@@ -30,8 +30,8 @@ This framework provides the prompt and context structure. Coding agent selection
 
 | Coding Agent | Integration | Notes |
 |--------------|------------|-------|
-| Claude Code | Symlinks from `.claude/` to `.agents/` | Full support (agents + skills) |
-| OpenCode | Reads `.agents/` directly | No symlinks needed |
+| Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
+| OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
 ## Setup (Recommended)
 
@@ -72,14 +72,14 @@ Replace `claude` with `opencode` if using OpenCode. Add `--mode copy` if symlink
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 cp -r .chief-agent-tmp/.agents .agents
 cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENT.md AGENT.md
+cp .chief-agent-tmp/AGENTS.md AGENTS.md
 rm -rf .chief-agent-tmp
 ```
 
 2. Create `CLAUDE.md` (symlink or copy):
 
 ```bash
-ln -s AGENT.md CLAUDE.md
+ln -s AGENTS.md CLAUDE.md
 ```
 
 3. For **Claude Code**, create symlinks from `.claude/` to `.agents/`:
@@ -105,8 +105,8 @@ After setup, your project will have:
 
 ```
 project/
-├── AGENT.md               # Framework rules — canonical file (highest authority)
-├── CLAUDE.md → AGENT.md   # Symlink for Claude Code compatibility
+├── AGENTS.md               # Framework rules — canonical file (highest authority)
+├── CLAUDE.md → AGENTS.md   # Symlink for Claude Code compatibility
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   │   ├── chief-agent.md
@@ -129,12 +129,12 @@ project/
 
 - `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions and skills
 - `.chief/` contains planning, rules, milestones, and project configuration
-- `AGENT.md` defines the highest-authority framework rules. `CLAUDE.md` is a symlink to it for Claude Code compatibility
+- `AGENTS.md` defines the highest-authority framework rules. `CLAUDE.md` is a symlink to it for Claude Code compatibility
 - Agent-specific directories (`.claude/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
 
 ## Getting Started
 
-After installing, set up your project context in `.chief/project.md` (not `AGENT.md` — that contains framework rules only):
+After installing, set up your project context in `.chief/project.md` (not `AGENTS.md` — that contains framework rules only):
 
 ```
 chief-agent: use grill-me to help me fill in project.md

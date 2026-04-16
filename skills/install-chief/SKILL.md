@@ -21,7 +21,7 @@ Check if the Chief Agent Framework is already installed by looking for these sig
 
 1. `.agents/agents/chief-agent.md` exists
 2. `.chief/` directory exists
-3. `AGENT.md` or `CLAUDE.md` at root contains the keyword "chief-agent" (check file content, not just existence — these files may exist from other setups)
+3. `AGENTS.md` or `CLAUDE.md` at root contains the keyword "Chief Agent Framework" (check file content, not just existence — these files may exist from other setups)
 
 If **any** of these match → the framework is likely already installed. Warn the user and suggest upgrading instead. Show them:
 ```
@@ -56,7 +56,7 @@ Copy from `.chief-agent-tmp/` into the project:
 ```bash
 cp -r .chief-agent-tmp/.agents .agents
 cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENT.md AGENT.md
+cp .chief-agent-tmp/AGENTS.md AGENTS.md
 ```
 
 Skip any file or directory that already exists (warn the user).
@@ -67,12 +67,12 @@ Based on the chosen mode:
 
 **Link mode:**
 ```bash
-ln -s AGENT.md CLAUDE.md
+ln -s AGENTS.md CLAUDE.md
 ```
 
 **Copy mode:**
 ```bash
-cp AGENT.md CLAUDE.md
+cp AGENTS.md CLAUDE.md
 ```
 
 ### 6. Set up coding agent integration
@@ -111,12 +111,12 @@ rm -rf .chief-agent-tmp
 Tell the user:
 
 1. Edit `.chief/project.md` with your project details (or run `chief-agent: use grill-me to help me fill in project.md`)
-2. Review `AGENT.md` and customize if needed
+2. Review `AGENTS.md` and customize if needed
 3. Start using: ask chief-agent to plan your first milestone
 
 ## Important rules
 
 - NEVER overwrite existing files without explicit user approval
-- If `.agents/` or `AGENT.md` already exist, suggest `/upgrade-chief` instead
+- If `.agents/` or `AGENTS.md` already exist, suggest `/upgrade-chief` instead
 - Always clean up `.chief-agent-tmp` even if the install is cancelled
 - Skip existing files in `.claude/` to avoid overwriting user's existing agent configs

@@ -44,7 +44,7 @@ git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-f
 
 Compare these paths between the current project and `.chief-agent-tmp/`:
 
-- `AGENT.md` (or `CLAUDE.md` if `AGENT.md` does not exist)
+- `AGENTS.md` (or `CLAUDE.md` if `AGENTS.md` does not exist)
 - `.agents/agents/*.md`
 - `.agents/skills/*/`
 - `.chief/MANUAL.md`
@@ -133,7 +133,7 @@ cp -r .agents/skills/<new-skill> .claude/skills/<new-skill>
 Skip entries that already exist.
 
 Also handle the coding-agent-specific rules file at root using the chosen mode:
-- For Claude Code: `CLAUDE.md` should be a symlink to `AGENT.md` (link mode) or a copy (copy mode)
+- For Claude Code: `CLAUDE.md` should be a symlink to `AGENTS.md` (link mode) or a copy (copy mode)
 - If the current state doesn't match the chosen mode, include this in the upgrade plan as a structure change
 
 ### 8. Clean up
