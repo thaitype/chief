@@ -1,6 +1,6 @@
 # Chief Agent Framework
 
-When you use AI coding tools on a real project, the work goes beyond a single prompt. There are multiple features to build, decisions to track, and progress to maintain across sessions.
+When you use AI coding agents on a real project, the work goes beyond a single prompt. There are multiple features to build, decisions to track, and progress to maintain across sessions.
 
 AI doesn't reduce the effort — it changes the type. Instead of routine work like writing syntax and debugging, you spend energy on constant decision-making: which architecture, which pattern, which direction to take next. Every interaction with AI is a decision. The more you rush, the more decisions you skip, and the more tech debt follows.
 
@@ -14,7 +14,7 @@ AI doesn't reduce the effort — it changes the type. Instead of routine work li
 
 You give short prompts. The agents handle planning, execution, and verification.
 
-Built for developers already using AI coding tools who want a structured workflow instead of ad-hoc prompting.
+Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting.
 
 ## Three Pillars of Working with AI
 
@@ -22,14 +22,14 @@ Effective AI-assisted development depends on three components working together:
 
 - **Human** — Sets the goal, defines direction, and makes critical design decisions. The clearer the goal, the less back-and-forth needed. Templates and structured rules reduce the number of decisions you have to make.
 - **Rules** — Encodes standards, contracts, and constraints so AI knows how to behave in your project. Architecture patterns, type safety, verification steps — all written down once, enforced every session.
-- **AI** — Applies AI engineering techniques to work more effectively: agentic coding, multi-agent orchestration, and automatic feedback loops from external systems (type checkers, linters, tests). Better tools and techniques mean more accurate results.
+- **AI** — Applies AI engineering techniques to work more effectively: agentic coding, multi-agent orchestration, and automatic feedback loops from external systems (type checkers, linters, tests). Better techniques mean more accurate results.
 
-This framework provides the prompt and context structure. Tool selection and model selection are your own decisions.
+This framework provides the prompt and context structure. Coding agent selection and model selection are your own decisions.
 
-## Supported Tools
+## Supported Coding Agents
 
-| Tool | Integration | Notes |
-|------|------------|-------|
+| Coding Agent | Integration | Notes |
+|--------------|------------|-------|
 | Claude Code | Symlinks from `.claude/` to `.agents/` | Full support (agents + skills) |
 | OpenCode | Reads `.agents/` directly | No symlinks needed |
 
@@ -37,7 +37,7 @@ This framework provides the prompt and context structure. Tool selection and mod
 
 Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
 
-> **Note:** v1 only provides templates for Claude Code. For other tools, copy the files manually into the appropriate directories.
+> **Note:** v1 only provides templates for Claude Code. For other coding agents, copy the files manually into the appropriate directories.
 > `CLAUDE.md` contains framework rules only — do not add project-specific config there. Use `.chief/project.md` for your project details.
 
 ```bash
@@ -111,7 +111,7 @@ After setup, your project will have:
 ```
 project/
 ├── CLAUDE.md              # Framework rules (highest authority)
-├── .agents/               # Canonical agent definitions (tool-agnostic)
+├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   │   ├── chief-agent.md
 │   │   ├── builder-agent.md
@@ -131,7 +131,7 @@ project/
 
 ## How It Works
 
-- `.agents/` is the **canonical, tool-agnostic** location for agent definitions and skills
+- `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions and skills
 - `.chief/` contains planning, rules, milestones, and project configuration
 - `CLAUDE.md` defines the highest-authority framework rules
 - Agent-specific directories (`.claude/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
@@ -221,7 +221,7 @@ Chief-agent handles the planning — task breakdown, component contracts, verifi
 
 - `main` is the active development branch
 - `v1.0.0` — first stable release (Claude Code only, uses `degit`)
-- v2 release planned with multi-tool support and setup script
+- v2 release planned with multi-coding-agent support and setup script
 
 ## Acknowledgement
 
