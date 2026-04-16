@@ -17,20 +17,20 @@ The first argument is the target version (branch or tag). Optional.
 
 ### 1. Check for existing installation
 
-Check if the Chief Agent Framework is already installed by looking for these specific files:
+Check if the Chief Agent Framework is already installed by looking for these signals:
 
-- `AGENT.md` at project root
-- `.agents/agents/chief-agent.md`
-- `.chief/MANUAL.md`
+1. `.agents/agents/chief-agent.md` exists
+2. `.chief/` directory exists
+3. `AGENT.md` or `CLAUDE.md` at root contains the keyword "chief-agent" (check file content, not just existence — these files may exist from other setups)
 
-If **any** of these exist → the framework is already installed. Warn the user and suggest upgrading instead. Show them:
+If **any** of these match → the framework is likely already installed. Warn the user and suggest upgrading instead. Show them:
 ```
 npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
 /upgrade-chief
 ```
 Do NOT proceed unless the user explicitly confirms they want a fresh install.
 
-If **none** of these exist → proceed. The `.agents/` directory may exist from other tools (e.g. Vercel skills) — that is not a chief-agent installation.
+If **none** match → proceed.
 
 ### 2. Ask coding agent and install mode
 
