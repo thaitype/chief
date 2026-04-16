@@ -1,5 +1,7 @@
 # Chief Agent Framework
 
+> **You are reading the `canary` (development) version.** For the stable release, see the [`release/v1` branch](https://github.com/thaitype/chief-agent-framework/tree/release/v1).
+
 When you use AI coding agents on a real project, the work goes beyond a single prompt. There are multiple features to build, decisions to track, and progress to maintain across sessions.
 
 AI doesn't reduce the effort — it changes the type. Instead of routine work like writing syntax and debugging, you spend energy on constant decision-making: which architecture, which pattern, which direction to take next. Every interaction with AI is a decision. The more you rush, the more decisions you skip, and the more tech debt follows.
