@@ -144,12 +144,6 @@ echo "Copying core files..."
 copy_dir "$SOURCE_ROOT/.agents" "$TARGET_DIR/.agents" ".agents"
 copy_dir "$SOURCE_ROOT/.chief" "$TARGET_DIR/.chief" ".chief"
 copy_file "$SOURCE_ROOT/AGENTS.md" "$TARGET_DIR/AGENTS.md" "AGENTS.md"
-
-if [[ "$MODE" == "link" ]]; then
-  create_symlink "AGENTS.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md -> AGENTS.md"
-else
-  copy_to_dest "$TARGET_DIR/AGENTS.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md (copy of AGENTS.md)"
-fi
 echo ""
 
 # --- Step 2: Agent-specific setup ---
@@ -161,6 +155,9 @@ case "$AGENT" in
     mkdir -p "$TARGET_DIR/.claude/skills"
 
     if [[ "$MODE" == "link" ]]; then
+      # Symlink CLAUDE.md to AGENTS.md
+      create_symlink "AGENTS.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md -> AGENTS.md"
+
       # Symlink individual agent files
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
         filename="$(basename "$agent_file")"
@@ -175,6 +172,9 @@ case "$AGENT" in
         fi
       done
     else
+      # Copy CLAUDE.md from AGENTS.md
+      copy_to_dest "$TARGET_DIR/AGENTS.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md (copy of AGENTS.md)"
+
       # Copy individual agent files
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
         filename="$(basename "$agent_file")"
