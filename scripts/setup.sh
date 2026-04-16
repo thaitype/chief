@@ -14,20 +14,20 @@ MODE="link"
 AGENT=""
 
 print_usage() {
-  echo "Usage: bash scripts/setup.sh [--mode link|copy] <agent>"
+  echo "Usage: bash scripts/setup.sh [--mode link|copy] --agent <agent>"
   echo ""
   echo "Agents:"
-  echo "  claude      Claude Code (.claude/agents/ and .claude/skills/)"
-  echo "  opencode    OpenCode (reads .agents/ directly, no symlinks needed)"
+  echo "  claude-code   Claude Code (.claude/agents/ and .claude/skills/)"
+  echo "  opencode      OpenCode (reads .agents/ directly, no symlinks needed)"
   echo ""
   echo "Options:"
-  echo "  --mode link   Create symlinks (default)"
-  echo "  --mode copy   Copy files instead of symlinking"
+  echo "  -a, --agent <agent>   Specify coding agent (required)"
+  echo "  --mode link           Create symlinks (default)"
+  echo "  --mode copy           Copy files instead of symlinking"
   echo ""
   echo "Example:"
-  echo "  git clone --depth 1 --branch v2.0.0 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp"
-  echo "  bash .chief-agent-tmp/scripts/setup.sh claude"
-  echo "  rm -rf .chief-agent-tmp"
+  echo "  bash .chief-agent-tmp/scripts/setup.sh --agent claude-code"
+  echo "  bash .chief-agent-tmp/scripts/setup.sh --agent opencode --mode copy"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -36,19 +36,25 @@ while [[ $# -gt 0 ]]; do
       MODE="$2"
       shift 2
       ;;
+    -a|--agent)
+      AGENT="$2"
+      shift 2
+      ;;
     --help|-h)
       print_usage
       exit 0
       ;;
     *)
-      AGENT="$1"
-      shift
+      echo "Error: Unknown argument '$1'"
+      echo ""
+      print_usage
+      exit 1
       ;;
   esac
 done
 
 if [[ -z "$AGENT" ]]; then
-  echo "Error: Please specify an agent: claude, opencode"
+  echo "Error: Please specify an agent with --agent: claude-code, opencode"
   echo ""
   print_usage
   exit 1
@@ -59,8 +65,8 @@ if [[ "$MODE" != "link" && "$MODE" != "copy" ]]; then
   exit 1
 fi
 
-if [[ "$AGENT" != "claude" && "$AGENT" != "opencode" ]]; then
-  echo "Error: Unsupported agent '$AGENT'. Supported: claude, opencode"
+if [[ "$AGENT" != "claude-code" && "$AGENT" != "opencode" ]]; then
+  echo "Error: Unsupported agent '$AGENT'. Supported: claude-code, opencode"
   exit 1
 fi
 
@@ -149,7 +155,7 @@ echo ""
 # --- Step 2: Agent-specific setup ---
 
 case "$AGENT" in
-  claude)
+  claude-code)
     echo "Setting up Claude Code integration..."
     mkdir -p "$TARGET_DIR/.claude/agents"
     mkdir -p "$TARGET_DIR/.claude/skills"

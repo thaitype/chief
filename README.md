@@ -58,11 +58,11 @@ Alternatively, use the setup script directly:
 
 ```bash
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
-bash .chief-agent-tmp/scripts/setup.sh claude
+bash .chief-agent-tmp/scripts/setup.sh --agent claude-code
 rm -rf .chief-agent-tmp
 ```
 
-Replace `claude` with `opencode` if using OpenCode. Add `--mode copy` if symlinks are not supported in your environment.
+Replace `claude-code` with `opencode` if using OpenCode. Add `--mode copy` if symlinks are not supported in your environment.
 
 ### Manual Install
 
