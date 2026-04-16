@@ -24,12 +24,12 @@ Effective AI-assisted development depends on three components working together:
 - **Rules** — Encodes standards, contracts, and constraints so AI knows how to behave in your project. Architecture patterns, type safety, verification steps — all written down once, enforced every session.
 - **AI** — Applies AI engineering techniques to work more effectively: agentic coding, multi-agent orchestration, and automatic feedback loops from external systems (type checkers, linters, tests). Better tools and techniques mean more accurate results.
 
-This framework focuses on the AI engineering side of prompt and context structure. Tool selection (Claude Code, Cursor, etc.) and model selection are your own decisions.
+This framework provides the prompt and context structure. Tool selection and model selection are your own decisions.
 
-## Supported Agents
+## Supported Tools
 
-| Agent | Integration | Notes |
-|-------|------------|-------|
+| Tool | Integration | Notes |
+|------|------------|-------|
 | Claude Code | Symlinks from `.claude/` to `.agents/` | Full support (agents + skills) |
 | OpenCode | Reads `.agents/` directly | No symlinks needed |
 
@@ -37,7 +37,8 @@ This framework focuses on the AI engineering side of prompt and context structur
 
 Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
 
-> **Note:** v1 only provides templates for Claude Code. For other agents, copy the files manually into the appropriate directories for your tool.
+> **Note:** v1 only provides templates for Claude Code. For other tools, copy the files manually into the appropriate directories.
+> `CLAUDE.md` contains framework rules only — do not add project-specific config there. Use `.chief/project.md` for your project details.
 
 ```bash
 npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
@@ -137,9 +138,7 @@ project/
 
 ## Getting Started
 
-The framework reduces your cognitive load. You give short prompts, agents handle the rest. You only answer critical design decisions — routine questions are resolved automatically by the agents.
-
-After installing, set up your project context:
+After installing, set up your project context in `.chief/project.md` (not `CLAUDE.md` — that contains framework rules only):
 
 ```
 chief-agent: use grill-me to help me fill in project.md
@@ -195,7 +194,7 @@ Chief reviews completed work, plans the next batch of tasks. Review-plan-agent v
 | Start a new milestone | `chief-agent: plan milestone-1, goal is to ...` |
 | Check progress | `chief-agent: review milestone-1 progress` |
 | Start building a task | `builder-agent: implement task-1 from milestone-1` |
-| Re-check a plan for consistency | `review-plan-agent: review milestone-1 plan` |
+| Manually trigger plan review (runs automatically, but can be re-triggered) | `review-plan-agent: review milestone-1 plan` |
 | Run integration tests | `tester-agent: validate milestone-1` |
 | Change direction mid-milestone | `chief-agent: update milestone-1, new goal is to ...` |
 | Set up project config with help | `chief-agent: use grill-me to help me fill in project.md` |
@@ -210,19 +209,19 @@ chief-agent: plan milestone-1, goal is to create a TypeScript SDK for our paymen
 
 Chief-agent will ask key decisions (e.g. "fetch or axios?", "class-based or functional?"), then plan tasks like: generate types from OpenAPI spec, implement client methods, write tests, add docs.
 
-**CLI tool for database migrations**
+**React component library with Storybook**
 
 ```
-chief-agent: plan milestone-1, goal is to build a CLI that manages database migrations with up/down/status commands
+chief-agent: plan milestone-1, goal is to build a React component library with Button, Input, and Modal components, documented in Storybook
 ```
 
-Chief-agent handles the planning — task breakdown, contract for the CLI interface, verification steps. You answer a couple of design decisions, builder does the rest.
+Chief-agent handles the planning — task breakdown, component contracts, verification steps. You answer a couple of design decisions, builder does the rest.
 
 ## Release
 
 - `main` is the active development branch
 - `v1.0.0` — first stable release (Claude Code only, uses `degit`)
-- v2 release planned with multi-agent support
+- v2 release planned with multi-tool support and setup script
 
 ## Acknowledgement
 
