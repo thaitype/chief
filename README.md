@@ -2,7 +2,19 @@
 
 **Chief Agent Framework** is an agnostic framework agent to enable goal-driven autonomous development with minimal human intervention.
 
-currently, it's alpha version, and only support basic builder-agent and chief-agent. (change can be updated frequently)
+## Setup
+
+```
+npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
+npx degit thaitype/chief-agent-framework/.claude#v1.0.0 .claude
+npx degit thaitype/chief-agent-framework/CLAUDE.md#v1.0.0 CLAUDE.md
+```
+
+## Release
+
+- `main` is active usage branch, and `v1.0.0` is the first stable release,
+
+DO NOT USE `main` branch for production, please use tagged release version, e.g. `v1.0.0`.
 
 ## Note
 - this framework design is first class citizen for Claude Code, however, it should be adaptable to other LLMs with minimal changes.
