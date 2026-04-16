@@ -11,7 +11,9 @@
 
 ## Setup (v1 — Stable)
 
-Recommended for production use. Claude Code only. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
+Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
+
+> **Note:** v1 only provides templates for Claude Code. For other agents, copy the files manually into the appropriate directories for your tool.
 
 ```bash
 npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
