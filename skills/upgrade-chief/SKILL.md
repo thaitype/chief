@@ -15,6 +15,21 @@ The first argument is the target version (branch or tag). Optional.
 
 ## Steps
 
+### 0. Detect install mode
+
+Before cloning, detect whether the user's current setup uses symlinks or copies:
+
+1. Check if `.claude/agents/chief-agent.md` exists
+2. If it is a symlink → current mode is **link**
+3. If it is a regular file → current mode is **copy**
+4. If `.claude/` does not exist → no coding-agent-specific setup detected
+
+Ask the user which mode they want for this upgrade:
+- **link** (recommended) — symlinks from `.claude/` to `.agents/`
+- **copy** — copies files from `.agents/` into `.claude/`
+
+Default to the user's current mode. If no current mode is detected, suggest **link**.
+
 ### 1. Clone the target version
 
 ```bash
@@ -91,16 +106,29 @@ For each approved change:
 - **Structure change**: apply the structural change (e.g. create symlinks)
 - **Removal**: delete the file (only if user approves)
 
-### 7. Update symlinks
+### 7. Update coding agent integration
 
-After applying changes, check if new agents or skills were added in `.agents/`. If the user has `.claude/` with symlinks, create symlinks for any new files:
+After applying changes, check if new agents or skills were added in `.agents/`. If the user has `.claude/` set up, add entries for any new files using the mode chosen in step 0:
 
+**Link mode:**
 ```bash
 ln -s ../../.agents/agents/<new-agent>.md .claude/agents/<new-agent>.md
 ln -s ../../.agents/skills/<new-skill> .claude/skills/<new-skill>
 ```
 
-Skip symlinks that already exist.
+**Copy mode:**
+```bash
+cp .agents/agents/<new-agent>.md .claude/agents/<new-agent>.md
+cp -r .agents/skills/<new-skill> .claude/skills/<new-skill>
+```
+
+Skip entries that already exist.
+
+Also handle `CLAUDE.md` at root using the same mode:
+- **Link mode:** `CLAUDE.md` should be a symlink to `AGENT.md`
+- **Copy mode:** `CLAUDE.md` should be a copy of `AGENT.md`
+
+If the current `CLAUDE.md` doesn't match the chosen mode, include this in the upgrade plan as a structure change.
 
 ### 8. Clean up
 
