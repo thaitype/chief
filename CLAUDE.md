@@ -339,32 +339,6 @@ Repeat
 Minimal human intervention.
 Maximum clarity and safety.
 
-## Development Commands
+## Project Configuration
 
-> Command to run during development and testing.
-> Adjust as needed for your environment.
-> TODO: Add Your specific commands here.
-
-## Architecture Overview
-
-> A brief overview of the architecture, key patterns, and important rules.
-> TODO: Fill in with your project's architecture details.
-
-### Tech Stack
-
-> List of major technologies used in the project.
-
-### Key Architectural Patterns
-
-> Description of important architectural patterns (e.g., Repository Pattern, Service Layer, etc.)
-> TODO: Fill in with your project's architectural patterns.
-
-### Directory Structure
-
-> The main directory structure of the project
-> TODO: Fill in with your project's directory structure.
-
-### Important Development Rules
-
-> Key rules that developers must follow.
-> TODO: Fill in with your project's important development rules.
+Project-specific details (dev commands, tech stack, architecture, directory structure) are defined in `.chief/project.md`.
