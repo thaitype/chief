@@ -35,10 +35,9 @@ This framework provides the prompt and context structure. Coding agent selection
 
 ## Setup (v1 — Stable)
 
-Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
+Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0) for v1 documentation.
 
 > **Note:** v1 only provides templates for Claude Code. For other coding agents, copy the files manually into the appropriate directories.
-> `AGENT.md` contains framework rules only — do not add project-specific config there. Use `.chief/project.md` for your project details. Claude Code reads `CLAUDE.md`, which is a symlink to `AGENT.md`.
 
 ```bash
 npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
