@@ -5,15 +5,18 @@
 # via chief-agent, then criticizes until the plan is ready to code.
 #
 # Uses --allowedTools so allowed tools run automatically, human is prompted for the rest.
+# Resumes the same session across iterations to preserve context.
 #
-# Usage: ./setup.sh <milestone-name> [max-iterations]
+# Usage: ./setup.sh <milestone-name> [max-iterations] [session-id]
 # Example: ./setup.sh milestone-1
-#          ./setup.sh milestone-PROJ-123 5
+#          ./setup.sh milestone-1 5
+#          ./setup.sh milestone-1 5 abc12345-...   # resume existing session
 
 set -e
 
-MILESTONE=${1:?"Usage: ./setup.sh <milestone-name> [max-iterations]"}
+MILESTONE=${1:?"Usage: ./setup.sh <milestone-name> [max-iterations] [session-id]"}
 MAX_ITERATIONS=${2:-5}
+SESSION_ID=${3:-$(uuidgen)}
 
 CHIEF_DIR=".chief"
 MILESTONE_DIR="$CHIEF_DIR/$MILESTONE"
@@ -24,6 +27,32 @@ PLAN_DIR="$MILESTONE_DIR/_plan"
 REPORT_DIR="$MILESTONE_DIR/_report"
 
 ALLOWED_TOOLS="Read,Write,Edit,Glob,Grep,Bash,Agent,AskUserQuestion"
+
+# ─── Helpers ─────────────────────────────────────────────────────────────────
+
+PROMPT_FILE=$(mktemp)
+trap 'rm -f "$PROMPT_FILE"' EXIT
+
+# Track whether the first call has been made (to switch from --session-id to --resume)
+FIRST_CALL=true
+
+run_claude() {
+  local prompt="$1"
+  if [ "$FIRST_CALL" = true ]; then
+    claude --session-id "$SESSION_ID" --allowedTools "$ALLOWED_TOOLS" -p "$prompt"
+    FIRST_CALL=false
+  else
+    claude --resume "$SESSION_ID" --allowedTools "$ALLOWED_TOOLS" -p "$prompt"
+  fi
+}
+
+render() {
+  if command -v glow &>/dev/null; then
+    echo "$1" | glow -
+  else
+    echo "$1"
+  fi
+}
 
 # ─── Step 0: Scaffold directories ───────────────────────────────────────────
 
@@ -40,13 +69,14 @@ EOF
 fi
 
 echo "  Created: $MILESTONE_DIR"
+echo "  Session: $SESSION_ID"
 echo ""
 
 # ─── Step 1: Populate goals, contracts, rules, and tasks ────────────────────
 
 echo "═══ Step 1: Populate milestone goals, contracts, and plan ═══"
 
-claude --allowedTools "$ALLOWED_TOOLS" -p "$(cat <<PROMPT
+cat > "$PROMPT_FILE" << PROMPT
 You are the chief-agent setting up milestone: $MILESTONE
 
 Read the project context:
@@ -78,8 +108,9 @@ Your job is to set up this milestone for execution. Do the following:
 If anything is unclear or multiple valid approaches exist, ASK THE HUMAN via AskUserQuestion.
 Do NOT guess on architectural decisions.
 PROMPT
-)"
 
+OUTPUT=$(run_claude "$(cat "$PROMPT_FILE")")
+render "$OUTPUT"
 echo ""
 
 # ─── Step 2: Criticize loop — is the template ready to code? ────────────────
@@ -89,12 +120,10 @@ echo "═══ Step 2: Criticize — is the plan ready to code? ═══"
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo "── Critique iteration $i / $MAX_ITERATIONS ──"
 
-  OUTPUT=$(claude --allowedTools "$ALLOWED_TOOLS" -p "$(cat <<PROMPT
-You are the chief-agent reviewing milestone: $MILESTONE
+  cat > "$PROMPT_FILE" << PROMPT
+Continue as the chief-agent reviewing milestone: $MILESTONE
 
-Read everything:
-- @CLAUDE.md
-- @$CHIEF_DIR/_rules
+Re-read the current state of:
 - @$GOAL_DIR
 - @$CONTRACT_DIR
 - @$PLAN_DIR
@@ -126,9 +155,9 @@ If issues are found:
 If the plan is ready to code with no meaningful issues:
   a. Output exactly: READY_TO_CODE
 PROMPT
-  )")
 
-  echo "$OUTPUT"
+  OUTPUT=$(run_claude "$(cat "$PROMPT_FILE")")
+  render "$OUTPUT"
 
   if echo "$OUTPUT" | grep -q "READY_TO_CODE"; then
     echo ""
@@ -148,12 +177,10 @@ echo "═══ Step 3: Criticize — design quality check ═══"
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo "── Design critique iteration $i / $MAX_ITERATIONS ──"
 
-  OUTPUT=$(claude --allowedTools "$ALLOWED_TOOLS" -p "$(cat <<PROMPT
-You are the chief-agent performing a DESIGN REVIEW for milestone: $MILESTONE
+  cat > "$PROMPT_FILE" << PROMPT
+Continue as the chief-agent performing a DESIGN REVIEW for milestone: $MILESTONE
 
-Read everything:
-- @CLAUDE.md
-- @$CHIEF_DIR/_rules
+Re-read the current state of:
 - @$GOAL_DIR
 - @$CONTRACT_DIR
 - @$PLAN_DIR
@@ -194,9 +221,9 @@ If the design is clean, minimal, goal-aligned, and not over-engineered:
   b. Commit: "chore($MILESTONE): design approved"
   c. Output exactly: DESIGN_APPROVED
 PROMPT
-  )")
 
-  echo "$OUTPUT"
+  OUTPUT=$(run_claude "$(cat "$PROMPT_FILE")")
+  render "$OUTPUT"
 
   if echo "$OUTPUT" | grep -q "DESIGN_APPROVED"; then
     echo ""
