@@ -1,6 +1,6 @@
 ---
 name: install-chief
-description: Install the Chief Agent Framework into the current project. Detects coding agent, asks for install mode, copies framework files, and sets up symlinks or copies. Use when the user wants to set up the framework (e.g. "/install-chief" or "/install-chief canary").
+description: Install the Chief Agent Framework into the current project. Uses setup.sh as the primary method, then verifies and fixes manually if needed. Use when the user wants to set up the framework (e.g. "/install-chief" or "/install-chief canary").
 ---
 
 Install the Chief Agent Framework into the current project.
@@ -36,77 +36,63 @@ If **none** match → proceed.
 
 Ask the user:
 
-1. **Which coding agent?** — Claude Code, OpenCode, or other
-2. **Install mode?** (only for coding agents with their own directory, e.g. Claude Code)
-   - **link** (recommended) — symlinks from coding-agent-specific directory to `.agents/`
+1. **Which coding agent?** — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
+2. **Install mode?** (only relevant for `claude-code`)
+   - **link** (recommended) — symlinks from `.claude/` to `.agents/`
    - **copy** — copies files instead of symlinking
+   - For all other agents, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly
 
-OpenCode reads `.agents/` directly and needs no install mode.
-
-### 3. Clone the target version
+### 3. Clone and run setup script
 
 ```bash
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
+rm -rf .chief-agent-tmp
 ```
 
-### 4. Copy core files
+### 4. Verify installation
 
-Copy from `.chief-agent-tmp/` into the project:
+After the setup script completes, verify that the installation is correct:
 
-```bash
-cp -r .chief-agent-tmp/.agents .agents
-cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENTS.md AGENTS.md
-```
+1. **Core files exist:**
+   - `.agents/agents/chief-agent.md`
+   - `.agents/agents/builder-agent.md`
+   - `.agents/agents/tester-agent.md`
+   - `.agents/agents/review-plan-agent.md`
+   - `.agents/skills/grill-me/SKILL.md`
+   - `.chief/project.md`
+   - `.chief/_rules/`
+   - `AGENTS.md`
 
-Skip any file or directory that already exists (warn the user).
+2. **Claude Code only** (if agent is `claude-code`):
+   - `CLAUDE.md` exists (symlink or copy depending on mode)
+   - `.claude/agents/` contains entries for all 4 agents
+   - `.claude/skills/` contains entry for grill-me
+   - If link mode: verify symlinks resolve correctly
 
-### 5. Set up coding-agent-specific rules file
+### 5. Fix issues (fallback)
 
-Based on the chosen mode:
+If any verification check fails, fix it manually:
 
-**Link mode:**
-```bash
-ln -s AGENTS.md CLAUDE.md
-```
+- **Missing core file** → copy from `.chief-agent-tmp/` if it still exists, otherwise clone again and copy the specific file
+- **Missing CLAUDE.md** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on mode
+- **Missing .claude/ symlinks** → create them individually:
+  ```bash
+  mkdir -p .claude/agents .claude/skills
+  ln -s ../../.agents/agents/<file>.md .claude/agents/<file>.md
+  ln -s ../../.agents/skills/<skill> .claude/skills/<skill>
+  ```
+- **Broken symlink** → remove and recreate
+- **Wrong mode** (e.g. user wanted link but got copy) → remove and recreate with correct mode
 
-**Copy mode:**
-```bash
-cp AGENTS.md CLAUDE.md
-```
+### 6. Clean up
 
-### 6. Set up coding agent integration
-
-**Claude Code** — create `.claude/agents/` and `.claude/skills/` directories, then add entries for each agent and skill:
-
-Link mode:
-```bash
-mkdir -p .claude/agents .claude/skills
-ln -s ../../.agents/agents/chief-agent.md .claude/agents/chief-agent.md
-ln -s ../../.agents/agents/builder-agent.md .claude/agents/builder-agent.md
-ln -s ../../.agents/agents/tester-agent.md .claude/agents/tester-agent.md
-ln -s ../../.agents/agents/review-plan-agent.md .claude/agents/review-plan-agent.md
-ln -s ../../.agents/skills/grill-me .claude/skills/grill-me
-```
-
-Copy mode:
-```bash
-mkdir -p .claude/agents .claude/skills
-cp .agents/agents/*.md .claude/agents/
-cp -r .agents/skills/* .claude/skills/
-```
-
-Skip entries that already exist in `.claude/` (warn the user).
-
-**OpenCode** — no action needed, it reads `.agents/` directly.
-
-### 7. Clean up
-
+Ensure `.chief-agent-tmp` is removed:
 ```bash
 rm -rf .chief-agent-tmp
 ```
 
-### 8. Next steps
+### 7. Next steps
 
 Tell the user:
 
@@ -117,6 +103,7 @@ Tell the user:
 ## Important rules
 
 - NEVER overwrite existing files without explicit user approval
-- If `.agents/` or `AGENTS.md` already exist, suggest `/upgrade-chief` instead
-- Always clean up `.chief-agent-tmp` even if the install is cancelled
-- Skip existing files in `.claude/` to avoid overwriting user's existing agent configs
+- If the framework is already installed, suggest `/upgrade-chief` instead
+- Always clean up `.chief-agent-tmp` even if the install is cancelled or fails
+- If the setup script fails, attempt manual fixes before giving up
+- Report all verification results to the user — even successful ones
