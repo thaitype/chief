@@ -51,9 +51,9 @@ The skill asks which coding agent you use, copies framework files, and sets up e
 ### Setup with degit
 
 ```bash
-npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
-npx degit thaitype/chief-agent-framework/.claude#v1.0.0 .claude
-npx degit thaitype/chief-agent-framework/AGENTS.md#v1.0.0 AGENTS.md
+npx degit thaitype/chief-agent-framework/.chief#v1 .chief
+npx degit thaitype/chief-agent-framework/.claude#v1 .claude
+npx degit thaitype/chief-agent-framework/AGENTS.md#v1 AGENTS.md
 ```
 
 Then create `CLAUDE.md` symlink for Claude Code:
@@ -65,7 +65,7 @@ ln -s AGENTS.md CLAUDE.md
 ### Setup with git
 
 ```bash
-git clone --depth 1 --branch v1.0.0 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch v1 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 cp -r .chief-agent-tmp/.chief .chief
 cp -r .chief-agent-tmp/.claude .claude
 cp .chief-agent-tmp/AGENTS.md AGENTS.md
