@@ -19,7 +19,12 @@ The first argument is the target version (branch or tag). Optional.
 
 Check if `.agents/` or `AGENT.md` already exist in the project.
 
-- If they exist → warn the user and suggest using `/upgrade-chief` instead. Do NOT proceed unless the user explicitly confirms they want a fresh install.
+- If they exist → warn the user and suggest upgrading instead. Show them:
+  ```
+  npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
+  /upgrade-chief
+  ```
+  Do NOT proceed unless the user explicitly confirms they want a fresh install.
 - If they don't exist → proceed.
 
 ### 2. Ask coding agent and install mode
