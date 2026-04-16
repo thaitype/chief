@@ -143,7 +143,13 @@ copy_to_dest() {
 echo "Copying core files..."
 copy_dir "$SOURCE_ROOT/.agents" "$TARGET_DIR/.agents" ".agents"
 copy_dir "$SOURCE_ROOT/.chief" "$TARGET_DIR/.chief" ".chief"
-copy_file "$SOURCE_ROOT/CLAUDE.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md"
+copy_file "$SOURCE_ROOT/AGENT.md" "$TARGET_DIR/AGENT.md" "AGENT.md"
+
+if [[ "$MODE" == "link" ]]; then
+  create_symlink "AGENT.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md -> AGENT.md"
+else
+  copy_to_dest "$TARGET_DIR/AGENT.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md (copy of AGENT.md)"
+fi
 echo ""
 
 # --- Step 2: Agent-specific setup ---
@@ -196,5 +202,5 @@ echo "Done! Chief Agent Framework installed successfully."
 echo ""
 echo "Next steps:"
 echo "  1. Edit .chief/project.md with your project details"
-echo "  2. Review CLAUDE.md and customize if needed"
+echo "  2. Review AGENT.md and customize if needed"
 echo "  3. Start using: ask chief-agent to plan your first milestone"

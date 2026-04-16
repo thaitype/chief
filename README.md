@@ -38,7 +38,7 @@ This framework provides the prompt and context structure. Coding agent selection
 Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
 
 > **Note:** v1 only provides templates for Claude Code. For other coding agents, copy the files manually into the appropriate directories.
-> `CLAUDE.md` contains framework rules only — do not add project-specific config there. Use `.chief/project.md` for your project details.
+> `AGENT.md` contains framework rules only — do not add project-specific config there. Use `.chief/project.md` for your project details. Claude Code reads `CLAUDE.md`, which is a symlink to `AGENT.md`.
 
 ```bash
 npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
@@ -55,6 +55,8 @@ cp -r .chief-agent-tmp/.claude .claude
 cp .chief-agent-tmp/CLAUDE.md CLAUDE.md
 rm -rf .chief-agent-tmp
 ```
+
+> **Note:** v1 uses `CLAUDE.md` as a real file. v2 introduces `AGENT.md` as the canonical file with `CLAUDE.md` as a symlink.
 
 ## Setup (v2 — Development)
 
@@ -81,17 +83,23 @@ bash .chief-agent-tmp/scripts/setup.sh --mode copy claude
 
 If you prefer not to use the setup script:
 
-1. Copy the directories and file into your project:
+1. Copy the directories and files into your project:
 
 ```bash
 git clone --depth 1 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 cp -r .chief-agent-tmp/.agents .agents
 cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/CLAUDE.md CLAUDE.md
+cp .chief-agent-tmp/AGENT.md AGENT.md
 rm -rf .chief-agent-tmp
 ```
 
-2. For **Claude Code**, create symlinks from `.claude/` to `.agents/`:
+2. Create `CLAUDE.md` (symlink or copy):
+
+```bash
+ln -s AGENT.md CLAUDE.md
+```
+
+3. For **Claude Code**, create symlinks from `.claude/` to `.agents/`:
 
 ```bash
 mkdir -p .claude/agents .claude/skills
@@ -102,7 +110,7 @@ ln -s ../../.agents/agents/review-plan-agent.md .claude/agents/review-plan-agent
 ln -s ../../.agents/skills/grill-me .claude/skills/grill-me
 ```
 
-3. For **OpenCode**, no extra steps — it reads `.agents/` directly.
+4. For **OpenCode**, no extra steps — it reads `.agents/` directly.
 
 ## Directory Structure
 
@@ -110,7 +118,8 @@ After setup, your project will have:
 
 ```
 project/
-├── CLAUDE.md              # Framework rules (highest authority)
+├── AGENT.md               # Framework rules — canonical file (highest authority)
+├── CLAUDE.md → AGENT.md   # Symlink for Claude Code compatibility
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   │   ├── chief-agent.md
@@ -133,12 +142,12 @@ project/
 
 - `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions and skills
 - `.chief/` contains planning, rules, milestones, and project configuration
-- `CLAUDE.md` defines the highest-authority framework rules
+- `AGENT.md` defines the highest-authority framework rules. `CLAUDE.md` is a symlink to it for Claude Code compatibility
 - Agent-specific directories (`.claude/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
 
 ## Getting Started
 
-After installing, set up your project context in `.chief/project.md` (not `CLAUDE.md` — that contains framework rules only):
+After installing, set up your project context in `.chief/project.md` (not `AGENT.md` — that contains framework rules only):
 
 ```
 chief-agent: use grill-me to help me fill in project.md
