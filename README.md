@@ -33,33 +33,28 @@ This framework provides the prompt and context structure. Coding agent selection
 | Claude Code | Symlinks from `.claude/` to `.agents/` | Full support (agents + skills) |
 | OpenCode | Reads `.agents/` directly | No symlinks needed |
 
-## Setup (v1 — Stable)
+## Setup (Recommended)
 
-Recommended for production use. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0) for v1 documentation.
-
-> **Note:** v1 only provides templates for Claude Code. For other coding agents, copy the files manually into the appropriate directories.
+Install the install skill, then run it:
 
 ```bash
-npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
-npx degit thaitype/chief-agent-framework/.claude#v1.0.0 .claude
-npx degit thaitype/chief-agent-framework/CLAUDE.md#v1.0.0 CLAUDE.md
+npx skills@latest add thaitype/chief-agent-framework --skill install-chief
 ```
 
-Or using git:
-
-```bash
-git clone --depth 1 --branch v1.0.0 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
-cp -r .chief-agent-tmp/.chief .chief
-cp -r .chief-agent-tmp/.claude .claude
-cp .chief-agent-tmp/CLAUDE.md CLAUDE.md
-rm -rf .chief-agent-tmp
+```
+/install-chief
 ```
 
-> **Note:** v1 uses `CLAUDE.md` as a real file. v2 introduces `AGENT.md` as the canonical file with `CLAUDE.md` as a symlink.
+The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything. To install a specific version:
 
-## Setup (v2 — Development)
+```
+/install-chief canary
+/install-chief v1.0.0
+```
 
-> **Not yet released.** Use from `canary` branch for testing only.
+### Setup with Shell Script
+
+Alternatively, use the setup script directly:
 
 ```bash
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
@@ -67,20 +62,9 @@ bash .chief-agent-tmp/scripts/setup.sh claude
 rm -rf .chief-agent-tmp
 ```
 
-Replace `claude` with `opencode` if using OpenCode.
-
-### Mode Options
-
-- `--mode link` (default) — creates symlinks from agent-specific directories to `.agents/`
-- `--mode copy` — copies files instead of symlinking (fallback for environments without symlink support)
-
-```bash
-bash .chief-agent-tmp/scripts/setup.sh --mode copy claude
-```
+Replace `claude` with `opencode` if using OpenCode. Add `--mode copy` if symlinks are not supported in your environment.
 
 ### Manual Install
-
-If you prefer not to use the setup script:
 
 1. Copy the directories and files into your project:
 
@@ -110,6 +94,10 @@ ln -s ../../.agents/skills/grill-me .claude/skills/grill-me
 ```
 
 4. For **OpenCode**, no extra steps — it reads `.agents/` directly.
+
+### v1 Setup
+
+See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0) for v1 documentation and setup instructions.
 
 ## Directory Structure
 
