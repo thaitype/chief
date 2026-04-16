@@ -43,7 +43,7 @@ npx skills@latest add thaitype/chief-agent-framework --skill install-chief
 ```
 
 ```
-/install-chief v1.0.0
+/install-chief v1
 ```
 
 The skill asks which coding agent you use, copies framework files, and sets up everything.
