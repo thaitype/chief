@@ -1,15 +1,17 @@
 ---
 name: upgrade-chief
-description: Upgrade the Chief Agent Framework to a specific version. Compares current files against the target version, creates an upgrade plan for review, and applies changes on approval. Use when the user wants to upgrade the framework (e.g. "/upgrade-chief main" or "/upgrade-chief v2.0.0").
+description: Upgrade the Chief Agent Framework to a specific version. Compares current files against the target version, creates an upgrade plan for review, and applies changes on approval. Use when the user wants to upgrade the framework (e.g. "/upgrade-chief" or "/upgrade-chief canary").
 ---
 
 Upgrade the Chief Agent Framework to the version specified in the arguments.
 
 ## Arguments
 
-The first argument is the target version (branch or tag). Examples: `main`, `v2.0.0`, `v1.0.0`.
+The first argument is the target version (branch or tag). Optional.
 
-If no argument is provided, ask the user which version they want to upgrade to.
+- No argument → upgrade to the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
+- `canary` → latest canary branch (active development, unreleased)
+- `v1.0.0`, `v2.0.0`, etc. → specific tagged version
 
 ## Steps
 

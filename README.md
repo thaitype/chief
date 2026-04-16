@@ -59,10 +59,10 @@ rm -rf .chief-agent-tmp
 
 ## Setup (v2 — Development)
 
-> **Not yet released.** Use from `main` branch for testing only.
+> **Not yet released.** Use from `canary` branch for testing only.
 
 ```bash
-git clone --depth 1 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 bash .chief-agent-tmp/scripts/setup.sh claude
 rm -rf .chief-agent-tmp
 ```
@@ -85,7 +85,7 @@ If you prefer not to use the setup script:
 1. Copy the directories and files into your project:
 
 ```bash
-git clone --depth 1 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 cp -r .chief-agent-tmp/.agents .agents
 cp -r .chief-agent-tmp/.chief .chief
 cp .chief-agent-tmp/AGENT.md AGENT.md
@@ -236,12 +236,13 @@ npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
 Then run:
 
 ```
-/upgrade-chief main
+/upgrade-chief
 ```
 
-Or specify a tagged version:
+With no arguments, it upgrades to the latest stable release. Or specify a version:
 
 ```
+/upgrade-chief canary
 /upgrade-chief v2.0.0
 ```
 
@@ -249,7 +250,8 @@ The skill compares your current files against the target version, creates an upg
 
 ## Release
 
-- `main` is the active development branch
+- `canary` is the active development branch — use for testing unreleased changes, not for production
+- Stable releases are tagged (e.g. `v1.0.0`) on release branches (`release/v1`)
 - `v1.0.0` — first stable release (Claude Code only, uses `degit`)
 - v2 release planned with multi-coding-agent support and setup script
 
