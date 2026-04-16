@@ -15,20 +15,24 @@ The first argument is the target version (branch or tag). Optional.
 
 ## Steps
 
-### 0. Detect install mode
+### 0. Detect coding agent and install mode
 
-Before cloning, detect whether the user's current setup uses symlinks or copies:
+Before cloning, detect which coding agent the user has set up:
 
-1. Check if `.claude/agents/chief-agent.md` exists
-2. If it is a symlink → current mode is **link**
-3. If it is a regular file → current mode is **copy**
-4. If `.claude/` does not exist → no coding-agent-specific setup detected
+1. Check if `.claude/agents/` exists → **Claude Code**
+2. If only `.agents/` exists (no coding-agent-specific directory) → **OpenCode** (or no coding agent setup)
 
-Ask the user which mode they want for this upgrade:
-- **link** (recommended) — symlinks from `.claude/` to `.agents/`
-- **copy** — copies files from `.agents/` into `.claude/`
+For coding agents that use their own directory (e.g. Claude Code with `.claude/`), detect install mode:
 
-Default to the user's current mode. If no current mode is detected, suggest **link**.
+1. Check if any file in the coding-agent-specific directory is a symlink → current mode is **link**
+2. If files are regular files → current mode is **copy**
+3. If no coding-agent-specific directory exists → no mode detected
+
+Ask the user to confirm:
+- Which coding agent they use (Claude Code, OpenCode, or other)
+- Which install mode they want: **link** (recommended) or **copy**
+
+Default to the detected coding agent and mode. If no mode is detected, suggest **link**. OpenCode reads `.agents/` directly and needs no install mode.
 
 ### 1. Clone the target version
 
@@ -108,27 +112,29 @@ For each approved change:
 
 ### 7. Update coding agent integration
 
-After applying changes, check if new agents or skills were added in `.agents/`. If the user has `.claude/` set up, add entries for any new files using the mode chosen in step 0:
+After applying changes, check if new agents or skills were added in `.agents/`. Based on the coding agent detected in step 0:
 
-**Link mode:**
+**Claude Code** — update `.claude/` using the chosen mode:
+
+Link mode:
 ```bash
 ln -s ../../.agents/agents/<new-agent>.md .claude/agents/<new-agent>.md
 ln -s ../../.agents/skills/<new-skill> .claude/skills/<new-skill>
 ```
 
-**Copy mode:**
+Copy mode:
 ```bash
 cp .agents/agents/<new-agent>.md .claude/agents/<new-agent>.md
 cp -r .agents/skills/<new-skill> .claude/skills/<new-skill>
 ```
 
+**OpenCode** — no action needed, it reads `.agents/` directly.
+
 Skip entries that already exist.
 
-Also handle `CLAUDE.md` at root using the same mode:
-- **Link mode:** `CLAUDE.md` should be a symlink to `AGENT.md`
-- **Copy mode:** `CLAUDE.md` should be a copy of `AGENT.md`
-
-If the current `CLAUDE.md` doesn't match the chosen mode, include this in the upgrade plan as a structure change.
+Also handle the coding-agent-specific rules file at root using the chosen mode:
+- For Claude Code: `CLAUDE.md` should be a symlink to `AGENT.md` (link mode) or a copy (copy mode)
+- If the current state doesn't match the chosen mode, include this in the upgrade plan as a structure change
 
 ### 8. Clean up
 
