@@ -35,3 +35,6 @@ DO NOT USE `main` branch for production, please use tagged release version, e.g.
 5. Ask `builder-agent` to implement tasks based on the plan
 6. Ask `chief-agent` to review the work, and plan next tasks until milestone goal achieved.
 7. Repeat step 2-6 until all milestones are achieved.
+
+## Acknowledgement
+- Grill me Skill from [mattpocock](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
