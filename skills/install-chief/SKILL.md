@@ -47,12 +47,48 @@ Ask the user:
 ```bash
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
-rm -rf .chief-agent-tmp
 ```
+
+If the setup script **fails completely** (non-zero exit code or crashes), skip to step 3b for full manual install. Do NOT run `rm -rf .chief-agent-tmp` yet — it's needed for manual steps.
+
+If the setup script succeeds, proceed to step 4.
+
+### 3b. Full manual install (fallback if setup script fails)
+
+If the setup script failed, perform the entire install manually:
+
+```bash
+# Core files
+cp -r .chief-agent-tmp/.agents .agents
+cp -r .chief-agent-tmp/.chief .chief
+cp .chief-agent-tmp/AGENTS.md AGENTS.md
+```
+
+For `claude-code` only, set up Claude Code integration:
+
+Link mode:
+```bash
+ln -s AGENTS.md CLAUDE.md
+mkdir -p .claude/agents .claude/skills
+for f in .agents/agents/*.md; do ln -s "../../$f" ".claude/agents/$(basename "$f")"; done
+for d in .agents/skills/*/; do ln -s "../../$d" ".claude/skills/$(basename "$d")"; done
+```
+
+Copy mode:
+```bash
+cp AGENTS.md CLAUDE.md
+mkdir -p .claude/agents .claude/skills
+cp .agents/agents/*.md .claude/agents/
+cp -r .agents/skills/* .claude/skills/
+```
+
+For all other agents — no extra steps needed.
+
+Skip any file or directory that already exists (warn the user).
 
 ### 4. Verify installation
 
-After the setup script completes, verify that the installation is correct:
+After the setup script or manual install completes, verify that the installation is correct:
 
 1. **Core files exist:**
    - `.agents/agents/chief-agent.md`
