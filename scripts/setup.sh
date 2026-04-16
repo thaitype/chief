@@ -17,8 +17,16 @@ print_usage() {
   echo "Usage: bash scripts/setup.sh [--mode link|copy] --agent <agent>"
   echo ""
   echo "Agents:"
-  echo "  claude-code   Claude Code (.claude/agents/ and .claude/skills/)"
-  echo "  opencode      OpenCode (reads .agents/ directly, no symlinks needed)"
+  echo "  claude-code   Claude Code (CLAUDE.md + .claude/agents/ and .claude/skills/)"
+  echo "  opencode      OpenCode (reads AGENTS.md and .agents/ directly)"
+  echo "  codex         Codex CLI (reads AGENTS.md directly)"
+  echo "  cursor        Cursor (reads AGENTS.md directly)"
+  echo "  copilot       GitHub Copilot (reads AGENTS.md directly)"
+  echo "  gemini-cli    Gemini CLI (reads AGENTS.md directly)"
+  echo "  amp           Amp (reads AGENTS.md directly)"
+  echo "  windsurf      Windsurf (reads AGENTS.md directly)"
+  echo "  kiro          Kiro (reads AGENTS.md directly)"
+  echo "  aider         Aider (reads AGENTS.md directly)"
   echo ""
   echo "Options:"
   echo "  -a, --agent <agent>   Specify coding agent (required)"
@@ -27,7 +35,7 @@ print_usage() {
   echo ""
   echo "Example:"
   echo "  bash .chief-agent-tmp/scripts/setup.sh --agent claude-code"
-  echo "  bash .chief-agent-tmp/scripts/setup.sh --agent opencode --mode copy"
+  echo "  bash .chief-agent-tmp/scripts/setup.sh --agent cursor"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -53,8 +61,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+SUPPORTED_AGENTS="claude-code opencode codex cursor copilot gemini-cli amp windsurf kiro aider"
+
 if [[ -z "$AGENT" ]]; then
-  echo "Error: Please specify an agent with --agent: claude-code, opencode"
+  echo "Error: Please specify an agent with --agent"
   echo ""
   print_usage
   exit 1
@@ -65,8 +75,9 @@ if [[ "$MODE" != "link" && "$MODE" != "copy" ]]; then
   exit 1
 fi
 
-if [[ "$AGENT" != "claude-code" && "$AGENT" != "opencode" ]]; then
-  echo "Error: Unsupported agent '$AGENT'. Supported: claude-code, opencode"
+if ! echo "$SUPPORTED_AGENTS" | grep -qw "$AGENT"; then
+  echo "Error: Unsupported agent '$AGENT'."
+  echo "Supported: $SUPPORTED_AGENTS"
   exit 1
 fi
 
@@ -197,9 +208,9 @@ case "$AGENT" in
     fi
     ;;
 
-  opencode)
-    echo "Setting up OpenCode integration..."
-    echo "  OpenCode reads from .agents/ directly. No additional setup needed."
+  *)
+    echo "Setting up $AGENT integration..."
+    echo "  $AGENT reads AGENTS.md and .agents/ directly. No additional setup needed."
     ;;
 esac
 
