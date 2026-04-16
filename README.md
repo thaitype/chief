@@ -1,6 +1,30 @@
 # Chief Agent Framework
 
-**Chief Agent Framework** is an agent-agnostic framework for goal-driven autonomous development with minimal human intervention.
+When you use AI coding tools on a real project, the work goes beyond a single prompt. There are multiple features to build, decisions to track, and progress to maintain across sessions.
+
+AI doesn't reduce the effort — it changes the type. Instead of routine work like writing syntax and debugging, you spend energy on constant decision-making: which architecture, which pattern, which direction to take next. Every interaction with AI is a decision. The more you rush, the more decisions you skip, and the more tech debt follows.
+
+**Chief Agent Framework** externalizes those decisions out of your head and into a system.
+
+- You define rules and goals once
+- A planning agent breaks work into milestones and tasks
+- A builder agent implements them
+- A tester agent verifies the results
+- A review agent checks plans for contradictions before anything gets built
+
+You give short prompts. The agents handle planning, execution, and verification.
+
+Built for developers already using AI coding tools who want a structured workflow instead of ad-hoc prompting.
+
+## Three Pillars of Working with AI
+
+Effective AI-assisted development depends on three components working together:
+
+- **Human** — Sets the goal, defines direction, and makes critical design decisions. The clearer the goal, the less back-and-forth needed. Templates and structured rules reduce the number of decisions you have to make.
+- **Rules** — Encodes standards, contracts, and constraints so AI knows how to behave in your project. Architecture patterns, type safety, verification steps — all written down once, enforced every session.
+- **AI** — Applies AI engineering techniques to work more effectively: agentic coding, multi-agent orchestration, and automatic feedback loops from external systems (type checkers, linters, tests). Better tools and techniques mean more accurate results.
+
+This framework focuses on the AI engineering side of prompt and context structure. Tool selection (Claude Code, Cursor, etc.) and model selection are your own decisions.
 
 ## Supported Agents
 
@@ -111,22 +135,88 @@ project/
 - `CLAUDE.md` defines the highest-authority framework rules
 - Agent-specific directories (`.claude/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
 
-## Prerequisite
+## Getting Started
 
-- Define clear `CLAUDE.md` as high-level rules for chief-agent to follow
-- Edit `.chief/project.md` with your project's tech stack, commands, and architecture
-- Optionally define global goals in `.chief/_rules/_goal/`
-- Define milestone goals in `.chief/milestone-*/_goal/`
+The framework reduces your cognitive load. You give short prompts, agents handle the rest. You only answer critical design decisions — routine questions are resolved automatically by the agents.
 
-## Usage
+After installing, set up your project context:
 
-1. Ask `chief-agent` to create the contract at rules level (optional)
-2. Ask `chief-agent` to create the contract at milestone level
-3. Human reviews contract, iterates with `chief-agent` until satisfied
-4. Ask `chief-agent` to create plan and tasks based on the contract
-5. Ask `builder-agent` to implement tasks from the plan
-6. Ask `chief-agent` to review work and plan next tasks
-7. Repeat until milestone is achieved
+```
+chief-agent: use grill-me to help me fill in project.md
+```
+
+Chief-agent will interview you about your tech stack, architecture, and dev commands, then fill in `.chief/project.md`. Or edit it manually if you prefer.
+
+Milestones can be simple (`milestone-1`, `milestone-2`) or reference your project tracker (`milestone-JIRA-123`, `milestone-CU-456`).
+
+## Agents at a Glance
+
+| Agent | When it works | When to call manually |
+|-------|--------------|----------------------|
+| chief-agent | You start here. Give it a goal. | Plan work, review progress, or change direction |
+| review-plan-agent | Runs automatically after every plan is created. Mandatory gate before building. | If you want to re-check an existing plan for contradictions |
+| builder-agent | Chief delegates tasks to it after plan is reviewed | When a task is ready and you want to start building |
+| tester-agent | Runs after builder finishes | When you need integration/E2E testing beyond unit tests |
+
+## Quick Start Example
+
+You're building a CLI that converts markdown to PDF. Here's the full workflow:
+
+**1. Start a milestone**
+
+```
+chief-agent: plan milestone-1, goal is to build a CLI that converts markdown to PDF with support for custom templates
+```
+
+Chief-agent reads your rules, asks you a few key design questions (e.g. "which PDF library?"), creates contracts, and breaks the work into tasks. Review-plan-agent automatically checks the plan for contradictions and gaps before anything gets built.
+
+**2. Build**
+
+```
+builder-agent: implement task-1 from milestone-1
+```
+
+Builder implements, runs tests, fixes lint errors, and commits.
+
+**3. Review progress**
+
+```
+chief-agent: review milestone-1 progress and plan next tasks
+```
+
+Chief reviews completed work, plans the next batch of tasks. Review-plan-agent validates the new plan again.
+
+**4. Repeat until done.**
+
+## Common Prompts
+
+| What you want | What to type |
+|---|---|
+| Start a new milestone | `chief-agent: plan milestone-1, goal is to ...` |
+| Check progress | `chief-agent: review milestone-1 progress` |
+| Start building a task | `builder-agent: implement task-1 from milestone-1` |
+| Re-check a plan for consistency | `review-plan-agent: review milestone-1 plan` |
+| Run integration tests | `tester-agent: validate milestone-1` |
+| Change direction mid-milestone | `chief-agent: update milestone-1, new goal is to ...` |
+| Set up project config with help | `chief-agent: use grill-me to help me fill in project.md` |
+
+## More Examples
+
+**TypeScript SDK for a payment API**
+
+```
+chief-agent: plan milestone-1, goal is to create a TypeScript SDK for our payment API with typed request/response and error handling
+```
+
+Chief-agent will ask key decisions (e.g. "fetch or axios?", "class-based or functional?"), then plan tasks like: generate types from OpenAPI spec, implement client methods, write tests, add docs.
+
+**CLI tool for database migrations**
+
+```
+chief-agent: plan milestone-1, goal is to build a CLI that manages database migrations with up/down/status commands
+```
+
+Chief-agent handles the planning — task breakdown, contract for the CLI interface, verification steps. You answer a couple of design decisions, builder does the rest.
 
 ## Release
 
