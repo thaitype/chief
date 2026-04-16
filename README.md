@@ -36,5 +36,9 @@ DO NOT USE `main` branch for production, please use tagged release version, e.g.
 6. Ask `chief-agent` to review the work, and plan next tasks until milestone goal achieved.
 7. Repeat step 2-6 until all milestones are achieved.
 
+
+## TODO
+- [ ] Add more support agent directory and template with standard structure, e.g. `.agent`
+
 ## Acknowledgement
 - Grill me Skill from [mattpocock](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)

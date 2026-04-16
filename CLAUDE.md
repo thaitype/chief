@@ -213,26 +213,28 @@ Each task can have file output when needed, the output should be placed at `.chi
 
 ---
 
-# CLAUDE.md Purpose
+# Mandatory Plan Review
 
-CLAUDE.md is the highest authority file.
+After writing or updating ANY plan, task spec, or decision document under `.chief/milestone-*/_plan/`, you MUST spawn the `review-plan` agent (`.claude/agents/review-plan-agent.md`) before proceeding to implementation or delegation.
 
-It should NOT contain excessive detail.
+During grill sessions: before presenting a recommendation, spawn review-plan agent to verify the recommendation against existing codebase behavior and prior decisions. Do this for EVERY recommendation, not just final plans.
 
-It should contain:
-
-* system overview
-* architecture overview
-* important rules
-* tech stack
-* directory structure
-* how to run/test
-
-Detailed rules belong in `.chief/_rules`.
+Do NOT delegate to builder-agent until review-plan returns clean.
 
 ---
 
-# 3-Agent Architecture
+# 4-Agent Architecture
+
+## 0. Review-Plan-Agent (Quality Gate)
+
+Reviews plans and decisions for internal consistency and alignment with prior discussion. Catches contradictions, hedging, and scope leaks. Does not modify plans — reports issues only.
+
+Triggered:
+- After writing any task spec or plan file
+- After grill-me sessions produce a plan
+- Before delegating to builder-agent
+
+Defined in `.claude/agents/review-plan-agent.md`.
 
 ## 1. Chief-Agent (Planner / Orchestrator)
 
@@ -307,16 +309,17 @@ Tester-agent reports findings back to chief-agent for decision.
 
 # Responsibility Separation
 
-| Responsibility Type        | Builder-Agent | Tester-Agent |
-|----------------------------|---------------|--------------|
-| Unit tests                 | ✅            | ❌           |
-| Type/lint/build checks     | ✅            | ❌           |
-| Integration testing        | ❌            | ✅           |
-| UI testing                 | ❌            | ✅           |
-| External auth validation   | ❌            | ✅           |
-| Cloud/environment checks   | ❌            | ✅           |
-| Code fixes                 | ✅            | ❌           |
-| Architecture decisions     | ❌            | ❌ (Chief)   |
+| Responsibility Type      | Builder-Agent | Tester-Agent    |
+| ------------------------ | ------------- | --------------- |
+| Unit tests               | ✅             | ❌               |
+| Type/lint/build checks   | ✅             | ❌               |
+| Integration testing      | ❌             | ✅               |
+| UI testing               | ❌             | ✅               |
+| External auth validation | ❌             | ✅               |
+| Cloud/environment checks | ❌             | ✅               |
+| Code fixes               | ✅             | ❌               |
+| Architecture decisions   | ❌             | ❌ (Chief)       |
+| Plan consistency review  | ❌             | ❌ (Review-Plan) |
 
 This separation prevents slow loops and keeps execution stable.
 
