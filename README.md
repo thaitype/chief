@@ -225,6 +225,28 @@ chief-agent: plan milestone-1, goal is to build a React component library with B
 
 Chief-agent handles the planning — task breakdown, component contracts, verification steps. You answer a couple of design decisions, builder does the rest.
 
+## Upgrading
+
+Install the upgrade skill:
+
+```bash
+npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
+```
+
+Then run:
+
+```
+/upgrade-chief main
+```
+
+Or specify a tagged version:
+
+```
+/upgrade-chief v2.0.0
+```
+
+The skill compares your current files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
+
 ## Release
 
 - `main` is the active development branch
