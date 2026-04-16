@@ -11,12 +11,22 @@
 
 ## Setup (v1 — Stable)
 
-Recommended for production use. Uses `v1.0.0` tagged release.
+Recommended for production use. Claude Code only. See [v1.0.0 release](https://github.com/thaitype/chief-agent-framework/tree/v1.0.0).
 
 ```bash
 npx degit thaitype/chief-agent-framework/.chief#v1.0.0 .chief
 npx degit thaitype/chief-agent-framework/.claude#v1.0.0 .claude
 npx degit thaitype/chief-agent-framework/CLAUDE.md#v1.0.0 CLAUDE.md
+```
+
+Or using git:
+
+```bash
+git clone --depth 1 --branch v1.0.0 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+cp -r .chief-agent-tmp/.chief .chief
+cp -r .chief-agent-tmp/.claude .claude
+cp .chief-agent-tmp/CLAUDE.md CLAUDE.md
+rm -rf .chief-agent-tmp
 ```
 
 ## Setup (v2 — Development)
