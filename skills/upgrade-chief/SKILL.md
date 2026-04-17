@@ -13,6 +13,18 @@ The first argument is the target version (branch or tag). Optional.
 - `canary` → latest canary branch (active development, unreleased)
 - `v1.0.0`, `v2.0.0`, etc. → specific tagged version
 
+Optional flag:
+- `--preset full` → documents and requests lite-to-full migration path.
+
+`--preset full` migration intent:
+1. Keep existing `AGENTS.md` and `CHIEF.md` files (do not delete). `AGENTS.md` may be updated to full-template content during migration; `CHIEF.md` remains as source input.
+2. Create `.chief/` directory structure
+3. Migrate `CHIEF.md` content into `.chief/_rules/`
+4. Add remaining agents (`chief-agent`, `builder-agent`, `tester-agent`)
+5. Add grill-me skill
+
+Important: migration logic is not implemented yet in this milestone. The interface and expected behavior are documented only.
+
 ## Steps
 
 ### 0. Detect coding agent and install mode

@@ -7,139 +7,179 @@ Install the Chief Agent Framework into the current project.
 
 ## Arguments
 
-The first argument is the target version (branch or tag). Optional.
+- First positional argument: target version (branch or tag). Optional.
+- Optional flag: `--preset lite|full`.
+  - `full` is default (backward compatible).
+  - `lite` installs lightweight preset.
 
-- No argument → install the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
-- `canary` → latest canary branch (active development, unreleased)
-- `v1.0.0`, `v2.0.0`, etc. → specific tagged version
+Version resolution:
+- No version argument: install latest stable release (highest semver tag). Find via `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}`, pick highest semver.
+- `canary`: latest canary branch.
+- `v1.0.0`, `v2.0.0`, etc.: specific tag.
+
+Preset behavior:
+- `--preset full`:
+  - installs full framework (`.agents/`, `.chief/`, full skills)
+  - installs `AGENTS.full.md` as project `AGENTS.md`
+- `--preset lite`:
+  - installs only `.agents/agents/sa-agent.md` and `.agents/agents/review-plan-agent.md`
+  - installs `AGENTS.lite.md` as project `AGENTS.md`
+  - installs `CHIEF.md` at project root
+  - does not install `.chief/`
+  - does not install grill-me skill
+
+`--preset` is installation scope. `--mode` remains symlink behavior for Claude Code (`link|copy`).
 
 ## Steps
 
 ### 1. Check for existing installation
 
-Check if the Chief Agent Framework is already installed by looking for these signals:
-
+Check these signals:
 1. `.agents/agents/chief-agent.md` exists
 2. `.chief/` directory exists
-3. `AGENTS.md` or `CLAUDE.md` at root contains the keyword "Chief Agent Framework" (check file content, not just existence — these files may exist from other setups)
+3. `AGENTS.md` or `CLAUDE.md` at root contains keyword "Chief Agent Framework"
 
-If **any** of these match → the framework is likely already installed. Warn the user and suggest upgrading instead. Show them:
-```
+If any match: warn that framework likely exists and suggest upgrade:
+```bash
 npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
 /upgrade-chief
 ```
-Do NOT proceed unless the user explicitly confirms they want a fresh install.
+Do not proceed unless user explicitly confirms fresh install.
 
-If **none** match → proceed.
+If none match: continue.
 
-### 2. Ask coding agent and install mode
+### 2. Ask coding agent, preset, and install mode
 
 Ask the user:
+1. Which coding agent? (`claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`)
+2. Which preset? (`full` default, or `lite`)
+3. Install mode for Claude Code only: `link` (recommended) or `copy`
 
-1. **Which coding agent?** — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
-2. **Install mode?** (only relevant for `claude-code`)
-   - **link** (recommended) — symlinks from `.claude/` to `.agents/`
-   - **copy** — copies files instead of symlinking
-   - For all other agents, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly
+For non-Claude agents, mode does not affect behavior.
 
 ### 3. Clone and run setup script
 
 ```bash
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
-bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
+bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --preset <preset> --mode <mode>
 ```
 
-If the setup script **fails completely** (non-zero exit code or crashes), skip to step 3b for full manual install. Do NOT run `rm -rf .chief-agent-tmp` yet — it's needed for manual steps.
+If setup script fails completely, go to step 3b. Keep `.chief-agent-tmp` for fallback.
 
-If the setup script succeeds, proceed to step 4.
+### 3b. Manual install fallback
 
-### 3b. Full manual install (fallback if setup script fails)
+If setup fails, install manually based on preset.
 
-If the setup script failed, perform the entire install manually:
-
+Full preset:
 ```bash
-# Core files
 cp -r .chief-agent-tmp/.agents .agents
 cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENTS.md AGENTS.md
+cp .chief-agent-tmp/AGENTS.full.md AGENTS.md
 ```
 
-For `claude-code` only, set up Claude Code integration:
+Lite preset:
+```bash
+mkdir -p .agents/agents
+cp .chief-agent-tmp/.agents/agents/sa-agent.md .agents/agents/
+cp .chief-agent-tmp/.agents/agents/review-plan-agent.md .agents/agents/
+cp .chief-agent-tmp/AGENTS.lite.md AGENTS.md
+cp .chief-agent-tmp/.chief/_template/CHIEF.md CHIEF.md
+```
+
+Claude Code only:
 
 Link mode:
 ```bash
 ln -s AGENTS.md CLAUDE.md
-mkdir -p .claude/agents .claude/skills
+mkdir -p .claude/agents
 for f in .agents/agents/*.md; do ln -s "../../$f" ".claude/agents/$(basename "$f")"; done
+```
+If preset is `full`, also link skills:
+```bash
+mkdir -p .claude/skills
 for d in .agents/skills/*/; do ln -s "../../$d" ".claude/skills/$(basename "$d")"; done
 ```
 
 Copy mode:
 ```bash
 cp AGENTS.md CLAUDE.md
-mkdir -p .claude/agents .claude/skills
+mkdir -p .claude/agents
 cp .agents/agents/*.md .claude/agents/
+```
+If preset is `full`, also copy skills:
+```bash
+mkdir -p .claude/skills
 cp -r .agents/skills/* .claude/skills/
 ```
 
-For all other agents — no extra steps needed.
+For non-Claude agents: no extra steps.
 
-Skip any file or directory that already exists (warn the user).
+Skip any file or directory that already exists and warn the user.
 
 ### 4. Verify installation
 
-After the setup script or manual install completes, verify that the installation is correct:
+Preset-specific checks:
 
-1. **Core files exist:**
-   - `.agents/agents/chief-agent.md`
-   - `.agents/agents/builder-agent.md`
-   - `.agents/agents/tester-agent.md`
-   - `.agents/agents/review-plan-agent.md`
-   - `.agents/skills/grill-me/SKILL.md`
-   - `.chief/project.md`
-   - `.chief/_rules/`
-   - `AGENTS.md`
+Full preset:
+- `.agents/agents/chief-agent.md`
+- `.agents/agents/builder-agent.md`
+- `.agents/agents/tester-agent.md`
+- `.agents/agents/review-plan-agent.md`
+- `.agents/agents/sa-agent.md`
+- `.agents/skills/grill-me/SKILL.md`
+- `.chief/project.md`
+- `.chief/_rules/`
+- `AGENTS.md`
 
-2. **Claude Code only** (if agent is `claude-code`):
-   - `CLAUDE.md` exists (symlink or copy depending on mode)
-   - `.claude/agents/` contains entries for all 4 agents
-   - `.claude/skills/` contains entry for grill-me
-   - If link mode: verify symlinks resolve correctly
+Lite preset:
+- `.agents/agents/sa-agent.md`
+- `.agents/agents/review-plan-agent.md`
+- `.agents/agents/chief-agent.md` does not exist
+- `.chief/` does not exist
+- `CHIEF.md` exists
+- `AGENTS.md` exists
 
-### 5. Fix issues (fallback)
+Claude Code only:
+- `CLAUDE.md` exists (symlink for link mode, copy for copy mode)
+- `.claude/agents/` entries match preset:
+  - full: all installed agents
+  - lite: only `sa-agent.md` and `review-plan-agent.md`
+- `.claude/skills/` exists only for full preset
 
-If any verification check fails, fix it manually:
+### 5. Fix issues
 
-- **Missing core file** → copy from `.chief-agent-tmp/` if it still exists, otherwise clone again and copy the specific file
-- **Missing CLAUDE.md** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on mode
-- **Missing .claude/ symlinks** → create them individually:
-  ```bash
-  mkdir -p .claude/agents .claude/skills
-  ln -s ../../.agents/agents/<file>.md .claude/agents/<file>.md
-  ln -s ../../.agents/skills/<skill> .claude/skills/<skill>
-  ```
-- **Broken symlink** → remove and recreate
-- **Wrong mode** (e.g. user wanted link but got copy) → remove and recreate with correct mode
+If verification fails, fix manually:
+- Missing files: copy from `.chief-agent-tmp` (or re-clone target version)
+- Missing `CLAUDE.md`: create symlink or copy based on selected mode
+- Missing `.claude` entries: create/copy individually
+- Broken symlinks: remove and recreate
+- Wrong preset installed: reinstall with intended `--preset`
+- Wrong mode installed: recreate links/copies with intended `--mode`
 
 ### 6. Clean up
 
-Ensure `.chief-agent-tmp` is removed:
+Always remove temp clone:
 ```bash
 rm -rf .chief-agent-tmp
 ```
 
 ### 7. Next steps
 
-Tell the user:
-
-1. Edit `.chief/project.md` with your project details (or run `chief-agent: use grill-me to help me fill in project.md`)
+Full preset:
+1. Edit `.chief/project.md` with project details
 2. Review `AGENTS.md` and customize if needed
 3. Start using: ask chief-agent to plan your first milestone
 
+Lite preset:
+1. Edit `CHIEF.md` with project context
+2. Review `AGENTS.md` and customize if needed
+3. Start using: ask sa-agent to grill your design decisions
+4. Upgrade path: `/upgrade-chief --preset full`
+
 ## Important rules
 
-- NEVER overwrite existing files without explicit user approval
-- If the framework is already installed, suggest `/upgrade-chief` instead
-- Always clean up `.chief-agent-tmp` even if the install is cancelled or fails
-- If the setup script fails, attempt manual fixes before giving up
-- Report all verification results to the user — even successful ones
+- Never overwrite existing files without explicit user approval
+- If framework already appears installed, suggest `/upgrade-chief` first
+- Always clean up `.chief-agent-tmp`, even on failure or cancellation
+- If setup fails, attempt manual fallback before giving up
+- Report all verification results to user, including successful checks
