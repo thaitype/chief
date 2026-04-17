@@ -23,12 +23,15 @@ Lite mode is a lightweight, pre-plan workflow for small projects.
 Only these agents are installed:
 
 1. `sa-agent` (System Analyst, pre-plan grill + decision tree)
-2. `review-plan-agent` (optional quality gate, user-invoked)
+2. `review-plan-agent` (default per-question quality gate during grill)
 
 ## sa-agent Behavior Contract
 
 - Strict grill mode: close major decision branches before handoff
 - Deep code design interrogation (state, boundaries, contracts, error handling, security, performance)
+- Runs `review-plan-agent` by default for every grill question
+- Proposes an auto-answer with reason for each question
+- Waits for user action per question: `approve`, `edit`, or `bypass`
 - Chat-only output by default
 - Does not write files unless user explicitly asks
 - Handoff target: `chief-agent` in full workflow
@@ -65,5 +68,6 @@ Monorepo per-scope context is opt-in and must be declared explicitly:
 
 - `sa-agent` does pre-plan only
 - `sa-agent` does not create formal milestone plans
-- User may invoke `review-plan-agent` manually before handoff
+- `sa-agent` invokes `review-plan-agent` by default during grill checkpoints
+- User may bypass approval per question (or request full-session bypass)
 - `chief-agent` owns permanent planning artifacts
