@@ -35,37 +35,27 @@ This framework provides the prompt and context structure. Coding agent selection
 | Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
 | OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
-## Setup (Recommended)
+## Setup (v1 — Stable)
 
-Install the install skill, then run it:
+For the stable release setup, see the [`release/v1` setup guide](https://github.com/thaitype/chief-agent-framework/tree/release/v1#setup).
+
+## Setup (canary — Development)
+
+> **WARNING:** This installs the `canary` (development) version, not the stable release. For stable, use the v1 setup above.
+
+### Skill-based Install (Recommended)
 
 ```bash
 npx skills@latest add thaitype/chief-agent-framework --skill install-chief
 ```
 
 ```
-/install-chief
-```
-
-With no arguments, this installs the **latest stable release**. The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
-
-To install a specific version:
-
-```
-/install-chief v1
 /install-chief canary
 ```
 
-| Version | Description |
-|---------|------------|
-| _(no argument)_ | Latest stable release (recommended) |
-| `v1` | Latest v1.x stable release |
-| `canary` | Active development branch (unreleased, for testing only) |
-| `v1.0.0`, `v1.1.0`, etc. | Specific tagged version |
+The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
 
-### Setup with Shell Script (canary only)
-
-The setup script is only available on `canary` branch:
+### Setup with Shell Script
 
 ```bash
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
@@ -75,20 +65,7 @@ rm -rf .chief-agent-tmp
 
 Replace `claude-code` with any supported agent: `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`. Add `--mode copy` if symlinks are not supported in your environment.
 
-### Manual Install (v1)
-
-```bash
-git clone --depth 1 --branch v1 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
-cp -r .chief-agent-tmp/.chief .chief
-cp -r .chief-agent-tmp/.claude .claude
-cp .chief-agent-tmp/AGENTS.md AGENTS.md
-ln -s AGENTS.md CLAUDE.md
-rm -rf .chief-agent-tmp
-```
-
-See [v1 release](https://github.com/thaitype/chief-agent-framework/tree/v1) for full v1 documentation.
-
-### Manual Install (canary)
+### Manual Install
 
 ```bash
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
