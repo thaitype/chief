@@ -35,47 +35,18 @@ This framework provides the prompt and context structure. Coding agent selection
 | Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
 | OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
-## Setup (Recommended)
+## Setup (v1 — Stable)
 
-Install the install skill, then run it:
-
-```bash
-npx skills@latest add thaitype/chief-agent-framework --skill install-chief
-```
-
-```
-/install-chief
-```
-
-With no arguments, this installs the **latest stable release**. The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
-
-To install a specific version:
-
-```
-/install-chief v1
-/install-chief canary
-```
-
-| Version | Description |
-|---------|------------|
-| _(no argument)_ | Latest stable release (recommended) |
-| `v1` | Latest v1.x stable release |
-| `canary` | Active development branch (unreleased, for testing only) |
-| `v1.0.0`, `v1.1.0`, etc. | Specific tagged version |
-
-### Setup with Shell Script (canary only)
-
-The setup script is only available on `canary` branch:
+Install with degit:
 
 ```bash
-git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
-bash .chief-agent-tmp/scripts/setup.sh --agent claude-code
-rm -rf .chief-agent-tmp
+npx degit thaitype/chief-agent-framework/.chief#v1 .chief
+npx degit thaitype/chief-agent-framework/.claude#v1 .claude
+npx degit thaitype/chief-agent-framework/AGENTS.md#v1 AGENTS.md
+ln -s AGENTS.md CLAUDE.md
 ```
 
-Replace `claude-code` with any supported agent: `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`. Add `--mode copy` if symlinks are not supported in your environment.
-
-### Manual Install (v1)
+Or with git:
 
 ```bash
 git clone --depth 1 --branch v1 https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
@@ -86,9 +57,41 @@ ln -s AGENTS.md CLAUDE.md
 rm -rf .chief-agent-tmp
 ```
 
-See [v1 release](https://github.com/thaitype/chief-agent-framework/tree/v1) for full v1 documentation.
+See [`release/v1` branch](https://github.com/thaitype/chief-agent-framework/tree/release/v1) for full v1 documentation.
 
-### Manual Install (canary)
+## Setup (canary — Development)
+
+> **WARNING:** This installs the canary (development) version, not the stable release. For the stable version, use the v1 setup above.
+
+Install the install skill, then run it:
+
+```bash
+npx skills@latest add thaitype/chief-agent-framework --skill install-chief
+```
+
+```
+/install-chief canary
+```
+
+The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
+
+| Version | Description |
+|---------|------------|
+| `canary` | Active development branch (unreleased, for testing only) |
+| `v1` | Latest v1.x stable release |
+| `v1.0.0`, `v1.1.0`, etc. | Specific tagged version |
+
+### Setup with Shell Script
+
+```bash
+git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+bash .chief-agent-tmp/scripts/setup.sh --agent claude-code
+rm -rf .chief-agent-tmp
+```
+
+Replace `claude-code` with any supported agent: `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`. Add `--mode copy` if symlinks are not supported in your environment.
+
+### Manual Install
 
 ```bash
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
