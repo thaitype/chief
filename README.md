@@ -34,21 +34,9 @@ This framework provides the prompt and context structure. Coding agent selection
 | Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` agents/skills | Full support |
 | OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
-## Setup (Recommended)
+## Setup
 
-Install the install skill, then run it:
-
-```bash
-npx skills@latest add thaitype/chief-agent-framework --skill install-chief
-```
-
-```
-/install-chief v1
-```
-
-The skill asks which coding agent you use, copies framework files, and sets up everything.
-
-### Setup with degit
+### Setup with degit (Recommended)
 
 ```bash
 npx degit thaitype/chief-agent-framework/.chief#v1 .chief
@@ -174,26 +162,9 @@ Chief-agent handles the planning — task breakdown, component contracts, verifi
 
 ## Upgrading
 
-Install the upgrade skill:
+To upgrade to the latest v1.x, re-run the setup commands. Existing files will be overwritten.
 
-```bash
-npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
-```
-
-Then run:
-
-```
-/upgrade-chief
-```
-
-With no arguments, it upgrades to the latest stable release. Or specify a version:
-
-```
-/upgrade-chief canary
-/upgrade-chief v2.0.0
-```
-
-The skill compares your current files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
+For skill-based upgrades (install-chief, upgrade-chief), see the [`canary` branch](https://github.com/thaitype/chief-agent-framework/tree/canary).
 
 ## Release
 
