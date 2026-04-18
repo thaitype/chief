@@ -27,12 +27,15 @@ This framework provides the prompt and context structure. Coding agent selection
 
 ## Supported Coding Agents
 
-`AGENTS.md` is the cross-tool standard (Linux Foundation AAIF). `CLAUDE.md` is a symlink to `AGENTS.md` for Claude Code compatibility.
+This project is first-class support for **Claude Code**, but the concept is agnostic to any AI coding agent.
 
-| Coding Agent | Integration | Notes |
-|--------------|------------|-------|
-| Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` agents/skills | Full support |
-| OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
+To use with other tools, you need to know:
+1. Where your tool reads its global rules file (e.g. `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`)
+2. Where your tool reads skills from (e.g. `.claude/skills/`, `.agents/skills/`)
+
+`AGENTS.md` is the cross-tool standard (Linux Foundation AAIF), supported natively by most coding agents. `CLAUDE.md` is a symlink to `AGENTS.md` for Claude Code compatibility.
+
+Automatic multi-tool support via skills will be available in v2 (still in development on the [`canary` branch](https://github.com/thaitype/chief-agent-framework/tree/canary)).
 
 ## Setup
 
