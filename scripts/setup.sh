@@ -340,6 +340,17 @@ case "$AGENT" in
     ;;
 esac
 
+# --- Step 3: Write metadata ---
+
+echo "Writing metadata..."
+cat > "$TARGET_DIR/.chief/.metadata.json" <<METAEOF
+{
+  "agent": "$AGENT",
+  "mode": "$MODE"
+}
+METAEOF
+echo "  WRITE .chief/.metadata.json"
+
 echo ""
 echo "Done! Chief Agent Framework installed successfully."
 echo ""

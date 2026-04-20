@@ -119,6 +119,7 @@ After the setup script or manual install completes, verify that the installation
    - `.agents/skills/grill-me/SKILL.md`
    - `.chief/project.md`
    - `.chief/_rules/`
+   - `.chief/.metadata.json` (contains `agent` and `mode`)
    - `AGENTS.md`
 
 2. **Claude Code only** (if agent is `claude-code`):

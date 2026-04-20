@@ -17,13 +17,24 @@ The first argument is the target version (branch or tag). Optional.
 
 ### 0. Detect coding agent and install mode
 
-Before cloning, detect which coding agent the user has set up:
+Before cloning, detect which coding agent and install mode the user has set up.
+
+**Primary detection**: Check if `.chief/.metadata.json` exists. If it does, read the `agent` and `mode` fields:
+
+```json
+{
+  "agent": "copilot",
+  "mode": "link"
+}
+```
+
+**Fallback detection** (if `.metadata.json` does not exist — older installs):
 
 1. Check if `.claude/agents/` exists → **Claude Code**
 2. Check if `.github/agents/` exists with agent files → **Copilot**
-3. If only `.agents/` exists (no coding-agent-specific directory) → **OpenCode** (or no coding agent setup)
+3. If only `.agents/` exists (no coding-agent-specific directory) → **OpenCode** (or unknown agent)
 
-For coding agents that use their own directory (e.g. Claude Code with `.claude/`), detect install mode:
+For fallback detection, also detect install mode:
 
 1. Check if any file in the coding-agent-specific directory is a symlink → current mode is **link**
 2. If files are regular files → current mode is **copy**
@@ -34,6 +45,8 @@ Ask the user to confirm:
 - Which install mode they want: **link** (recommended) or **copy**
 
 Default to the detected coding agent and mode. If no mode is detected, suggest **link**. On Windows, if symlinks are not available (Developer Mode disabled), suggest **copy** mode. OpenCode reads `.agents/` directly and needs no install mode.
+
+After confirming, update `.chief/.metadata.json` with the confirmed values (create it if it doesn't exist).
 
 ### 1. Clone the target version
 
