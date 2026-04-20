@@ -37,9 +37,10 @@ If **none** match → proceed.
 Ask the user:
 
 1. **Which coding agent?** — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
-2. **Install mode?** (only relevant for `claude-code`)
-   - **link** (recommended) — symlinks from `.claude/` to `.agents/`
+2. **Install mode?** (relevant for `claude-code` and `copilot`)
+   - **link** (recommended) — symlinks from agent-specific directory to `.agents/`
    - **copy** — copies files instead of symlinking
+   - On Windows, link mode requires Developer Mode enabled and `git config --global core.symlinks true`. If unavailable, suggest copy mode.
    - For all other agents, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly
 
 ### 3. Clone and run setup script
@@ -58,10 +59,10 @@ If the setup script succeeds, proceed to step 4.
 If the setup script failed, perform the entire install manually:
 
 ```bash
-# Core files
-cp -r .chief-agent-tmp/.agents .agents
-cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENTS.md AGENTS.md
+# Core files (source is under template/)
+cp -r .chief-agent-tmp/template/.agents .agents
+cp -r .chief-agent-tmp/template/.chief .chief
+cp .chief-agent-tmp/template/AGENTS.md AGENTS.md
 ```
 
 For `claude-code` only, set up Claude Code integration:
@@ -82,7 +83,27 @@ cp .agents/agents/*.md .claude/agents/
 cp -r .agents/skills/* .claude/skills/
 ```
 
+For `copilot` only, set up GitHub Copilot integration:
+
+Link mode:
+```bash
+mkdir -p .github/agents
+for f in .agents/agents/*.md; do ln -s "../../$f" ".github/agents/$(basename "$f")"; done
+```
+
+Copy mode:
+```bash
+mkdir -p .github/agents
+cp .agents/agents/*.md .github/agents/
+```
+
 For all other agents — no extra steps needed.
+
+For non-`claude-code` agents, ask the user for model names:
+1. **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
+2. **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
+
+Replace `${thinking_model}` with the Thinking Model in chief-agent, and `${coding_model}` with the Coding Model in all other agent files. For `claude-code`, auto-replace with `opus` and `sonnet` (no prompt needed). For `copilot`, update files in `.github/agents/`. For other agents, update files in `.agents/agents/`.
 
 Skip any file or directory that already exists (warn the user).
 
@@ -106,11 +127,16 @@ After the setup script or manual install completes, verify that the installation
    - `.claude/skills/` contains entry for grill-me
    - If link mode: verify symlinks resolve correctly
 
+3. **Copilot only** (if agent is `copilot`):
+   - `.github/agents/` contains entries for all 4 agents (symlinks or copies depending on mode)
+   - If link mode: verify symlinks resolve correctly
+   - Model values have been replaced if the user provided model names
+
 ### 5. Fix issues (fallback)
 
 If any verification check fails, fix it manually:
 
-- **Missing core file** → copy from `.chief-agent-tmp/` if it still exists, otherwise clone again and copy the specific file
+- **Missing core file** → copy from `.chief-agent-tmp/template/` if it still exists, otherwise clone again and copy the specific file
 - **Missing CLAUDE.md** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on mode
 - **Missing .claude/ symlinks** → create them individually:
   ```bash

@@ -33,7 +33,8 @@ This framework provides the prompt and context structure. Coding agent selection
 | Coding Agent | Integration | Notes |
 |--------------|------------|-------|
 | Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
-| OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
+| GitHub Copilot | `.github/agents/` symlinks or copies | Full support (agents) |
+| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
 ## Setup (v1 — Stable)
 
@@ -55,6 +56,8 @@ The skill asks which coding agent you use, picks the install mode, copies framew
 
 For manual installation options (shell script, git clone), see [docs/manual-install.md](docs/manual-install.md).
 
+> **Windows users:** Link mode requires Developer Mode enabled and `git config --global core.symlinks true`. The setup script auto-detects this — if symlinks aren't available, it falls back to copy mode.
+
 ## Directory Structure
 
 After setup, your project will have:
@@ -62,7 +65,8 @@ After setup, your project will have:
 ```
 project/
 ├── AGENTS.md               # Framework rules — canonical file (highest authority)
-├── CLAUDE.md → AGENTS.md   # Symlink for Claude Code compatibility
+├── CLAUDE.md → AGENTS.md   # Symlink (Claude Code only)
+├── .github/agents/        # Copilot agent definitions (symlinks or copies)
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   │   ├── chief-agent.md
@@ -85,8 +89,10 @@ project/
 
 - `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions and skills
 - `.chief/` contains planning, rules, milestones, and project configuration
-- `AGENTS.md` defines the highest-authority framework rules. `CLAUDE.md` is a symlink to it for Claude Code compatibility
-- Agent-specific directories (`.claude/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
+- `AGENTS.md` defines the highest-authority framework rules
+- `CLAUDE.md` is a symlink to `AGENTS.md` (Claude Code only)
+- `.github/agents/` contains symlinks or copies for GitHub Copilot
+- Agent-specific directories (`.claude/`, `.github/agents/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
 
 ## Getting Started
 
@@ -198,6 +204,33 @@ The skill compares your current files against the target version, creates an upg
 - Stable releases are tagged (e.g. `v1.0.0`) on release branches (`release/v1`)
 - `v1.0.0` — first stable release (Claude Code only, uses `degit`)
 - v2 release planned with multi-coding-agent support and setup script
+
+## Development
+
+To test changes locally before submitting a PR:
+
+1. Push your feature branch to GitHub
+2. In a **separate test project** (not inside this repo), install the skill from your branch:
+
+```bash
+npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill install-chief
+```
+
+3. Test it:
+
+```
+/install-chief <your-branch>
+```
+
+The same pattern works for other skills like `upgrade-chief`.
+
+## Contributing
+
+1. Fork the repo and branch from `canary`
+2. Make your changes
+3. Test locally using the [Development](#development) workflow above
+4. Push and open a PR targeting `canary`
+5. Follow existing commit style: `type: description` (e.g. `fix: resolve merge issue`, `feat: add kiro agent support`)
 
 ## Acknowledgement
 

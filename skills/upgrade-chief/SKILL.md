@@ -17,22 +17,23 @@ The first argument is the target version (branch or tag). Optional.
 
 ### 0. Detect coding agent and install mode
 
-Before cloning, detect which coding agent the user has set up:
+Before cloning, detect which coding agent the user has set up by checking directories:
 
-1. Check if `.claude/agents/` exists → **Claude Code**
-2. If only `.agents/` exists (no coding-agent-specific directory) → **OpenCode** (or no coding agent setup)
+1. Check if `.claude/agents/` exists → suggest **Claude Code**
+2. Check if `.github/agents/` exists with agent files → suggest **Copilot**
+3. If only `.agents/` exists (no coding-agent-specific directory) → suggest **OpenCode** (or unknown agent)
 
-For coding agents that use their own directory (e.g. Claude Code with `.claude/`), detect install mode:
+For coding agents that use their own directory, detect install mode:
 
 1. Check if any file in the coding-agent-specific directory is a symlink → current mode is **link**
 2. If files are regular files → current mode is **copy**
 3. If no coding-agent-specific directory exists → no mode detected
 
-Ask the user to confirm:
-- Which coding agent they use (Claude Code, OpenCode, or other)
+Always ask the user to confirm:
+- Which coding agent they use — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
 - Which install mode they want: **link** (recommended) or **copy**
 
-Default to the detected coding agent and mode. If no mode is detected, suggest **link**. OpenCode reads `.agents/` directly and needs no install mode.
+Default to the detected coding agent and mode. If no mode is detected, suggest **link**. On Windows, if symlinks are not available (Developer Mode disabled), suggest **copy** mode. OpenCode reads `.agents/` directly and needs no install mode.
 
 ### 1. Clone the target version
 
@@ -42,7 +43,9 @@ git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-f
 
 ### 2. Diff current files vs target version
 
-Compare these paths between the current project and `.chief-agent-tmp/`:
+Compare these paths between the current project and `.chief-agent-tmp/template/`:
+
+Note: The framework repo stores installable files under `template/`. When comparing, map `.chief-agent-tmp/template/<path>` to `<path>` in the current project.
 
 - `AGENTS.md` (or `CLAUDE.md` if `AGENTS.md` does not exist)
 - `.agents/agents/*.md`
@@ -128,12 +131,45 @@ cp .agents/agents/<new-agent>.md .claude/agents/<new-agent>.md
 cp -r .agents/skills/<new-skill> .claude/skills/<new-skill>
 ```
 
+**Copilot** — update `.github/agents/` using the chosen mode:
+
+Link mode:
+```bash
+ln -s ../../.agents/agents/<new-agent>.md .github/agents/<new-agent>.md
+```
+
+Copy mode:
+```bash
+cp .agents/agents/<new-agent>.md .github/agents/<new-agent>.md
+```
+
+Preserve the user's custom model values in existing agent files. Only update content, not the `model:` field, unless the user explicitly approves.
+
 **OpenCode** — no action needed, it reads `.agents/` directly.
 
 Skip entries that already exist.
 
+### 7b. Check model configuration (non-Claude Code only)
+
+For non-Claude Code agents, check if agent files still contain the default `model: opus` or `model: sonnet` values (i.e., models were never customized by the user).
+
+Determine the agent directory to check:
+- **Copilot**: check `.github/agents/`
+- **Other non-Claude Code agents**: check `.agents/agents/`
+
+If any agent file still has placeholder model values (`model: ${thinking_model}` or `model: ${coding_model}`):
+- For **Claude Code**: auto-replace `${thinking_model}` → `opus`, `${coding_model}` → `sonnet` (no prompt needed)
+- For **other agents**: ask the user:
+   1. **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
+   2. **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
+   
+   Replace `${thinking_model}` with the Thinking Model and `${coding_model}` with the Coding Model.
+
+If all agent files already have real model values (no placeholders), skip this step — the user has already configured their models.
+
 Also handle the coding-agent-specific rules file at root using the chosen mode:
 - For Claude Code: `CLAUDE.md` should be a symlink to `AGENTS.md` (link mode) or a copy (copy mode)
+- For Copilot: `.github/agents/*.md` should be symlinks (link mode) or copies (copy mode) from `.agents/agents/*.md`
 - If the current state doesn't match the chosen mode, include this in the upgrade plan as a structure change
 
 ### 8. Clean up
