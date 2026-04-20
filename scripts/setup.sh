@@ -327,24 +327,26 @@ case "$AGENT" in
 
   copilot)
     echo "Setting up GitHub Copilot integration..."
+
+    # Replace models in canonical source FIRST (before creating symlinks/copies)
+    prompt_and_replace_models "$TARGET_DIR" ".agents/agents"
+
+    # THEN create integration files
     mkdir -p "$TARGET_DIR/.github/agents"
 
     if [[ "$MODE" == "link" ]]; then
-      # Symlink individual agent files
+      # Symlink individual agent files (symlinks reflect already-replaced canonical files)
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
         filename="$(basename "$agent_file")"
         create_symlink "../../.agents/agents/$filename" "$TARGET_DIR/.github/agents/$filename" ".github/agents/$filename"
       done
     else
-      # Copy individual agent files
+      # Copy individual agent files (copies made from already-replaced canonical files)
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
         filename="$(basename "$agent_file")"
         copy_to_dest "$agent_file" "$TARGET_DIR/.github/agents/$filename" ".github/agents/$filename"
       done
     fi
-
-    # Prompt for model replacement
-    prompt_and_replace_models "$TARGET_DIR" ".github/agents"
     ;;
 
   *)
