@@ -205,6 +205,33 @@ The skill compares your current files against the target version, creates an upg
 - `v1.0.0` — first stable release (Claude Code only, uses `degit`)
 - v2 release planned with multi-coding-agent support and setup script
 
+## Development
+
+To test changes locally before submitting a PR:
+
+1. Push your feature branch to GitHub
+2. In a **separate test project** (not inside this repo), install the skill from your branch:
+
+```bash
+npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill install-chief
+```
+
+3. Test it:
+
+```
+/install-chief <your-branch>
+```
+
+The same pattern works for other skills like `upgrade-chief`.
+
+## Contributing
+
+1. Fork the repo and branch from `canary`
+2. Make your changes
+3. Test locally using the [Development](#development) workflow above
+4. Push and open a PR targeting `canary`
+5. Follow existing commit style: `type: description` (e.g. `fix: resolve merge issue`, `feat: add kiro agent support`)
+
 ## Acknowledgement
 
 - Grill me Skill from [mattpocock](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
