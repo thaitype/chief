@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 ## Overview
 
@@ -47,12 +47,12 @@ A milestone can be:
 
 Rules must always be resolved using the following priority:
 
-1. **CLAUDE.md** (highest authority)
+1. **AGENTS.md** (highest authority)
 2. `.chief/_rules`
 3. `.chief/milestone-X/_goal` (lowest authority)
 
 Example:
-If CLAUDE.md states:
+If AGENTS.md states:
 
 > "Do not use MongoDB ObjectId in service layer"
 
@@ -60,7 +60,7 @@ But `.chief/_rules` states:
 
 > "MongoDB ObjectId may be used in some cases"
 
-Then **CLAUDE.md always overrides**.
+Then **AGENTS.md always overrides**.
 
 ---
 
@@ -70,7 +70,7 @@ Then **CLAUDE.md always overrides**.
 
 Humans focus primarily on:
 
-* Writing and refining `CLAUDE.md`
+* Writing and refining `AGENTS.md`
 * Maintaining `_rules`
 * Defining goals clearly
 
@@ -82,7 +82,7 @@ Clear rules and goals allow agents to work autonomously and safely.
 
 AI agents must:
 
-* Follow CLAUDE.md strictly
+* Follow AGENTS.md strictly
 * Follow `.chief/_rules`
 * Follow milestone goals and contracts
 * Execute tasks safely and correctly
@@ -215,7 +215,7 @@ Each task can have file output when needed, the output should be placed at `.chi
 
 # Mandatory Plan Review
 
-After writing or updating ANY plan, task spec, or decision document under `.chief/milestone-*/_plan/`, you MUST spawn the `review-plan` agent (`.claude/agents/review-plan-agent.md`) before proceeding to implementation or delegation.
+After writing or updating ANY plan, task spec, or decision document under `.chief/milestone-*/_plan/`, you MUST spawn the `review-plan` agent before proceeding to implementation or delegation.
 
 During grill sessions: before presenting a recommendation, spawn review-plan agent to verify the recommendation against existing codebase behavior and prior decisions. Do this for EVERY recommendation, not just final plans.
 
@@ -234,7 +234,7 @@ Triggered:
 - After grill-me sessions produce a plan
 - Before delegating to builder-agent
 
-Defined in `.claude/agents/review-plan-agent.md`.
+Defined in `.agents/agents/review-plan-agent.md`.
 
 ## 1. Chief-Agent (Planner / Orchestrator)
 
@@ -242,7 +242,7 @@ The decision-making brain.
 
 Responsibilities:
 
-- Read `CLAUDE.md`
+- Read `AGENTS.md`
 - Read global rules under `.chief/_rules`
 - Analyze milestone goals and contracts
 - Create and maintain `_plan`

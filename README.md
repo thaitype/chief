@@ -33,7 +33,8 @@ This framework provides the prompt and context structure. Coding agent selection
 | Coding Agent | Integration | Notes |
 |--------------|------------|-------|
 | Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
-| OpenCode, Codex, Cursor, Copilot, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
+| GitHub Copilot | `.github/agents/*.agent.md` copies | Full support (agents) |
+| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
 ## Setup (v1 — Stable)
 
@@ -62,7 +63,8 @@ After setup, your project will have:
 ```
 project/
 ├── AGENTS.md               # Framework rules — canonical file (highest authority)
-├── CLAUDE.md → AGENTS.md   # Symlink for Claude Code compatibility
+├── CLAUDE.md → AGENTS.md   # Symlink (Claude Code only)
+├── .github/agents/        # Copilot agent definitions (*.agent.md copies)
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   │   ├── chief-agent.md
@@ -85,8 +87,10 @@ project/
 
 - `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions and skills
 - `.chief/` contains planning, rules, milestones, and project configuration
-- `AGENTS.md` defines the highest-authority framework rules. `CLAUDE.md` is a symlink to it for Claude Code compatibility
-- Agent-specific directories (`.claude/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
+- `AGENTS.md` defines the highest-authority framework rules
+- `CLAUDE.md` is a symlink to `AGENTS.md` (Claude Code only)
+- `.github/agents/*.agent.md` are copies for GitHub Copilot
+- Agent-specific directories (`.claude/`, `.github/agents/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
 
 ## Getting Started
 

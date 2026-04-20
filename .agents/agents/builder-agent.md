@@ -42,7 +42,7 @@ Assume:
 All other rules/contracts have been interpreted by chief-agent and embedded into the task.
 
 Do NOT automatically read:
-- CLAUDE.md
+- AGENTS.md
 - `.chief/_rules/_goal`
 - `.chief/_rules/_contract`
 - other milestone files

@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Chief Agent Framework - Setup Script
-# Installs .agents/, .chief/, and CLAUDE.md into a project,
-# then creates symlinks for the specified agent tool.
+# Installs .agents/, .chief/, and AGENTS.md into a project,
+# then sets up agent-specific integrations.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -21,7 +21,7 @@ print_usage() {
   echo "  opencode      OpenCode (reads AGENTS.md and .agents/ directly)"
   echo "  codex         Codex CLI (reads AGENTS.md directly)"
   echo "  cursor        Cursor (reads AGENTS.md directly)"
-  echo "  copilot       GitHub Copilot (reads AGENTS.md directly)"
+  echo "  copilot       GitHub Copilot (.github/agents/*.agent.md)"
   echo "  gemini-cli    Gemini CLI (reads AGENTS.md directly)"
   echo "  amp           Amp (reads AGENTS.md directly)"
   echo "  windsurf      Windsurf (reads AGENTS.md directly)"
@@ -35,6 +35,7 @@ print_usage() {
   echo ""
   echo "Example:"
   echo "  bash .chief-agent-tmp/scripts/setup.sh --agent claude-code"
+  echo "  bash .chief-agent-tmp/scripts/setup.sh --agent copilot"
   echo "  bash .chief-agent-tmp/scripts/setup.sh --agent cursor"
 }
 
@@ -81,6 +82,13 @@ if ! echo "$SUPPORTED_AGENTS" | grep -qw "$AGENT"; then
   exit 1
 fi
 
+# --- Enforce copy mode for copilot ---
+
+if [[ "$AGENT" == "copilot" && "$MODE" == "link" ]]; then
+  echo "⚠️  Copilot does not support symlinks. Switching to copy mode."
+  MODE="copy"
+fi
+
 # --- Detect target directory ---
 # If running from a temp clone (e.g. .chief-agent-tmp/scripts/setup.sh),
 # install into the parent of the clone directory.
@@ -98,6 +106,39 @@ echo "Mode: $MODE"
 echo ""
 
 # --- Helper functions ---
+
+merge_dir() {
+  local src="$1"
+  local dest="$2"
+  local name="$3"
+
+  if [[ ! -d "$dest" ]]; then
+    cp -r "$src" "$dest"
+    echo "  COPY $name/"
+  else
+    # File-level merge: copy new files, skip existing
+    local count=0
+    while IFS= read -r -d '' file; do
+      local rel="${file#$src/}"
+      local dest_file="$dest/$rel"
+      local dest_dir="$(dirname "$dest_file")"
+      if [[ ! -e "$dest_file" ]]; then
+        mkdir -p "$dest_dir"
+        if [[ -d "$file" ]]; then
+          mkdir -p "$dest_file"
+        else
+          cp "$file" "$dest_file"
+        fi
+        count=$((count + 1))
+      fi
+    done < <(find "$src" -mindepth 1 \( -type f -o -type d \) -print0)
+    if [[ $count -gt 0 ]]; then
+      echo "  MERGE $name/ ($count new files added)"
+    else
+      echo "  SKIP $name/ (all files already exist)"
+    fi
+  fi
+}
 
 copy_dir() {
   local src="$1"
@@ -155,10 +196,49 @@ copy_to_dest() {
   fi
 }
 
+# --- Model replacement for non-Claude Code agents ---
+
+prompt_and_replace_models() {
+  local target_dir="$1"
+  local agent_dir="$2"  # e.g. .github/agents or .agents/agents
+
+  echo ""
+  echo "Model configuration:"
+  echo "  Claude Code uses 'opus' (thinking) and 'sonnet' (coding) by default."
+  echo "  For other agents, you need to specify equivalent model names."
+  echo ""
+  read -rp "  Thinking Model (for chief-agent, e.g. o3, gemini-2.5-pro): " THINKING_MODEL
+  read -rp "  Coding Model (for builder/tester/review-plan, e.g. gpt-4.1, gemini-2.5-flash): " CODING_MODEL
+
+  if [[ -z "$THINKING_MODEL" || -z "$CODING_MODEL" ]]; then
+    echo "  ⚠️  No models specified. Keeping defaults (opus/sonnet). You can edit the agent files manually."
+    return
+  fi
+
+  echo ""
+  echo "  Replacing models..."
+
+  # Replace model in agent files
+  for agent_file in "$target_dir/$agent_dir"/*; do
+    if [[ -f "$agent_file" ]]; then
+      local filename="$(basename "$agent_file")"
+      if [[ "$filename" == *"chief-agent"* ]]; then
+        sed -i '' "s/^model: opus$/model: $THINKING_MODEL/" "$agent_file" 2>/dev/null || \
+        sed -i "s/^model: opus$/model: $THINKING_MODEL/" "$agent_file"
+        echo "    $filename: model → $THINKING_MODEL"
+      else
+        sed -i '' "s/^model: sonnet$/model: $CODING_MODEL/" "$agent_file" 2>/dev/null || \
+        sed -i "s/^model: sonnet$/model: $CODING_MODEL/" "$agent_file"
+        echo "    $filename: model → $CODING_MODEL"
+      fi
+    fi
+  done
+}
+
 # --- Step 1: Copy core files ---
 
 echo "Copying core files..."
-copy_dir "$SOURCE_ROOT/.agents" "$TARGET_DIR/.agents" ".agents"
+merge_dir "$SOURCE_ROOT/.agents" "$TARGET_DIR/.agents" ".agents"
 copy_dir "$SOURCE_ROOT/.chief" "$TARGET_DIR/.chief" ".chief"
 copy_file "$SOURCE_ROOT/AGENTS.md" "$TARGET_DIR/AGENTS.md" "AGENTS.md"
 echo ""
@@ -208,9 +288,32 @@ case "$AGENT" in
     fi
     ;;
 
+  copilot)
+    echo "Setting up GitHub Copilot integration..."
+    mkdir -p "$TARGET_DIR/.github/agents"
+
+    # Copy agent files with .agent.md suffix
+    for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
+      filename="$(basename "$agent_file" .md)"
+      dest_file="$TARGET_DIR/.github/agents/${filename}.agent.md"
+      if [[ -e "$dest_file" ]]; then
+        echo "  SKIP .github/agents/${filename}.agent.md (already exists)"
+      else
+        cp "$agent_file" "$dest_file"
+        echo "  COPY .github/agents/${filename}.agent.md"
+      fi
+    done
+
+    # Prompt for model replacement
+    prompt_and_replace_models "$TARGET_DIR" ".github/agents"
+    ;;
+
   *)
     echo "Setting up $AGENT integration..."
-    echo "  $AGENT reads AGENTS.md and .agents/ directly. No additional setup needed."
+    echo "  $AGENT reads AGENTS.md and .agents/ directly. No additional file setup needed."
+
+    # Prompt for model replacement in .agents/agents/
+    prompt_and_replace_models "$TARGET_DIR" ".agents/agents"
     ;;
 esac
 

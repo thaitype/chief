@@ -3,7 +3,7 @@ name: chief-agent
 description: |
   Goal-driven Planner/Orchestrator for the Chief Agent Framework.
 
-  Reads CLAUDE.md (highest priority), then .chief/_rules, then milestone-specific goals.
+  Reads AGENTS.md (highest priority), then .chief/_rules, then milestone-specific goals.
   Produces and maintains milestone plans (_plan/_todo.md + task specs), delegates execution to builder-agent,
   delegates verification to tester-agent, and decides next actions with minimal human involvement.
 
@@ -34,7 +34,7 @@ Your job is to:
 
 When rules conflict, follow this priority order:
 
-1) `CLAUDE.md` (highest authority)
+1) `AGENTS.md` (highest authority)
 2) `.chief/_rules/**`
 3) `.chief/milestone-*/_goal/**` (lowest authority)
 
@@ -60,7 +60,7 @@ You must:
 Identify the active milestone directory under `.chief/` (for example `milestone-1` or `milestone-PROJ-1234`).
 
 Read:
-- `CLAUDE.md`
+- `AGENTS.md`
 - `.chief/_rules/_standard/**`
 - `.chief/_rules/_contract/**`
 - `.chief/_rules/_goal/**`

@@ -19,11 +19,14 @@ git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-fram
 cp -r .chief-agent-tmp/.agents .agents
 cp -r .chief-agent-tmp/.chief .chief
 cp .chief-agent-tmp/AGENTS.md AGENTS.md
-ln -s AGENTS.md CLAUDE.md
 rm -rf .chief-agent-tmp
 ```
 
-For **Claude Code**, create symlinks from `.claude/` to `.agents/`:
+For **Claude Code**, create `CLAUDE.md` symlink and agent/skill symlinks:
+
+```bash
+ln -s AGENTS.md CLAUDE.md
+```
 
 ```bash
 mkdir -p .claude/agents .claude/skills
@@ -32,6 +35,16 @@ ln -s ../../.agents/agents/builder-agent.md .claude/agents/builder-agent.md
 ln -s ../../.agents/agents/tester-agent.md .claude/agents/tester-agent.md
 ln -s ../../.agents/agents/review-plan-agent.md .claude/agents/review-plan-agent.md
 ln -s ../../.agents/skills/grill-me .claude/skills/grill-me
+```
+
+For **GitHub Copilot**, copy agents to `.github/agents/` with `.agent.md` suffix:
+
+```bash
+mkdir -p .github/agents
+cp .agents/agents/chief-agent.md .github/agents/chief-agent.agent.md
+cp .agents/agents/builder-agent.md .github/agents/builder-agent.agent.md
+cp .agents/agents/tester-agent.md .github/agents/tester-agent.agent.md
+cp .agents/agents/review-plan-agent.md .github/agents/review-plan-agent.agent.md
 ```
 
 For other coding agents — no extra steps, they read `AGENTS.md` directly.

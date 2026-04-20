@@ -65,6 +65,7 @@ GitHub's AI coding assistant. Added AGENTS.md support Aug 2025.
 | `.github/copilot-instructions.md` | Project-wide | Original format |
 | `.github/instructions/*.instructions.md` | Scoped | YAML frontmatter with glob patterns (2025) |
 | `AGENTS.md` | Cross-tool | Supported since Aug 2025 |
+| `.github/agents/*.agent.md` | Agent definitions | Custom agents with YAML frontmatter |
 
 ---
 

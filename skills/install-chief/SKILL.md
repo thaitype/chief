@@ -40,6 +40,7 @@ Ask the user:
 2. **Install mode?** (only relevant for `claude-code`)
    - **link** (recommended) — symlinks from `.claude/` to `.agents/`
    - **copy** — copies files instead of symlinking
+   - For `copilot`, mode is always **copy** (symlinks not supported)
    - For all other agents, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly
 
 ### 3. Clone and run setup script
@@ -82,7 +83,23 @@ cp .agents/agents/*.md .claude/agents/
 cp -r .agents/skills/* .claude/skills/
 ```
 
+For `copilot` only, set up GitHub Copilot integration:
+
+```bash
+mkdir -p .github/agents
+for f in .agents/agents/*.md; do
+  name="$(basename "$f" .md)"
+  cp "$f" ".github/agents/${name}.agent.md"
+done
+```
+
 For all other agents — no extra steps needed.
+
+For non-`claude-code` agents, ask the user for model names:
+1. **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
+2. **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
+
+Replace `model: opus` with the Thinking Model in chief-agent, and `model: sonnet` with the Coding Model in all other agent files. For `copilot`, update files in `.github/agents/`. For other agents, update files in `.agents/agents/`.
 
 Skip any file or directory that already exists (warn the user).
 
@@ -105,6 +122,10 @@ After the setup script or manual install completes, verify that the installation
    - `.claude/agents/` contains entries for all 4 agents
    - `.claude/skills/` contains entry for grill-me
    - If link mode: verify symlinks resolve correctly
+
+3. **Copilot only** (if agent is `copilot`):
+   - `.github/agents/` contains `.agent.md` files for all 4 agents
+   - Model values have been replaced if the user provided model names
 
 ### 5. Fix issues (fallback)
 
