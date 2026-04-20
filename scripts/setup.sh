@@ -7,6 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_ROOT="$(dirname "$SCRIPT_DIR")"
+TEMPLATE_DIR="$SOURCE_ROOT/template"
 
 # --- Parse arguments ---
 
@@ -259,9 +260,9 @@ prompt_and_replace_models() {
 # --- Step 1: Copy core files ---
 
 echo "Copying core files..."
-merge_dir "$SOURCE_ROOT/.agents" "$TARGET_DIR/.agents" ".agents"
-copy_dir "$SOURCE_ROOT/.chief" "$TARGET_DIR/.chief" ".chief"
-copy_file "$SOURCE_ROOT/AGENTS.md" "$TARGET_DIR/AGENTS.md" "AGENTS.md"
+merge_dir "$TEMPLATE_DIR/.agents" "$TARGET_DIR/.agents" ".agents"
+copy_dir "$TEMPLATE_DIR/.chief" "$TARGET_DIR/.chief" ".chief"
+copy_file "$TEMPLATE_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md" "AGENTS.md"
 echo ""
 
 # --- Step 2: Agent-specific setup ---

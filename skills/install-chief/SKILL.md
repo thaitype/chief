@@ -59,10 +59,10 @@ If the setup script succeeds, proceed to step 4.
 If the setup script failed, perform the entire install manually:
 
 ```bash
-# Core files
-cp -r .chief-agent-tmp/.agents .agents
-cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENTS.md AGENTS.md
+# Core files (source is under template/)
+cp -r .chief-agent-tmp/template/.agents .agents
+cp -r .chief-agent-tmp/template/.chief .chief
+cp .chief-agent-tmp/template/AGENTS.md AGENTS.md
 ```
 
 For `claude-code` only, set up Claude Code integration:
@@ -136,7 +136,7 @@ After the setup script or manual install completes, verify that the installation
 
 If any verification check fails, fix it manually:
 
-- **Missing core file** → copy from `.chief-agent-tmp/` if it still exists, otherwise clone again and copy the specific file
+- **Missing core file** → copy from `.chief-agent-tmp/template/` if it still exists, otherwise clone again and copy the specific file
 - **Missing CLAUDE.md** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on mode
 - **Missing .claude/ symlinks** → create them individually:
   ```bash

@@ -18,9 +18,9 @@ Replace `claude-code` with any supported agent: `opencode`, `codex`, `cursor`, `
 
 ```bash
 git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
-cp -r .chief-agent-tmp/.agents .agents
-cp -r .chief-agent-tmp/.chief .chief
-cp .chief-agent-tmp/AGENTS.md AGENTS.md
+cp -r .chief-agent-tmp/template/.agents .agents
+cp -r .chief-agent-tmp/template/.chief .chief
+cp .chief-agent-tmp/template/AGENTS.md AGENTS.md
 rm -rf .chief-agent-tmp
 ```
 

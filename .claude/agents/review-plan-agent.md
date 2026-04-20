@@ -1,1 +1,1 @@
-../../.agents/agents/review-plan-agent.md
+../../template/.agents/agents/review-plan-agent.md

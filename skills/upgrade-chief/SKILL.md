@@ -43,7 +43,9 @@ git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-f
 
 ### 2. Diff current files vs target version
 
-Compare these paths between the current project and `.chief-agent-tmp/`:
+Compare these paths between the current project and `.chief-agent-tmp/template/`:
+
+Note: The framework repo stores installable files under `template/`. When comparing, map `.chief-agent-tmp/template/<path>` to `<path>` in the current project.
 
 - `AGENTS.md` (or `CLAUDE.md` if `AGENTS.md` does not exist)
 - `.agents/agents/*.md`

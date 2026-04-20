@@ -1,1 +1,1 @@
-../../.agents/agents/chief-agent.md
+../../template/.agents/agents/chief-agent.md
