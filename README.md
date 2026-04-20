@@ -33,7 +33,7 @@ This framework provides the prompt and context structure. Coding agent selection
 | Coding Agent | Integration | Notes |
 |--------------|------------|-------|
 | Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
-| GitHub Copilot | `.github/agents/*.agent.md` copies | Full support (agents) |
+| GitHub Copilot | `.github/agents/` symlinks or copies | Full support (agents) |
 | OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
 
 ## Setup (v1 — Stable)
@@ -56,6 +56,8 @@ The skill asks which coding agent you use, picks the install mode, copies framew
 
 For manual installation options (shell script, git clone), see [docs/manual-install.md](docs/manual-install.md).
 
+> **Windows users:** Link mode requires Developer Mode enabled and `git config --global core.symlinks true`. The setup script auto-detects this — if symlinks aren't available, it falls back to copy mode.
+
 ## Directory Structure
 
 After setup, your project will have:
@@ -64,7 +66,7 @@ After setup, your project will have:
 project/
 ├── AGENTS.md               # Framework rules — canonical file (highest authority)
 ├── CLAUDE.md → AGENTS.md   # Symlink (Claude Code only)
-├── .github/agents/        # Copilot agent definitions (*.agent.md copies)
+├── .github/agents/        # Copilot agent definitions (symlinks or copies)
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   │   ├── chief-agent.md
@@ -89,7 +91,7 @@ project/
 - `.chief/` contains planning, rules, milestones, and project configuration
 - `AGENTS.md` defines the highest-authority framework rules
 - `CLAUDE.md` is a symlink to `AGENTS.md` (Claude Code only)
-- `.github/agents/*.agent.md` are copies for GitHub Copilot
+- `.github/agents/` contains symlinks or copies for GitHub Copilot
 - Agent-specific directories (`.claude/`, `.github/agents/`, etc.) are populated via symlinks or copies pointing back to `.agents/`
 
 ## Getting Started

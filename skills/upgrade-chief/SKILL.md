@@ -20,7 +20,7 @@ The first argument is the target version (branch or tag). Optional.
 Before cloning, detect which coding agent the user has set up:
 
 1. Check if `.claude/agents/` exists → **Claude Code**
-2. Check if `.github/agents/` exists with `.agent.md` files → **Copilot**
+2. Check if `.github/agents/` exists with agent files → **Copilot**
 3. If only `.agents/` exists (no coding-agent-specific directory) → **OpenCode** (or no coding agent setup)
 
 For coding agents that use their own directory (e.g. Claude Code with `.claude/`), detect install mode:
@@ -33,7 +33,7 @@ Ask the user to confirm:
 - Which coding agent they use (Claude Code, Copilot, OpenCode, or other)
 - Which install mode they want: **link** (recommended) or **copy**
 
-Default to the detected coding agent and mode. If no mode is detected, suggest **link**. Copilot always uses **copy** mode. OpenCode reads `.agents/` directly and needs no install mode.
+Default to the detected coding agent and mode. If no mode is detected, suggest **link**. On Windows, if symlinks are not available (Developer Mode disabled), suggest **copy** mode. OpenCode reads `.agents/` directly and needs no install mode.
 
 ### 1. Clone the target version
 
@@ -129,14 +129,16 @@ cp .agents/agents/<new-agent>.md .claude/agents/<new-agent>.md
 cp -r .agents/skills/<new-skill> .claude/skills/<new-skill>
 ```
 
-**Copilot** — copy agents to `.github/agents/` with `.agent.md` suffix:
+**Copilot** — update `.github/agents/` using the chosen mode:
 
+Link mode:
 ```bash
-mkdir -p .github/agents
-for f in .agents/agents/<new-agent>.md; do
-  name="$(basename "$f" .md)"
-  cp "$f" ".github/agents/${name}.agent.md"
-done
+ln -s ../../.agents/agents/<new-agent>.md .github/agents/<new-agent>.md
+```
+
+Copy mode:
+```bash
+cp .agents/agents/<new-agent>.md .github/agents/<new-agent>.md
 ```
 
 Preserve the user's custom model values in existing `.github/agents/` files. Only update content, not the `model:` field, unless the user explicitly approves.
@@ -147,7 +149,7 @@ Skip entries that already exist.
 
 Also handle the coding-agent-specific rules file at root using the chosen mode:
 - For Claude Code: `CLAUDE.md` should be a symlink to `AGENTS.md` (link mode) or a copy (copy mode)
-- For Copilot: `.github/agents/*.agent.md` should be copies from `.agents/agents/*.md`
+- For Copilot: `.github/agents/*.md` should be symlinks (link mode) or copies (copy mode) from `.agents/agents/*.md`
 - If the current state doesn't match the chosen mode, include this in the upgrade plan as a structure change
 
 ### 8. Clean up

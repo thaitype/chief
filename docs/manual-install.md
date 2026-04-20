@@ -12,6 +12,8 @@ rm -rf .chief-agent-tmp
 
 Replace `claude-code` with any supported agent: `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`. Add `--mode copy` if symlinks are not supported in your environment.
 
+> **Windows users:** Link mode requires Developer Mode enabled and `git config --global core.symlinks true`. The setup script auto-detects symlink support and falls back to copy mode if unavailable.
+
 ## Manual Install
 
 ```bash
@@ -37,14 +39,21 @@ ln -s ../../.agents/agents/review-plan-agent.md .claude/agents/review-plan-agent
 ln -s ../../.agents/skills/grill-me .claude/skills/grill-me
 ```
 
-For **GitHub Copilot**, copy agents to `.github/agents/` with `.agent.md` suffix:
+For **GitHub Copilot**, create symlinks or copies in `.github/agents/`:
 
+Link mode:
 ```bash
 mkdir -p .github/agents
-cp .agents/agents/chief-agent.md .github/agents/chief-agent.agent.md
-cp .agents/agents/builder-agent.md .github/agents/builder-agent.agent.md
-cp .agents/agents/tester-agent.md .github/agents/tester-agent.agent.md
-cp .agents/agents/review-plan-agent.md .github/agents/review-plan-agent.agent.md
+ln -s ../../.agents/agents/chief-agent.md .github/agents/chief-agent.md
+ln -s ../../.agents/agents/builder-agent.md .github/agents/builder-agent.md
+ln -s ../../.agents/agents/tester-agent.md .github/agents/tester-agent.md
+ln -s ../../.agents/agents/review-plan-agent.md .github/agents/review-plan-agent.md
+```
+
+Copy mode:
+```bash
+mkdir -p .github/agents
+cp .agents/agents/*.md .github/agents/
 ```
 
 For other coding agents — no extra steps, they read `AGENTS.md` directly.

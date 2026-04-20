@@ -21,7 +21,7 @@ print_usage() {
   echo "  opencode      OpenCode (reads AGENTS.md and .agents/ directly)"
   echo "  codex         Codex CLI (reads AGENTS.md directly)"
   echo "  cursor        Cursor (reads AGENTS.md directly)"
-  echo "  copilot       GitHub Copilot (.github/agents/*.agent.md)"
+  echo "  copilot       GitHub Copilot (.github/agents/)"
   echo "  gemini-cli    Gemini CLI (reads AGENTS.md directly)"
   echo "  amp           Amp (reads AGENTS.md directly)"
   echo "  windsurf      Windsurf (reads AGENTS.md directly)"
@@ -82,11 +82,32 @@ if ! echo "$SUPPORTED_AGENTS" | grep -qw "$AGENT"; then
   exit 1
 fi
 
-# --- Enforce copy mode for copilot ---
+# --- Windows symlink detection ---
 
-if [[ "$AGENT" == "copilot" && "$MODE" == "link" ]]; then
-  echo "⚠️  Copilot does not support symlinks. Switching to copy mode."
-  MODE="copy"
+check_symlink_support() {
+  local test_target="$1"
+  local test_link="${test_target}.symlink-test-$$"
+  if ln -s "$test_target" "$test_link" 2>/dev/null; then
+    rm -f "$test_link"
+    return 0
+  else
+    rm -f "$test_link" 2>/dev/null
+    return 1
+  fi
+}
+
+IS_WINDOWS=false
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) IS_WINDOWS=true ;;
+esac
+
+if [[ "$MODE" == "link" && "$IS_WINDOWS" == true ]]; then
+  if ! check_symlink_support "$(dirname "${BASH_SOURCE[0]}")"; then
+    echo "⚠️  Symlinks not supported on this Windows environment."
+    echo "   Enable Developer Mode in Windows Settings, or use --mode copy."
+    echo "   Falling back to copy mode."
+    MODE="copy"
+  fi
 fi
 
 # --- Detect target directory ---
@@ -292,17 +313,19 @@ case "$AGENT" in
     echo "Setting up GitHub Copilot integration..."
     mkdir -p "$TARGET_DIR/.github/agents"
 
-    # Copy agent files with .agent.md suffix
-    for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
-      filename="$(basename "$agent_file" .md)"
-      dest_file="$TARGET_DIR/.github/agents/${filename}.agent.md"
-      if [[ -e "$dest_file" ]]; then
-        echo "  SKIP .github/agents/${filename}.agent.md (already exists)"
-      else
-        cp "$agent_file" "$dest_file"
-        echo "  COPY .github/agents/${filename}.agent.md"
-      fi
-    done
+    if [[ "$MODE" == "link" ]]; then
+      # Symlink individual agent files
+      for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
+        filename="$(basename "$agent_file")"
+        create_symlink "../../.agents/agents/$filename" "$TARGET_DIR/.github/agents/$filename" ".github/agents/$filename"
+      done
+    else
+      # Copy individual agent files
+      for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
+        filename="$(basename "$agent_file")"
+        copy_to_dest "$agent_file" "$TARGET_DIR/.github/agents/$filename" ".github/agents/$filename"
+      done
+    fi
 
     # Prompt for model replacement
     prompt_and_replace_models "$TARGET_DIR" ".github/agents"

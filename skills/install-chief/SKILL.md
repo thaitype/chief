@@ -37,10 +37,10 @@ If **none** match → proceed.
 Ask the user:
 
 1. **Which coding agent?** — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
-2. **Install mode?** (only relevant for `claude-code`)
-   - **link** (recommended) — symlinks from `.claude/` to `.agents/`
+2. **Install mode?** (relevant for `claude-code` and `copilot`)
+   - **link** (recommended) — symlinks from agent-specific directory to `.agents/`
    - **copy** — copies files instead of symlinking
-   - For `copilot`, mode is always **copy** (symlinks not supported)
+   - On Windows, link mode requires Developer Mode enabled and `git config --global core.symlinks true`. If unavailable, suggest copy mode.
    - For all other agents, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly
 
 ### 3. Clone and run setup script
@@ -85,12 +85,16 @@ cp -r .agents/skills/* .claude/skills/
 
 For `copilot` only, set up GitHub Copilot integration:
 
+Link mode:
 ```bash
 mkdir -p .github/agents
-for f in .agents/agents/*.md; do
-  name="$(basename "$f" .md)"
-  cp "$f" ".github/agents/${name}.agent.md"
-done
+for f in .agents/agents/*.md; do ln -s "../../$f" ".github/agents/$(basename "$f")"; done
+```
+
+Copy mode:
+```bash
+mkdir -p .github/agents
+cp .agents/agents/*.md .github/agents/
 ```
 
 For all other agents — no extra steps needed.
@@ -124,7 +128,8 @@ After the setup script or manual install completes, verify that the installation
    - If link mode: verify symlinks resolve correctly
 
 3. **Copilot only** (if agent is `copilot`):
-   - `.github/agents/` contains `.agent.md` files for all 4 agents
+   - `.github/agents/` contains entries for all 4 agents (symlinks or copies depending on mode)
+   - If link mode: verify symlinks resolve correctly
    - Model values have been replaced if the user provided model names
 
 ### 5. Fix issues (fallback)
