@@ -8,31 +8,18 @@ A framework that reduces the cognitive load of working with AI coding agents —
 
 > You're currently on v2 document, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1)
 
-When you use AI coding agents on a real project, the work goes beyond a single prompt. There are multiple features to build, decisions to track, and progress to maintain across sessions.
+Chief Agent Framework is a structured workflow for AI coding agents. You define rules and goals once, and agents handle planning, building, and verification across sessions — milestone by milestone.
 
-AI doesn't reduce the effort — it changes the type. Instead of routine work like writing syntax and debugging, you spend energy on constant decision-making: which architecture, which pattern, which direction to take next. Every interaction with AI is a decision. The more you rush, the more decisions you skip, and the more tech debt follows.
+When you use AI on a real project, the challenge isn't writing code — it's the constant decision-making. Which architecture, which pattern, which direction next. Every AI interaction is a decision. The more you rush, the more you skip, and the more tech debt follows.
 
-**Chief Agent Framework** externalizes those decisions out of your head and into a system.
+This framework externalizes those decisions into a system:
 
-- You define rules and goals once
 - A planning agent breaks work into milestones and tasks
 - A builder agent implements them
 - A tester agent verifies the results
 - A review agent can check plans for contradictions when you want a second opinion
 
-You give short prompts. The agents handle planning, execution, and verification.
-
-Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting.
-
-## Three Pillars of Working with AI
-
-Effective AI-assisted development depends on three components working together:
-
-- **Human** — Sets the goal, defines direction, and makes critical design decisions. The clearer the goal, the less back-and-forth needed. Templates and structured rules reduce the number of decisions you have to make.
-- **Rules** — Encodes standards, contracts, and constraints so AI knows how to behave in your project. Architecture patterns, type safety, verification steps — all written down once, enforced every session.
-- **AI** — Applies AI engineering techniques to work more effectively: agentic coding, multi-agent orchestration, and automatic feedback loops from external systems (type checkers, linters, tests). Better techniques mean more accurate results.
-
-This framework provides the prompt and context structure. Coding agent selection and model selection are your own decisions.
+Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
 
 ## Supported Coding Agents
 
