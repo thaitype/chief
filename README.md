@@ -1,6 +1,6 @@
 # Chief Agent Framework
 
-> **You are reading the `canary` (development) version.** For the stable release, see the [`release/v1` branch](https://github.com/thaitype/chief-agent-framework/tree/release/v1).
+> You're currently on v2 document, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1)
 
 When you use AI coding agents on a real project, the work goes beyond a single prompt. There are multiple features to build, decisions to track, and progress to maintain across sessions.
 
@@ -12,7 +12,7 @@ AI doesn't reduce the effort — it changes the type. Instead of routine work li
 - A planning agent breaks work into milestones and tasks
 - A builder agent implements them
 - A tester agent verifies the results
-- A review agent checks plans for contradictions before anything gets built
+- A review agent can check plans for contradictions when you want a second opinion
 
 You give short prompts. The agents handle planning, execution, and verification.
 
@@ -34,22 +34,18 @@ This framework provides the prompt and context structure. Coding agent selection
 | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
 | Claude Code                                                     | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills)         |
 | GitHub Copilot                                                  | `.github/agents/` symlinks or copies                  | Full support (agents)                  |
-| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Works out of the box (Not test yet ⚠️ ) |
+| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Should work out of the box (untested ⚠️ — [open an issue](https://github.com/thaitype/chief-agent-framework/issues) if you hit problems) |
 
-## Setup (v1 — Stable)
+## Setup
 
-For the stable release setup, see the [`release/v1` setup guide](https://github.com/thaitype/chief-agent-framework/tree/release/v1#setup).
-
-## Setup (canary — Development)
-
-> **WARNING:** This installs the `canary` (development) version, not the stable release. For stable, use the v1 setup above.
+Current version is v2, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
 npx skills@latest add thaitype/chief-agent-framework --skill install-chief
 ```
 
 ```
-/install-chief canary
+/install-chief
 ```
 
 The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
@@ -111,7 +107,7 @@ Milestones can be simple (`milestone-1`, `milestone-2`) or reference your projec
 | Agent             | When it works                                                                   | When to call manually                                       |
 | ----------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | chief-agent       | You start here. Give it a goal.                                                 | Plan work, review progress, or change direction             |
-| review-plan-agent | Runs automatically after every plan is created. Mandatory gate before building. | If you want to re-check an existing plan for contradictions |
+| review-plan-agent | Optional. Not part of the automatic flow.                                       | When you want to validate a plan for contradictions         |
 | builder-agent     | Chief delegates tasks to it after plan is reviewed                              | When a task is ready and you want to start building         |
 | tester-agent      | Runs after builder finishes                                                     | When you need integration/E2E testing beyond unit tests     |
 
@@ -125,7 +121,7 @@ You're building a CLI that converts markdown to PDF. Here's the full workflow:
 chief-agent: plan milestone-1, goal is to build a CLI that converts markdown to PDF with support for custom templates
 ```
 
-Chief-agent reads your rules, asks you a few key design questions (e.g. "which PDF library?"), creates contracts, and breaks the work into tasks. Review-plan-agent automatically checks the plan for contradictions and gaps before anything gets built.
+Chief-agent reads your rules, asks you a few key design questions (e.g. "which PDF library?"), creates contracts, and breaks the work into tasks.
 
 **2. Build**
 
@@ -141,7 +137,7 @@ Builder implements, runs tests, fixes lint errors, and commits.
 chief-agent: review milestone-1 progress and plan next tasks
 ```
 
-Chief reviews completed work, plans the next batch of tasks. Review-plan-agent validates the new plan again.
+Chief reviews completed work, plans the next batch of tasks.
 
 **4. Repeat until done.**
 
@@ -152,7 +148,7 @@ Chief reviews completed work, plans the next batch of tasks. Review-plan-agent v
 | Start a new milestone                                                      | `chief-agent: plan milestone-1, goal is to ...`           |
 | Check progress                                                             | `chief-agent: review milestone-1 progress`                |
 | Start building a task                                                      | `builder-agent: implement task-1 from milestone-1`        |
-| Manually trigger plan review (runs automatically, but can be re-triggered) | `review-plan-agent: review milestone-1 plan`              |
+| Validate a plan for contradictions (optional)                              | `review-plan-agent: review milestone-1 plan`              |
 | Run integration tests                                                      | `tester-agent: validate milestone-1`                      |
 | Change direction mid-milestone                                             | `chief-agent: update milestone-1, new goal is to ...`     |
 | Set up project config with help                                            | `chief-agent: use grill-me to help me fill in project.md` |
@@ -177,6 +173,8 @@ Chief-agent handles the planning — task breakdown, component contracts, verifi
 
 ## Upgrading
 
+> this will be upgraded to v2
+
 Install the upgrade skill:
 
 ```bash
@@ -200,10 +198,12 @@ The skill compares your current files against the target version, creates an upg
 
 ## Release
 
-- `canary` is the active development branch — use for testing unreleased changes, not for production
-- Stable releases are tagged (e.g. `v1.0.0`) on release branches (`release/v1`)
-- `v1.0.0` — first stable release (Claude Code only, uses `degit`)
-- v2 release planned with multi-coding-agent support and setup script
+- v1 was the initial release, focused on Claude Code support, see the [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1) for details.
+
+## Branches
+- `release/v1` — Stable v1 release, focused on Claude Code support
+- `main` - latest stable release (currently v2)
+- `canary` - active development branch, may be unstable
 
 ## Development
 

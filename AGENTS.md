@@ -213,28 +213,7 @@ Each task can have file output when needed, the output should be placed at `.chi
 
 ---
 
-# Mandatory Plan Review
-
-After writing or updating ANY plan, task spec, or decision document under `.chief/milestone-*/_plan/`, you MUST spawn the `review-plan` agent before proceeding to implementation or delegation.
-
-During grill sessions: before presenting a recommendation, spawn review-plan agent to verify the recommendation against existing codebase behavior and prior decisions. Do this for EVERY recommendation, not just final plans.
-
-Do NOT delegate to builder-agent until review-plan returns clean.
-
----
-
-# 4-Agent Architecture
-
-## 0. Review-Plan-Agent (Quality Gate)
-
-Reviews plans and decisions for internal consistency and alignment with prior discussion. Catches contradictions, hedging, and scope leaks. Does not modify plans — reports issues only.
-
-Triggered:
-- After writing any task spec or plan file
-- After grill-me sessions produce a plan
-- Before delegating to builder-agent
-
-Defined in `.agents/agents/review-plan-agent.md`.
+# 3-Agent Architecture
 
 ## 1. Chief-Agent (Planner / Orchestrator)
 
@@ -319,7 +298,6 @@ Tester-agent reports findings back to chief-agent for decision.
 | Cloud/environment checks | ❌             | ✅               |
 | Code fixes               | ✅             | ❌               |
 | Architecture decisions   | ❌             | ❌ (Chief)       |
-| Plan consistency review  | ❌             | ❌ (Review-Plan) |
 
 This separation prevents slow loops and keeps execution stable.
 
@@ -338,6 +316,20 @@ Repeat
 
 Minimal human intervention.
 Maximum clarity and safety.
+
+---
+
+# Optional Agents
+
+## Review-Plan-Agent
+
+Reviews plans and decisions for internal consistency and alignment with prior discussion. Catches contradictions, hedging, and scope leaks. Does not modify plans — reports issues only.
+
+Use manually when you want to validate a plan before proceeding.
+
+Defined in `.agents/agents/review-plan-agent.md`.
+
+---
 
 ## Project Configuration
 
