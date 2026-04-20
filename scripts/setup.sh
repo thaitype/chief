@@ -218,43 +218,47 @@ copy_to_dest() {
   fi
 }
 
-# --- Model replacement for non-Claude Code agents ---
+# --- Model replacement ---
+
+replace_models() {
+  local target_dir="$1"
+  local agent_dir="$2"  # e.g. .github/agents or .agents/agents
+  local thinking_model="$3"
+  local coding_model="$4"
+
+  echo ""
+  echo "  Replacing model placeholders..."
+
+  for agent_file in "$target_dir/$agent_dir"/*; do
+    if [[ -f "$agent_file" ]]; then
+      local filename="$(basename "$agent_file")"
+      sed -i '' 's/\${thinking_model}/'"$thinking_model"'/g' "$agent_file" 2>/dev/null || \
+      sed -i 's/\${thinking_model}/'"$thinking_model"'/g' "$agent_file"
+      sed -i '' 's/\${coding_model}/'"$coding_model"'/g' "$agent_file" 2>/dev/null || \
+      sed -i 's/\${coding_model}/'"$coding_model"'/g' "$agent_file"
+      echo "    $filename: done"
+    fi
+  done
+}
 
 prompt_and_replace_models() {
   local target_dir="$1"
-  local agent_dir="$2"  # e.g. .github/agents or .agents/agents
+  local agent_dir="$2"
 
   echo ""
   echo "Model configuration:"
-  echo "  Claude Code uses 'opus' (thinking) and 'sonnet' (coding) by default."
-  echo "  For other agents, you need to specify equivalent model names."
+  echo "  Agent files use \${thinking_model} and \${coding_model} placeholders."
+  echo "  You need to specify the model names for your coding agent."
   echo ""
   read -rp "  Thinking Model (for chief-agent, e.g. o3, gemini-2.5-pro): " THINKING_MODEL
   read -rp "  Coding Model (for builder/tester/review-plan, e.g. gpt-4.1, gemini-2.5-flash): " CODING_MODEL
 
   if [[ -z "$THINKING_MODEL" || -z "$CODING_MODEL" ]]; then
-    echo "  ⚠️  No models specified. Keeping defaults (opus/sonnet). You can edit the agent files manually."
+    echo "  ⚠️  No models specified. Keeping placeholders. You can edit the agent files manually."
     return
   fi
 
-  echo ""
-  echo "  Replacing models..."
-
-  # Replace model in agent files
-  for agent_file in "$target_dir/$agent_dir"/*; do
-    if [[ -f "$agent_file" ]]; then
-      local filename="$(basename "$agent_file")"
-      if [[ "$filename" == *"chief-agent"* ]]; then
-        sed -i '' "s/^model: opus$/model: $THINKING_MODEL/" "$agent_file" 2>/dev/null || \
-        sed -i "s/^model: opus$/model: $THINKING_MODEL/" "$agent_file"
-        echo "    $filename: model → $THINKING_MODEL"
-      else
-        sed -i '' "s/^model: sonnet$/model: $CODING_MODEL/" "$agent_file" 2>/dev/null || \
-        sed -i "s/^model: sonnet$/model: $CODING_MODEL/" "$agent_file"
-        echo "    $filename: model → $CODING_MODEL"
-      fi
-    fi
-  done
+  replace_models "$target_dir" "$agent_dir" "$THINKING_MODEL" "$CODING_MODEL"
 }
 
 # --- Step 1: Copy core files ---
@@ -270,6 +274,10 @@ echo ""
 case "$AGENT" in
   claude-code)
     echo "Setting up Claude Code integration..."
+
+    # Auto-replace model placeholders for Claude Code
+    replace_models "$TARGET_DIR" ".agents/agents" "opus" "sonnet"
+
     mkdir -p "$TARGET_DIR/.claude/agents"
     mkdir -p "$TARGET_DIR/.claude/skills"
 

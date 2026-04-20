@@ -11,7 +11,7 @@ description: |
   Escalates only when blocked by design ambiguity, out-of-scope changes, or negative progress.
 
   Optimized for speed, correctness, and minimal deviation.
-model: ${coding_model}
+model: sonnet
 ---
 
 # Builder Agent (Executor)

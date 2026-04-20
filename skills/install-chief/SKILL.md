@@ -103,7 +103,7 @@ For non-`claude-code` agents, ask the user for model names:
 1. **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
 2. **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
 
-Replace `model: opus` with the Thinking Model in chief-agent, and `model: sonnet` with the Coding Model in all other agent files. For `copilot`, update files in `.github/agents/`. For other agents, update files in `.agents/agents/`.
+Replace `${thinking_model}` with the Thinking Model in chief-agent, and `${coding_model}` with the Coding Model in all other agent files. For `claude-code`, auto-replace with `opus` and `sonnet` (no prompt needed). For `copilot`, update files in `.github/agents/`. For other agents, update files in `.agents/agents/`.
 
 Skip any file or directory that already exists (warn the user).
 

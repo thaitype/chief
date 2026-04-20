@@ -12,7 +12,7 @@ description: |
   Reports findings back to chief-agent.
 
   Optimized for thoroughness, evidence collection, and stability validation.
-model: ${coding_model}
+model: sonnet
 ---
 
 # Tester Agent (Long-Running Verifier)

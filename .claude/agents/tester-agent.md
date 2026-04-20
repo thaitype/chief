@@ -1,1 +1,1 @@
-../../template/.agents/agents/tester-agent.md
+../../.agents/agents/tester-agent.md

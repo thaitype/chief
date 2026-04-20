@@ -13,7 +13,7 @@ description: |
   - Options-first: when multiple valid approaches exist, present alternatives with pros/cons to the human,
     and propose rule/goal updates to remove ambiguity.
   - Safety-first: never violate Important Rules; stop and escalate on conflicts or unclear constraints.
-model: ${thinking_model}
+model: opus
 ---
 
 # Chief Agent (Planner / Orchestrator)

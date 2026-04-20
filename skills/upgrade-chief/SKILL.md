@@ -157,14 +157,15 @@ Determine the agent directory to check:
 - **Copilot**: check `.github/agents/`
 - **Other non-Claude Code agents**: check `.agents/agents/`
 
-If any agent file still has default model values (`model: opus` or `model: sonnet`):
-1. Ask the user:
-   - **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
-   - **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
-2. Replace `model: opus` with the Thinking Model in chief-agent
-3. Replace `model: sonnet` with the Coding Model in all other agent files
+If any agent file still has placeholder model values (`model: ${thinking_model}` or `model: ${coding_model}`):
+- For **Claude Code**: auto-replace `${thinking_model}` → `opus`, `${coding_model}` → `sonnet` (no prompt needed)
+- For **other agents**: ask the user:
+   1. **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
+   2. **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
+   
+   Replace `${thinking_model}` with the Thinking Model and `${coding_model}` with the Coding Model.
 
-If all agent files already have non-default model values, skip this step — the user has already configured their models.
+If all agent files already have real model values (no placeholders), skip this step — the user has already configured their models.
 
 Also handle the coding-agent-specific rules file at root using the chosen mode:
 - For Claude Code: `CLAUDE.md` should be a symlink to `AGENTS.md` (link mode) or a copy (copy mode)

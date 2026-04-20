@@ -13,7 +13,7 @@ description: |
   Does NOT implement code.
   Does NOT modify plans.
   Reports issues back to the caller for correction.
-model: ${coding_model}
+model: sonnet
 ---
 
 # Review Plan Agent
