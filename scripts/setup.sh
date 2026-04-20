@@ -220,6 +220,15 @@ copy_to_dest() {
 
 # --- Model replacement ---
 
+sed_replace() {
+  local pattern="$1"
+  local replacement="$2"
+  local file="$3"
+  local tmp
+  tmp=$(mktemp)
+  sed "s/$pattern/$replacement/g" "$file" > "$tmp" && mv "$tmp" "$file"
+}
+
 replace_models() {
   local target_dir="$1"
   local agent_dir="$2"  # e.g. .github/agents or .agents/agents
@@ -232,10 +241,8 @@ replace_models() {
   for agent_file in "$target_dir/$agent_dir"/*; do
     if [[ -f "$agent_file" ]]; then
       local filename="$(basename "$agent_file")"
-      sed -i '' 's/\${thinking_model}/'"$thinking_model"'/g' "$agent_file" 2>/dev/null || \
-      sed -i 's/\${thinking_model}/'"$thinking_model"'/g' "$agent_file"
-      sed -i '' 's/\${coding_model}/'"$coding_model"'/g' "$agent_file" 2>/dev/null || \
-      sed -i 's/\${coding_model}/'"$coding_model"'/g' "$agent_file"
+      sed_replace '\${thinking_model}' "$thinking_model" "$agent_file"
+      sed_replace '\${coding_model}' "$coding_model" "$agent_file"
       echo "    $filename: done"
     fi
   done
