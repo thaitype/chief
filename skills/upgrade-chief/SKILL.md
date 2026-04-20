@@ -141,11 +141,28 @@ Copy mode:
 cp .agents/agents/<new-agent>.md .github/agents/<new-agent>.md
 ```
 
-Preserve the user's custom model values in existing `.github/agents/` files. Only update content, not the `model:` field, unless the user explicitly approves.
+Preserve the user's custom model values in existing agent files. Only update content, not the `model:` field, unless the user explicitly approves.
 
 **OpenCode** — no action needed, it reads `.agents/` directly.
 
 Skip entries that already exist.
+
+### 7b. Check model configuration (non-Claude Code only)
+
+For non-Claude Code agents, check if agent files still contain the default `model: opus` or `model: sonnet` values (i.e., models were never customized by the user).
+
+Determine the agent directory to check:
+- **Copilot**: check `.github/agents/`
+- **Other non-Claude Code agents**: check `.agents/agents/`
+
+If any agent file still has default model values (`model: opus` or `model: sonnet`):
+1. Ask the user:
+   - **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
+   - **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
+2. Replace `model: opus` with the Thinking Model in chief-agent
+3. Replace `model: sonnet` with the Coding Model in all other agent files
+
+If all agent files already have non-default model values, skip this step — the user has already configured their models.
 
 Also handle the coding-agent-specific rules file at root using the chosen mode:
 - For Claude Code: `CLAUDE.md` should be a symlink to `AGENTS.md` (link mode) or a copy (copy mode)
