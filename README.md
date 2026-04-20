@@ -30,11 +30,11 @@ This framework provides the prompt and context structure. Coding agent selection
 
 ## Supported Coding Agents
 
-| Coding Agent | Integration | Notes |
-|--------------|------------|-------|
-| Claude Code | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills) |
-| GitHub Copilot | `.github/agents/` symlinks or copies | Full support (agents) |
-| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively | Works out of the box |
+| Coding Agent                                                    | Integration                                           | Notes                                  |
+| --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
+| Claude Code                                                     | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills)         |
+| GitHub Copilot                                                  | `.github/agents/` symlinks or copies                  | Full support (agents)                  |
+| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Works out of the box (Not test yet ⚠️ ) |
 
 ## Setup (v1 — Stable)
 
@@ -108,12 +108,12 @@ Milestones can be simple (`milestone-1`, `milestone-2`) or reference your projec
 
 ## Agents at a Glance
 
-| Agent | When it works | When to call manually |
-|-------|--------------|----------------------|
-| chief-agent | You start here. Give it a goal. | Plan work, review progress, or change direction |
+| Agent             | When it works                                                                   | When to call manually                                       |
+| ----------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| chief-agent       | You start here. Give it a goal.                                                 | Plan work, review progress, or change direction             |
 | review-plan-agent | Runs automatically after every plan is created. Mandatory gate before building. | If you want to re-check an existing plan for contradictions |
-| builder-agent | Chief delegates tasks to it after plan is reviewed | When a task is ready and you want to start building |
-| tester-agent | Runs after builder finishes | When you need integration/E2E testing beyond unit tests |
+| builder-agent     | Chief delegates tasks to it after plan is reviewed                              | When a task is ready and you want to start building         |
+| tester-agent      | Runs after builder finishes                                                     | When you need integration/E2E testing beyond unit tests     |
 
 ## Quick Start Example
 
@@ -147,15 +147,15 @@ Chief reviews completed work, plans the next batch of tasks. Review-plan-agent v
 
 ## Common Prompts
 
-| What you want | What to type |
-|---|---|
-| Start a new milestone | `chief-agent: plan milestone-1, goal is to ...` |
-| Check progress | `chief-agent: review milestone-1 progress` |
-| Start building a task | `builder-agent: implement task-1 from milestone-1` |
-| Manually trigger plan review (runs automatically, but can be re-triggered) | `review-plan-agent: review milestone-1 plan` |
-| Run integration tests | `tester-agent: validate milestone-1` |
-| Change direction mid-milestone | `chief-agent: update milestone-1, new goal is to ...` |
-| Set up project config with help | `chief-agent: use grill-me to help me fill in project.md` |
+| What you want                                                              | What to type                                              |
+| -------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Start a new milestone                                                      | `chief-agent: plan milestone-1, goal is to ...`           |
+| Check progress                                                             | `chief-agent: review milestone-1 progress`                |
+| Start building a task                                                      | `builder-agent: implement task-1 from milestone-1`        |
+| Manually trigger plan review (runs automatically, but can be re-triggered) | `review-plan-agent: review milestone-1 plan`              |
+| Run integration tests                                                      | `tester-agent: validate milestone-1`                      |
+| Change direction mid-milestone                                             | `chief-agent: update milestone-1, new goal is to ...`     |
+| Set up project config with help                                            | `chief-agent: use grill-me to help me fill in project.md` |
 
 ## More Examples
 
