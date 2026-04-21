@@ -60,11 +60,20 @@ If rules conflict, higher priority wins. Always.
 | **Builder** | Implementer | Code, unit test, type/lint fix, commit | Integration test, architecture decisions |
 | **Tester** | Verifier | Integration/UI/API/environment testing | Implement code, patch bugs |
 
+### Responsibility Boundary
+
+- **Builder** handles ALL fast, deterministic, local verification: unit tests, type checks, lint, build. Builder MUST run these before committing.
+- **Tester** handles ONLY slow, non-deterministic, real-world verification: integration tests, UI flows, API calls, auth flows, environment-dependent checks.
+- Tester NEVER runs unit tests, lint, build, or reads source files for code review.
+- Tester is ONLY triggered when the user explicitly requests it. Chief MUST NOT auto-delegate to tester.
+
 ### Execution Cycle
 
 ```
-Human defines direction → Chief plans → Builder builds → Tester verifies → Chief decides → Repeat
+Human defines direction → Chief plans → Builder builds → Chief decides → Repeat
 ```
+
+Tester is injected into the cycle only when the user requests real-world validation.
 
 ### Rules for `.chief/_rules` Files
 
