@@ -76,10 +76,7 @@ Perform the upgrade manually, same as install-chief fallback pattern:
    - Remove local skill directory
    - Copy template skill directory
 
-3. **Remove deleted files** — If a local agent/skill has no template equivalent:
-   - Remove it
-
-4. **Update integration files** based on agent and mode:
+3. **Update integration files** based on agent and mode:
 
    **claude-code link:**
    ```bash
@@ -128,6 +125,6 @@ Report what was changed, what was skipped, and any manual steps remaining.
 - ALL temporary files MUST be inside `.chief-agent-tmp/`. NEVER write to `/tmp`, session dirs, home dirs, or any other location outside the repo.
 - NEVER apply changes without user approval
 - NEVER overwrite user content in `.chief/` milestones (goals, contracts, plans, reports)
-- NEVER remove local-only files unless the user explicitly requests removal
+- NEVER remove local-only files — upgrade only updates and adds, never deletes
 - NEVER summarize diffs from memory — always use actual diff output (from upgrade.sh or manual commands)
 - Always clean up `.chief-agent-tmp` even if the upgrade is cancelled

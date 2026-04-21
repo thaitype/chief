@@ -136,7 +136,6 @@ echo ""
 # Track changes
 UPDATES=()
 NEW_FILES=()
-REMOVED=()
 
 # --- Compare agent files ---
 
@@ -171,14 +170,13 @@ for template_file in "$TEMPLATE_DIR/.agents/agents"/*.md; do
   fi
 done
 
-# Check for removed agents
+# Check for local-only agents
 for local_file in "$TARGET_DIR/.agents/agents"/*.md; do
   filename="$(basename "$local_file")"
   template_file="$TEMPLATE_DIR/.agents/agents/$filename"
   if [[ ! -f "$template_file" ]]; then
-    echo "**$filename** — REMOVED in target"
+    echo "**$filename** — local-only (kept)"
     echo ""
-    REMOVED+=("agent:$filename")
   fi
 done
 
@@ -230,7 +228,7 @@ for template_skill_dir in "$TEMPLATE_DIR/.agents/skills"/*/; do
   fi
 done
 
-# Check for removed skills
+# Check for local-only skills
 for local_skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
   if [[ ! -d "$local_skill_dir" ]]; then
     continue
@@ -238,9 +236,8 @@ for local_skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
   skill_name="$(basename "$local_skill_dir")"
   template_skill_dir="$TEMPLATE_DIR/.agents/skills/$skill_name"
   if [[ ! -d "$template_skill_dir" ]]; then
-    echo "**$skill_name/** — REMOVED in target"
+    echo "**$skill_name/** — local-only (kept)"
     echo ""
-    REMOVED+=("skill:$skill_name")
   fi
 done
 
@@ -252,10 +249,9 @@ echo "## Summary"
 echo ""
 echo "  Updates: ${#UPDATES[@]}"
 echo "  New:     ${#NEW_FILES[@]}"
-echo "  Removed: ${#REMOVED[@]}"
 echo ""
 
-total=$(( ${#UPDATES[@]} + ${#NEW_FILES[@]} + ${#REMOVED[@]} ))
+total=$(( ${#UPDATES[@]} + ${#NEW_FILES[@]} ))
 
 if [[ $total -eq 0 ]]; then
   echo "Nothing to upgrade. Already up to date."
@@ -298,15 +294,6 @@ for template_file in "$TEMPLATE_DIR/.agents/agents"/*.md; do
   fi
 done
 
-# Remove deleted agents
-for entry in "${REMOVED[@]}"; do
-  if [[ "$entry" == agent:* ]]; then
-    filename="${entry#agent:}"
-    rm -f "$TARGET_DIR/.agents/agents/$filename"
-    echo "  REMOVE .agents/agents/$filename"
-  fi
-done
-
 # Overwrite/add skills
 for template_skill_dir in "$TEMPLATE_DIR/.agents/skills"/*/; do
   if [[ ! -d "$template_skill_dir" ]]; then
@@ -322,14 +309,6 @@ for template_skill_dir in "$TEMPLATE_DIR/.agents/skills"/*/; do
   echo "  UPDATE .agents/skills/$skill_name/"
 done
 
-# Remove deleted skills
-for entry in "${REMOVED[@]}"; do
-  if [[ "$entry" == skill:* ]]; then
-    skill_name="${entry#skill:}"
-    rm -rf "$TARGET_DIR/.agents/skills/$skill_name"
-    echo "  REMOVE .agents/skills/$skill_name/"
-  fi
-done
 
 # --- Model replacement for new agent files ---
 
@@ -379,18 +358,6 @@ case "$AGENT" in
         fi
       done
 
-      # Remove stale integration files
-      for entry in "${REMOVED[@]}"; do
-        if [[ "$entry" == agent:* ]]; then
-          filename="${entry#agent:}"
-          rm -f "$TARGET_DIR/.claude/agents/$filename"
-          echo "  REMOVE .claude/agents/$filename"
-        elif [[ "$entry" == skill:* ]]; then
-          skill_name="${entry#skill:}"
-          rm -rf "$TARGET_DIR/.claude/skills/$skill_name"
-          echo "  REMOVE .claude/skills/$skill_name"
-        fi
-      done
     else
       # Re-copy agent files
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
@@ -409,18 +376,6 @@ case "$AGENT" in
         fi
       done
 
-      # Remove stale integration files
-      for entry in "${REMOVED[@]}"; do
-        if [[ "$entry" == agent:* ]]; then
-          filename="${entry#agent:}"
-          rm -f "$TARGET_DIR/.claude/agents/$filename"
-          echo "  REMOVE .claude/agents/$filename"
-        elif [[ "$entry" == skill:* ]]; then
-          skill_name="${entry#skill:}"
-          rm -rf "$TARGET_DIR/.claude/skills/$skill_name"
-          echo "  REMOVE .claude/skills/$skill_name"
-        fi
-      done
     fi
     ;;
 
@@ -435,27 +390,11 @@ case "$AGENT" in
         ln -s "../../.agents/agents/$filename" "$link_path"
         echo "  LINK .github/agents/$filename"
       done
-
-      for entry in "${REMOVED[@]}"; do
-        if [[ "$entry" == agent:* ]]; then
-          filename="${entry#agent:}"
-          rm -f "$TARGET_DIR/.github/agents/$filename"
-          echo "  REMOVE .github/agents/$filename"
-        fi
-      done
     else
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
         filename="$(basename "$agent_file")"
         cp "$agent_file" "$TARGET_DIR/.github/agents/$filename"
         echo "  COPY .github/agents/$filename"
-      done
-
-      for entry in "${REMOVED[@]}"; do
-        if [[ "$entry" == agent:* ]]; then
-          filename="${entry#agent:}"
-          rm -f "$TARGET_DIR/.github/agents/$filename"
-          echo "  REMOVE .github/agents/$filename"
-        fi
       done
     fi
     ;;
