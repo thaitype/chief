@@ -21,6 +21,15 @@ This framework externalizes those decisions into a system:
 
 Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
 
+## Profiles
+
+The framework ships in two profiles. See [docs/profiles.md](docs/profiles.md) for details.
+
+| Profile | What's installed | Best for |
+| ------- | ---------------- | -------- |
+| **Lite** | Single `AGENTS.md` | Prototypes, scripts, personal tools, or any project where full framework ceremony adds more friction than value |
+| **Full** | `AGENTS.md` + `.chief/` + `.agents/` + subagents | Multi-milestone projects, shared codebases, or projects with contracts and cross-team work |
+
 ## Supported Coding Agents
 
 | Coding Agent                                                    | Integration                                           | Notes                                  |
@@ -41,13 +50,15 @@ npx skills@latest add thaitype/chief-agent-framework --skill install-chief
 /install-chief
 ```
 
-The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
+The skill asks which coding agent you use and which **profile** you want (lite or full), then picks the install mode, copies framework files, and sets up everything.
 
 For manual installation options (shell script, git clone), see [docs/manual-install.md](docs/manual-install.md).
 
 > **Windows users:** Link mode requires Developer Mode enabled and `git config --global core.symlinks true`. The setup script auto-detects this — if symlinks aren't available, it falls back to copy mode.
 
 ## Directory Structure
+
+The structure below shows the **full profile**. Lite profile installs only `AGENTS.md` and a coding agent symlink.
 
 After setup, your project will have:
 
