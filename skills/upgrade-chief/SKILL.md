@@ -57,46 +57,89 @@ Compare these paths between the current project and `.chief-agent-tmp/template/`
 
 For each file, run `diff` or `git diff --no-index` and capture the output. You MUST use actual diff output to build the upgrade plan — do not summarize from memory or file names alone.
 
+**Separating model field from content:** When diffing `.agents/agents/*.md` files, the `model:` field in YAML frontmatter is ALWAYS user-configured. To classify correctly:
+
+1. Strip the `model:` line from both local and target files before diffing content.
+2. If content (everything except `model:`) differs → classify based on content diff only.
+3. The `model:` value is NEVER a reason to classify a file as a conflict.
+4. When applying a framework update to an agent file, ALWAYS preserve the user's current `model:` value.
+
 ### 3. Categorize each change
 
 For every file that differs, classify it:
 
 | Category | Description |
 |---|---|
-| **Framework update** | File exists in both, target version changed. Show a diff summary of what changed. Safe to overwrite. |
+| **Framework update** | File exists in both, target version changed (ignoring `model:` field). Safe to overwrite (preserving user's `model:` value). |
 | **New file** | File exists in target but not in current project. Safe to add. |
-| **User-modified conflict** | File exists in both, and the user has modified it from the original. Needs review. |
+| **User content** | Files that contain user-written content mixed with framework content. Needs review. |
 | **Structure change** | File type changed (e.g. real file became symlink, directory renamed). Needs review. |
 | **Local-only file** | File exists in current but not in target. **Keep by default.** Only remove if user explicitly requests removal. |
 
-To detect user modifications: compare the current file against both the original installed version (if detectable from git history) and the target version. If uncertain, classify as conflict.
+**Classification rules:**
+
+- `.agents/agents/*.md` and `.agents/skills/**` are ALWAYS **framework update**, never conflicts. The user chose to upgrade — these files are framework-owned. Recommend overwrite.
+- `AGENTS.md` is **user content** because it contains the Project Rules section which the user wrote. Show diff, let user review.
+- `.chief/project.md` is **user content**. Show diff, let user review.
+- `.chief/_rules/`, `.chief/_template/` are **framework update** (structure/scaffolding).
+- `.chief/milestone-*/**` is NEVER touched by upgrade. Skip entirely.
+- A `model:` field difference alone is NEVER a reason to change category — it is expected and always preserved.
 
 ### 4. Present the upgrade plan
 
 You MUST display the full upgrade plan text inline in your response. Do NOT ask "how would you like to proceed" or prompt for approval before showing the plan.
 
-Format the plan clearly:
+**Default recommendation:** All `.agents/agents/*.md` and `.agents/skills/**` files should be recommended to **overwrite** since the user explicitly chose to upgrade. The user invoked upgrade — they expect updates. If a user rejects a specific file, they are responsible for merging manually.
+
+Format the plan clearly, showing **actual diff output** for every changed file:
 
 ```
 ## Upgrade Plan: <current> → <target>
 
-### Framework updates (safe to overwrite)
-- <file> — <brief diff summary of what changed>
+### 1. Agent definitions (.agents/agents/)
 
-### New files
+**<file>** — ✅ Overwrite (recommended)
+> model: preserved as `<user's current model>`
+
+\```diff
+<actual diff output with model: lines excluded>
+\```
+
+### 2. Skills (.agents/skills/)
+
+**<file>** — ✅ Overwrite (recommended)
+
+\```diff
+<actual diff output>
+\```
+
+### 3. New files
+
 - <file> — <description>
 
-### Conflicts (needs review)
-- <file> — you modified this file, target version also changed
+### 4. Project files (AGENTS.md, .chief/)
 
-### Structure changes
+**<file>** — ⚠️ Review required (contains user content)
+
+\```diff
+<actual diff output>
+\```
+
+### 5. Structure changes
+
 - <file> — <description of change>
 
-### Local-only files (kept by default)
+### 6. Local-only files (kept by default)
+
 - <file> — exists locally but not in target version
 ```
 
-If a section has no entries, omit it.
+Rules for the plan:
+- If a section has no entries, omit it.
+- MUST show actual diff output for every changed file — not prose summaries.
+- Agent and skill files MUST default to "Overwrite (recommended)".
+- Files with user content (AGENTS.md Project Rules section, `.chief/project.md`, milestone files) MUST default to "Review required".
+- For agent files, always note that the user's `model:` value will be preserved.
 
 ### 5. Wait for user approval
 
@@ -111,7 +154,7 @@ The user may:
 ### 6. Apply approved changes
 
 For each approved change:
-- **Framework update**: overwrite the file from target version
+- **Framework update**: overwrite the file from target version. For `.agents/agents/*.md` files, preserve the user's current `model:` value — do not replace it with the template placeholder.
 - **New file**: copy from target version
 - **Conflict**: show a diff and let the user decide (overwrite, skip, or merge manually)
 - **Structure change**: apply the structural change (e.g. create symlinks)
