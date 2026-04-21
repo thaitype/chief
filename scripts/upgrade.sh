@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 # Chief Agent Framework - Upgrade Script
 # Overwrites .agents/ (agents + skills) from template,
