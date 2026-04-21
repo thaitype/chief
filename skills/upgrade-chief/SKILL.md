@@ -188,6 +188,7 @@ Report what was changed, what was skipped, and any manual steps the user still n
 
 ## Important rules
 
+- ALL temporary files MUST be inside `.chief-agent-tmp/`. NEVER write to `/tmp`, session dirs, home dirs, or any other location outside the repo.
 - NEVER apply changes without user approval
 - NEVER overwrite user content in `.chief/` milestones (goals, contracts, plans, reports)
 - NEVER remove local-only files unless the user explicitly requests removal. Local-only files are kept by default.
