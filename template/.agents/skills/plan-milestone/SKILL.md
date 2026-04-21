@@ -26,6 +26,8 @@ If extending an existing milestone:
 
 ## Phase 0: Grill-Me Session
 
+**NEVER SKIP THIS PHASE.** Even if goals or contracts already exist, you must grill the user first. Existing files do not substitute for a grill-me session — they may contain outdated or wrong assumptions that only surface through questioning.
+
 Before writing anything, run a grill-me session to clarify requirements:
 
 - Interview the user relentlessly about every aspect of this milestone until you reach a shared understanding.
@@ -43,9 +45,16 @@ When the grill-me session is complete, summarize the key decisions and confirm w
 
 ---
 
-## Phase 1: Write Goals
+## Phase 1: Review and Write Goals
+
+**NEVER SKIP THIS PHASE.** Even if goal files already exist, you must present them to the user for review and approval before moving to contracts.
 
 Based on the grill-me session, write or update milestone goal files under `.chief/<milestone>/_goal/`.
+
+If goals already exist:
+- Read each goal file and verify it still matches the decisions from Phase 0.
+- If the grill-me session revealed that an existing goal is wrong or incomplete, update it now.
+- Present both existing and new/modified goals to the user.
 
 If extending:
 - Update existing goal files when the new scope overlaps.
@@ -109,6 +118,18 @@ If a conflict is detected:
 - Flag it explicitly to the user with both sides of the conflict.
 - Propose a resolution.
 - Do not proceed until the conflict is resolved.
+
+---
+
+## Backtrack Rule
+
+If user feedback during a later phase reveals that an earlier phase's output is wrong or incomplete, you MUST go back and fix the earlier phase first. Do NOT patch the current phase to work around a broken earlier phase.
+
+Examples:
+- Contract review reveals a goal assumption is wrong → go back to Phase 1, fix the goal, get approval, then return to Phase 2.
+- TODO review reveals a contract is missing a field → go back to Phase 2, fix the contract, get approval, then return to Phase 3.
+
+The phase order is strict in both directions: forward (never skip ahead) and backward (always fix upstream first).
 
 ---
 
