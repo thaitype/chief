@@ -37,13 +37,21 @@ Ask the user to confirm agent and mode.
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 ```
 
-### 2. Run upgrade.sh --plan
+### 2. Run upgrade.sh --plan and diff AGENTS.md
 
+Run the upgrade script plan:
 ```bash
 bash .chief-agent-tmp/scripts/upgrade.sh --plan --agent <agent> --mode <mode>
 ```
 
-Show the full output to the user. This is the upgrade plan.
+Then separately diff AGENTS.md (the script does not handle this file):
+```bash
+diff AGENTS.md .chief-agent-tmp/template/AGENTS.md
+```
+
+Show both outputs to the user. For AGENTS.md, explain:
+- The **Project Rules** section at the top is user-owned — NEVER overwrite it.
+- Everything below (Rules Hierarchy, Chief Agent Framework, etc.) is framework content that may need updating.
 
 ### 3. Wait for user approval
 
@@ -52,15 +60,25 @@ Ask the user to review. They may:
 - Cancel
 - Ask for more detail on a specific file
 
-### 4. Run upgrade.sh (apply)
+### 4. Run upgrade.sh (apply) and merge AGENTS.md
 
 ```bash
 bash .chief-agent-tmp/scripts/upgrade.sh --agent <agent> --mode <mode>
 ```
 
-If this **succeeds**, skip to step 6.
+Then merge AGENTS.md manually:
 
-If this **fails**, proceed to step 5.
+1. Read the user's current `AGENTS.md` — identify the **Project Rules** section (everything between `## Project Rules` and the next `---`).
+2. Read `.chief-agent-tmp/template/AGENTS.md` — this is the new framework version.
+3. Replace everything in the user's `AGENTS.md` **below** the Project Rules section with the new framework content from template.
+4. Keep the user's Project Rules section exactly as-is.
+5. Show the user the merged result and get confirmation before writing.
+
+If the user's AGENTS.md has no `## Project Rules` section, treat the entire file as framework content and overwrite it from template.
+
+If upgrade.sh **succeeds**, skip to step 6.
+
+If upgrade.sh **fails**, proceed to step 5.
 
 ### 5. Manual fallback (if upgrade.sh fails)
 
