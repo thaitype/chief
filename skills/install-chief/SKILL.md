@@ -19,6 +19,10 @@ The first argument is the target version (branch or tag). Optional.
 
 Check if the Chief Agent Framework is already installed by looking for these signals:
 
+For **lite** installs:
+1. `AGENTS.md` at root contains the keyword "Chief Agent Framework"
+
+For **full** installs (or if profile is unknown at this point, check all):
 1. `.agents/agents/chief-agent.md` exists
 2. `.chief/` directory exists
 3. `AGENTS.md` or `CLAUDE.md` at root contains the keyword "Chief Agent Framework" (check file content, not just existence — these files may exist from other setups)
@@ -36,12 +40,18 @@ If **none** match → proceed.
 
 Ask the user:
 
-1. **Which coding agent?** — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
-2. **Install mode?** (relevant for `claude-code` and `copilot`)
-   - **link** (recommended) — symlinks from agent-specific directory to `.agents/`
+1. **Which profile?** — `lite` or `full` (default: lite)
+   - **lite** — Single `AGENTS.md` with core principles and project-specific rules section. No `.chief/`, `.agents/`, or skills. Best for prototypes, scripts, personal tools.
+   - **full** — Full framework with `.chief/`, `.agents/`, subagents, skills, milestones. Best for multi-milestone projects, shared codebases.
+
+2. **Which coding agent?** — Supported agents: `claude-code`, `opencode`, `codex`, `cursor`, `copilot`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`
+
+3. **Install mode?** (relevant for `claude-code` and `copilot` in **full** profile; for **lite** profile, only relevant for `claude-code` to set up the `CLAUDE.md` symlink)
+   - **link** (recommended) — symlinks from agent-specific directory to `.agents/` (full) or `AGENTS.md` (lite, claude-code only)
    - **copy** — copies files instead of symlinking
    - On Windows, link mode requires Developer Mode enabled and `git config --global core.symlinks true`. If unavailable, suggest copy mode.
-   - For all other agents, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly
+   - For lite profile with agents other than `claude-code`, mode does not apply since those agents read `AGENTS.md` directly.
+   - For full profile with agents other than `claude-code` and `copilot`, mode does not affect behavior since they read `AGENTS.md` and `.agents/` directly.
 
 ### 3. Clone and run setup script
 
@@ -50,19 +60,46 @@ git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-f
 bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
 ```
 
+If profile is `lite`, skip the setup script entirely and proceed directly to step 3b for manual install.
+
 If the setup script **fails completely** (non-zero exit code or crashes), skip to step 3b for full manual install. Do NOT run `rm -rf .chief-agent-tmp` yet — it's needed for manual steps.
 
 If the setup script succeeds, proceed to step 4.
 
-### 3b. Full manual install (fallback if setup script fails)
+### 3b. Manual install
 
-If the setup script failed, perform the entire install manually:
+**Lite profile:**
+
+```bash
+# Core file only
+cp .chief-agent-tmp/template/AGENTS.lite.md AGENTS.md
+```
+
+For `claude-code` only (lite mode):
+
+Link mode:
+```bash
+ln -s AGENTS.md CLAUDE.md
+```
+
+Copy mode:
+```bash
+cp AGENTS.md CLAUDE.md
+```
+
+For `copilot` — no special setup in lite mode (lite installs have no `.agents/` to copy, so skip).
+
+For all other agents — no extra steps needed in lite mode.
+
+---
+
+**Full profile (fallback if setup script fails):**
 
 ```bash
 # Core files (source is under template/)
 cp -r .chief-agent-tmp/template/.agents .agents
 cp -r .chief-agent-tmp/template/.chief .chief
-cp .chief-agent-tmp/template/AGENTS.md AGENTS.md
+cp .chief-agent-tmp/template/AGENTS.full.md AGENTS.md
 ```
 
 For `claude-code` only, set up Claude Code integration:
@@ -99,7 +136,7 @@ cp .agents/agents/*.md .github/agents/
 
 For all other agents — no extra steps needed.
 
-For non-`claude-code` agents, ask the user for model names:
+For non-`claude-code` agents (full profile), ask the user for model names:
 1. **Thinking Model** (for chief-agent, e.g. `o3`, `gemini-2.5-pro`)
 2. **Coding Model** (for builder/tester/review-plan, e.g. `gpt-4.1`, `gemini-2.5-flash`)
 
@@ -108,6 +145,14 @@ Replace `${thinking_model}` with the Thinking Model in chief-agent, and `${codin
 Skip any file or directory that already exists (warn the user).
 
 ### 4. Verify installation
+
+**Lite profile:**
+
+1. `AGENTS.md` exists and contains "Chief Agent Framework"
+2. If agent is `claude-code`: `CLAUDE.md` exists (symlink or copy depending on mode)
+3. No `.chief/` or `.agents/` directories exist (confirm they were not accidentally created)
+
+**Full profile:**
 
 After the setup script or manual install completes, verify that the installation is correct:
 
@@ -138,7 +183,7 @@ If any verification check fails, fix it manually:
 
 - **Missing core file** → copy from `.chief-agent-tmp/template/` if it still exists, otherwise clone again and copy the specific file
 - **Missing CLAUDE.md** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on mode
-- **Missing .claude/ symlinks** → create them individually:
+- **Missing .claude/ symlinks** → create them individually (full profile only):
   ```bash
   mkdir -p .claude/agents .claude/skills
   ln -s ../../.agents/agents/<file>.md .claude/agents/<file>.md
@@ -155,6 +200,16 @@ rm -rf .chief-agent-tmp
 ```
 
 ### 7. Next steps
+
+**Lite profile:**
+
+Tell the user:
+
+1. Add your project-specific rules to the bottom section of `AGENTS.md`
+2. Optional: install grill-me skill with `npx skills@latest add thaitype/chief-agent-framework --skill grill-me`
+3. When your project grows, upgrade with `/upgrade-chief`
+
+**Full profile:**
 
 Tell the user:
 
