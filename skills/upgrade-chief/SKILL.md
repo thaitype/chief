@@ -43,9 +43,9 @@ git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-f
 
 ### 2. Diff current files vs target version
 
-Compare these paths between the current project and `.chief-agent-tmp/template/`:
+**CRITICAL: The framework stores installable files under `template/`. Always compare `.chief-agent-tmp/template/<path>` → `<path>` in the project. NEVER compare against the framework repo root.**
 
-Note: The framework repo stores installable files under `template/`. When comparing, map `.chief-agent-tmp/template/<path>` to `<path>` in the current project.
+Compare these paths between the current project and `.chief-agent-tmp/template/`:
 
 - `AGENTS.md` (or `CLAUDE.md` if `AGENTS.md` does not exist)
 - `.agents/agents/*.md`
@@ -55,21 +55,25 @@ Note: The framework repo stores installable files under `template/`. When compar
 - `.chief/_rules/` (directory structure, not user content)
 - `.chief/_template/`
 
+For each file, run `diff` or `git diff --no-index` and capture the output. You MUST use actual diff output to build the upgrade plan — do not summarize from memory or file names alone.
+
 ### 3. Categorize each change
 
 For every file that differs, classify it:
 
 | Category | Description |
 |---|---|
-| **Framework update** | File exists in both, only target version changed. Safe to overwrite. |
+| **Framework update** | File exists in both, target version changed. Show a diff summary of what changed. Safe to overwrite. |
 | **New file** | File exists in target but not in current project. Safe to add. |
 | **User-modified conflict** | File exists in both, and the user has modified it from the original. Needs review. |
 | **Structure change** | File type changed (e.g. real file became symlink, directory renamed). Needs review. |
-| **Removal** | File exists in current but not in target. Check if user depends on it. |
+| **Local-only file** | File exists in current but not in target. **Keep by default.** Only remove if user explicitly requests removal. |
 
 To detect user modifications: compare the current file against both the original installed version (if detectable from git history) and the target version. If uncertain, classify as conflict.
 
 ### 4. Present the upgrade plan
+
+You MUST display the full upgrade plan text inline in your response. Do NOT ask "how would you like to proceed" or prompt for approval before showing the plan.
 
 Format the plan clearly:
 
@@ -77,7 +81,7 @@ Format the plan clearly:
 ## Upgrade Plan: <current> → <target>
 
 ### Framework updates (safe to overwrite)
-- <file> — <what changed>
+- <file> — <brief diff summary of what changed>
 
 ### New files
 - <file> — <description>
@@ -88,7 +92,7 @@ Format the plan clearly:
 ### Structure changes
 - <file> — <description of change>
 
-### Removals
+### Local-only files (kept by default)
 - <file> — exists locally but not in target version
 ```
 
@@ -111,7 +115,7 @@ For each approved change:
 - **New file**: copy from target version
 - **Conflict**: show a diff and let the user decide (overwrite, skip, or merge manually)
 - **Structure change**: apply the structural change (e.g. create symlinks)
-- **Removal**: delete the file (only if user approves)
+- **Local-only file**: keep as-is (default). Only delete if the user explicitly requests removal.
 
 ### 7. Update coding agent integration
 
@@ -186,6 +190,8 @@ Report what was changed, what was skipped, and any manual steps the user still n
 
 - NEVER apply changes without user approval
 - NEVER overwrite user content in `.chief/` milestones (goals, contracts, plans, reports)
-- NEVER delete user files without explicit approval
+- NEVER remove local-only files unless the user explicitly requests removal. Local-only files are kept by default.
+- NEVER ask for approval before showing the upgrade plan. Show the plan first, then ask.
+- NEVER summarize diffs from memory — always run actual diff commands against `template/`
 - If uncertain whether a file was user-modified, classify it as a conflict
 - Always clean up `.chief-agent-tmp` even if the upgrade is cancelled
