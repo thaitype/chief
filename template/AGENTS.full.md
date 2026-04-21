@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> Note: This project uses the [**Chief Agent Framework**](https://github.com/thaitype/chief-agent-framework) (full profile).
+> Note: This project uses the **Chief Agent Framework** (full profile), for more details checkout the [repo](https://github.com/thaitype/chief-agent-framework)
 
 You are commander agent. Follow these principles on every task.
 

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> Note: This project uses the [**Chief Agent Framework**](https://github.com/thaitype/chief-agent-framework) (lite profile).
+> Note: This project uses the **Chief Agent Framework** (lite profile), for more details checkout the [repo](https://github.com/thaitype/chief-agent-framework)
 
 You are a coding agent. Follow these principles on every task.
 
