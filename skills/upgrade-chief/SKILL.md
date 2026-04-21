@@ -15,7 +15,26 @@ The first argument is the target version (branch or tag). Optional.
 
 ## Steps
 
-### 0. Detect coding agent and install mode
+### 0. Detect current profile, coding agent, and upgrade type
+
+#### 0a. Detect current profile
+
+Check the project directory to determine which profile is installed:
+
+- If `.chief/` directory exists AND `.agents/` directory exists → current profile is **full**
+- If only `AGENTS.md` exists (no `.chief/`, no `.agents/`) → current profile is **lite**
+- If the state is ambiguous (e.g. `.agents/` exists but `.chief/` does not) → ask the user which profile they intended to install
+
+#### 0b. Ask for upgrade type
+
+Ask the user which type of upgrade they want:
+
+- **`version`** (default) — upgrade to a newer version of the same profile
+- **`profile`** — upgrade from lite to full (additive, adds the full framework structure)
+
+If the user is already on **full** and requests a **profile** upgrade, inform them they are already on the full profile. No downgrade from full to lite is supported.
+
+#### 0c. Detect coding agent and install mode
 
 Before cloning, detect which coding agent the user has set up by checking directories:
 
@@ -41,19 +60,30 @@ Default to the detected coding agent and mode. If no mode is detected, suggest *
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
 ```
 
+---
+
+## Version upgrade (same profile)
+
+Follow steps 2–9 below when the upgrade type is **version**.
+
 ### 2. Diff current files vs target version
 
-Compare these paths between the current project and `.chief-agent-tmp/template/`:
+Compare these paths between the current project and `.chief-agent-tmp/template/`.
 
 Note: The framework repo stores installable files under `template/`. When comparing, map `.chief-agent-tmp/template/<path>` to `<path>` in the current project.
 
-- `AGENTS.md` (or `CLAUDE.md` if `AGENTS.md` does not exist)
+**Full profile** — compare against `template/AGENTS.full.md` (map to `AGENTS.md` in the project):
+- `AGENTS.md` (compare against `template/AGENTS.full.md`)
 - `.agents/agents/*.md`
 - `.agents/skills/*/`
 - `.chief/MANUAL.md`
 - `.chief/project.md` (template only — compare structure, not user content)
 - `.chief/_rules/` (directory structure, not user content)
 - `.chief/_template/`
+
+**Lite profile** — compare against `template/AGENTS.lite.md` (map to `AGENTS.md` in the project):
+- `AGENTS.md` (compare against `template/AGENTS.lite.md`)
+- Coding agent symlink or copy (e.g. `CLAUDE.md` for Claude Code)
 
 ### 3. Categorize each change
 
@@ -74,7 +104,7 @@ To detect user modifications: compare the current file against both the original
 Format the plan clearly:
 
 ```
-## Upgrade Plan: <current> → <target>
+## Upgrade Plan: <current> → <target> (version upgrade, <profile> profile)
 
 ### Framework updates (safe to overwrite)
 - <file> — <what changed>
@@ -182,10 +212,118 @@ rm -rf .chief-agent-tmp
 
 Report what was changed, what was skipped, and any manual steps the user still needs to take.
 
+---
+
+## Lite → Full profile upgrade
+
+Follow these steps when the upgrade type is **profile** and the current profile is **lite**.
+
+### P1. Clone the target version
+
+(Already done in step 1 above.)
+
+### P2. Present the upgrade plan
+
+Clearly describe what will happen:
+
+```
+## Profile Upgrade Plan: lite → full (<target> version)
+
+### AGENTS.md
+- Current AGENTS.md (lite) will be backed up as AGENTS.md.lite.bak
+- Replaced with full profile version from template/AGENTS.full.md
+- If you have project-specific rules in your current AGENTS.md, they will be extracted
+  and migrated to .chief/project.md
+
+### New directories and files
+- .agents/           — agent definitions for chief, builder, tester, review-plan agents
+- .chief/            — milestone skeleton, rules, templates, MANUAL.md, project.md
+- .claude/agents/    — coding agent integration (Claude Code)  [or equivalent for other agents]
+- .claude/skills/    — skill integration (Claude Code)         [or equivalent for other agents]
+
+### Coding agent integration
+- Agent files and skills will be linked/copied from .agents/ using <link|copy> mode
+```
+
+Note: Only include sections relevant to what will actually be created.
+
+### P3. Wait for user approval
+
+Do NOT apply any changes until the user explicitly approves.
+
+### P4. Apply the profile upgrade
+
+Execute these steps in order:
+
+1. **Backup current AGENTS.md**:
+   ```bash
+   cp AGENTS.md AGENTS.md.lite.bak
+   ```
+
+2. **Replace AGENTS.md with full profile version**:
+   ```bash
+   cp .chief-agent-tmp/template/AGENTS.full.md AGENTS.md
+   ```
+
+3. **Copy `.agents/` directory from template**:
+   ```bash
+   cp -r .chief-agent-tmp/template/.agents .agents
+   ```
+
+4. **Copy `.chief/` directory from template**:
+   ```bash
+   cp -r .chief-agent-tmp/template/.chief .chief
+   ```
+
+5. **Set up coding agent integration** (same as install-chief full mode). Based on the detected coding agent:
+
+   **Claude Code** — link mode:
+   ```bash
+   mkdir -p .claude/agents .claude/skills
+   ln -s ../../.agents/agents/<agent>.md .claude/agents/<agent>.md
+   ln -s ../../.agents/skills/<skill> .claude/skills/<skill>
+   ln -s ../AGENTS.md CLAUDE.md   # if CLAUDE.md does not already exist
+   ```
+
+   **Claude Code** — copy mode:
+   ```bash
+   mkdir -p .claude/agents .claude/skills
+   cp .agents/agents/<agent>.md .claude/agents/<agent>.md
+   cp -r .agents/skills/<skill> .claude/skills/<skill>
+   cp AGENTS.md CLAUDE.md   # if CLAUDE.md does not already exist
+   ```
+
+   **Copilot** — link or copy mode (same pattern as version upgrade step 7).
+
+   **OpenCode** — no action needed.
+
+6. **Migrate project-specific rules** (if any were detected in the lite `AGENTS.md`):
+   - Show the user which rules appear to be project-specific (not framework boilerplate).
+   - Append them to `.chief/project.md` under a clearly marked section.
+   - Inform the user to review `.chief/project.md` after the upgrade.
+
+### P5. Clean up
+
+```bash
+rm -rf .chief-agent-tmp
+```
+
+### P6. Summary
+
+Report:
+- What was created
+- Where the old lite AGENTS.md was backed up (`AGENTS.md.lite.bak`)
+- Whether project-specific rules were migrated to `.chief/project.md`
+- Any manual steps the user still needs to take (e.g. configuring models in agent files)
+
+---
+
 ## Important rules
 
 - NEVER apply changes without user approval
 - NEVER overwrite user content in `.chief/` milestones (goals, contracts, plans, reports)
 - NEVER delete user files without explicit approval
+- NEVER delete or discard user's custom rules without migrating them first
+- No downgrade from full profile to lite profile is supported
 - If uncertain whether a file was user-modified, classify it as a conflict
 - Always clean up `.chief-agent-tmp` even if the upgrade is cancelled
