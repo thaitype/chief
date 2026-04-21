@@ -173,6 +173,20 @@ If verification commands are missing or unclear:
 
 ---
 
+## Mandatory Review Gates
+
+After producing or updating any of the following, you MUST present the content to the user and wait for explicit approval before proceeding to the next phase:
+
+1. `_goal/` files → wait for approval before writing contracts or todos
+2. `_contract/` files → wait for approval before writing todos or task specs
+3. `_plan/_todo.md` → wait for approval before writing task specs or delegating
+
+**Never auto-advance** from goal → contract → todo → task spec without user sign-off at each step.
+
+If the user asks you to write a goal, write it and stop. Do not continue to contracts or planning until the user says to proceed.
+
+---
+
 ## Operating Style
 
 * Be concise and structured.
