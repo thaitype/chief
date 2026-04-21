@@ -1,82 +1,55 @@
-# Chief Agent Framework
+# Milestone 1: Lite and Full AGENTS.md Profiles
 
-Two profiles for AI-driven coding, sharing a single set of core principles.
+## Objective
 
-## Profiles
+Deliver two installable AGENTS.md profiles (lite and full) with install/upgrade skill support, so users can choose the right level of framework structure for their project.
 
-### Lite
+## Deliverables
 
-Single `AGENTS.md` at the repo root. 
+1. **`template/AGENTS.lite.md`** -- new file. Lite profile template based on `_goal/AGENTS.lite.md` draft.
+2. **`template/AGENTS.full.md`** -- new file. Rename current `template/AGENTS.md` to `template/AGENTS.full.md` and replace its content with the `_goal/AGENTS.full.md` draft.
+3. **`docs/profiles.md`** -- new file. Explains both profiles, their differences, and upgrade criteria. Based on `_report/profiles-design-spec.md`.
+4. **`skills/install-chief/SKILL.md`** -- updated. Ask user which profile (lite/full), create appropriate files + coding agent symlink.
+5. **`skills/upgrade-chief/SKILL.md`** -- updated. Support lite-to-full upgrade and version upgrades within the same profile. No downgrade.
+6. **Framework README** -- updated. Reference both profiles, link to `docs/profiles.md`.
 
-**Use when**: one-off scripts, prototypes, personal tools, exploratory work, or any project where `.chief/` ceremony would add more friction than value.
+## Key Decisions
 
-```
-repo/
-└── AGENTS.md             # Core principles 1–6 + project-specific rules
-```
+### Profile behavior
 
-### Full
+- The user's project always gets `AGENTS.md` (never `AGENTS.lite.md` or `AGENTS.full.md`). The template files in this repo are named with the profile suffix; the install skill copies the chosen one as `AGENTS.md`.
+- **Lite mode** = only `AGENTS.md` + coding agent symlink (e.g. `CLAUDE.md`). No `.chief/`, no `.agents/`, no skills directory.
+- **Full mode** = `AGENTS.md` + `.chief/` + `.agents/` + skills + subagents. Supports both inline project rules in `AGENTS.md` AND `.chief/project.md`. `AGENTS.md` always wins on conflicts.
 
-AGENTS.md + `.chief/` rules directory + milestones + 4 subagents (chief, builder, tester, review-plan).
+### Core principles
 
-**Use when**: multi-milestone projects, shared codebases, projects with contracts and cross-team work, or any project where structured planning and delegation pay for themselves.
+- 6 core principles are shared and finalized as drafted. Wording differences between lite and full templates are intentional adaptations (not contradictions).
 
-```
-repo/
-├── AGENTS.md                         # Core principles 1–6 + hierarchy + agent roles
-├── .chief/
-│   ├── project.md                    # Informational: tech stack, commands, architecture
-│   ├── _rules/
-│   │   ├── _standard/                # Empty — user-defined
-│   │   ├── _goal/                    # Empty — user-defined
-│   │   ├── _contract/                # Empty — user-defined
-│   │   └── _verification/            # Empty — user-defined
-│   ├── _template/
-│   └── milestone-1/
-│       ├── _contract/
-│       ├── _goal/
-│       ├── _plan/_todo.md
-│       └── _report/
-└── .agents/
-    ├── agents/
-    │   ├── chief-agent.md
-    │   ├── builder-agent.md
-    │   ├── tester-agent.md
-    │   └── review-plan-agent.md
-    └── skills/
-        └── grill-me/SKILL.md
-```
+### Lite profile specifics
 
-## Core principles (shared by both profiles)
+- Lite `AGENTS.md` has a "Project-specific rules" section: empty with a brief note and example headings in 1-2 sentences.
+- Grill-me skill is NOT shipped in lite mode. Docs mention optional install: `npx skills@latest add thaitype/chief-agent-framework --skill grill-me`.
+- Lite users can manually create coding agent symlinks (e.g. `ln -s AGENTS.md CLAUDE.md`).
 
-Principles 1–6 are **identical and non-negotiable** in both profiles:
+### Install skill
 
-1. **Think before coding** — list interpretations, ask when unclear, push back when simpler exists
-2. **Minimum code** — no speculative abstractions, no unrequested flexibility
-3. **Surgical changes** — every changed line traces to the request
-4. **Goal-driven execution** — success criteria + verification loop
-5. **Escalation** — stop on ambiguity, scope leaks, or negative progress
-6. **Completion** — verify before declaring done; structured commit messages
+- Asks which profile (lite/full) and which coding agent.
+- Lite install: copies lite template as `AGENTS.md`, creates coding agent symlink. Nothing else.
+- Full install: existing behavior, but uses `AGENTS.full.md` as source for `AGENTS.md`.
 
-Only the **scaffolding** differs between profiles, not the principles.
+### Upgrade skill
 
-## When to upgrade lite → full
+- Supports lite-to-full upgrade (additive: add `.chief/`, `.agents/`, skills, extend `AGENTS.md`).
+- Supports version upgrades within same profile.
+- No downgrade support.
 
-Upgrade when any of these happen:
+### Reference material
 
-- `AGENTS.md` + `.chief/project.md` grow past ~300 lines combined
-- Rules need categorization (standards vs. contracts vs. goals vs. verification)
-- Work spans multiple milestones or tickets
-- Multiple contributors need shared planning artifacts
-- You need subagents (separate contexts for chief / builder / tester)
+- Karpathy guidelines (`_report/karpathy-guidelines.md`) are reference only. Principles are well-aligned, no revision needed.
 
-Upgrade is purely additive:
+## Drafts and References
 
-1. Keep `AGENTS.md` — extend with the full-mode sections (hierarchy, agent roles)
-2. Keep `.chief/project.md` — move enforceable rules out to `.chief/_rules/**`
-3. Create empty `.chief/_rules/{_standard,_goal,_contract,_verification}/`
-4. Add `.agents/agents/` subagent definitions
-5. Create first milestone
-
-No rule rewrites. No file renames.
-
+- `_goal/AGENTS.lite.md` -- draft lite template (spec for `template/AGENTS.lite.md`)
+- `_goal/AGENTS.full.md` -- draft full template (spec for `template/AGENTS.full.md`)
+- `_report/profiles-design-spec.md` -- original design spec for both profiles
+- `_report/karpathy-guidelines.md` -- reference material
