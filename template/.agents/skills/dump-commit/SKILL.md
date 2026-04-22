@@ -31,10 +31,12 @@ git add -A
 
 If the user provided a message in the arguments → use it directly.
 
-If no message was provided:
-- Run `git diff --cached --stat` (file names only — do NOT read file content)
-- Generate a 1-line message summarizing changed files, e.g.: `wip: update chief-agent, plan-milestone, upgrade.sh`
-- Keep it under 72 characters
+If no message was provided, generate a 1-line message using these sources (in priority order):
+
+1. **Recent conversation context** — if the conversation contains clear context about what was just done (e.g. "add retro-chief skill", "fix upgrade script"), use that to write a meaningful message.
+2. **File names from `git diff --cached --stat`** — if no conversation context, fall back to summarizing changed file names (e.g. `wip: update chief-agent, plan-milestone, upgrade.sh`).
+
+Do NOT read file content or full diffs. Keep the message under 72 characters.
 
 ### 4. Commit
 
