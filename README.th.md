@@ -60,16 +60,7 @@ project/
 ├── .github/agents/        # Agent definitions สำหรับ Copilot (symlinks หรือ copies)
 ├── .agents/               # Agent definitions หลัก (ไม่ผูกกับ coding agent ใดตัวหนึ่ง)
 │   ├── agents/            # คำนิยามบทบาทของ agent
-│   │   ├── chief-agent.md
-│   │   ├── builder-agent.md
-│   │   ├── tester-agent.md
-│   │   └── review-plan-agent.md
 │   └── skills/            # Skills ที่ติดตั้งได้
-│       ├── grill-me/
-│       ├── chief-plan/
-│       ├── chief-autopilot/
-│       ├── chief-retro/
-│       └── dump-commit/
 ├── .chief/                # Plans, rules, milestones
 │   ├── project.md         # Config เฉพาะโปรเจกต์ (tech stack, commands)
 │   ├── MANUAL.md          # คู่มือการใช้งาน framework
