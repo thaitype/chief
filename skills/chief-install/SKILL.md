@@ -1,15 +1,15 @@
 ---
-name: install-chief
-description: Install the Chief Agent Framework into the current project. Uses setup.sh as the primary method, then verifies and fixes manually if needed. Use when the user wants to set up the framework (e.g. "/install-chief" or "/install-chief canary").
+name: chief-install
+description: Install the Chief into the current project. Uses setup.sh as the primary method, then verifies and fixes manually if needed. Use when the user wants to set up the framework (e.g. "/chief-install" or "/chief-install canary").
 ---
 
-Install the Chief Agent Framework into the current project.
+Install the Chief into the current project.
 
 ## Arguments
 
 The first argument is the target version (branch or tag). Optional.
 
-- No argument → install the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
+- No argument → install the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
 - `canary` → latest canary branch (active development, unreleased)
 - `v1.0.0`, `v2.0.0`, etc. → specific tagged version
 
@@ -17,16 +17,16 @@ The first argument is the target version (branch or tag). Optional.
 
 ### 1. Check for existing installation
 
-Check if the Chief Agent Framework is already installed by looking for these signals:
+Check if the Chief is already installed by looking for these signals:
 
 1. `.agents/agents/chief-agent.md` exists
 2. `.chief/` directory exists
-3. `AGENTS.md` or `CLAUDE.md` at root contains the keyword "Chief Agent Framework" (check file content, not just existence — these files may exist from other setups)
+3. `AGENTS.md` or `CLAUDE.md` at root contains the keyword "Chief" (check file content, not just existence — these files may exist from other setups)
 
 If **any** of these match → the framework is likely already installed. Warn the user and suggest upgrading instead. Show them:
 ```
-npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
-/upgrade-chief
+npx skills@latest add thaitype/chief --skill chief-upgrade
+/chief-upgrade
 ```
 Do NOT proceed unless the user explicitly confirms they want a fresh install.
 
@@ -46,7 +46,7 @@ Ask the user:
 ### 3. Clone and run setup script
 
 ```bash
-git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch <version> https://github.com/thaitype/chief.git .chief-agent-tmp
 bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
 ```
 
@@ -165,7 +165,7 @@ Tell the user:
 ## Important rules
 
 - NEVER overwrite existing files without explicit user approval
-- If the framework is already installed, suggest `/upgrade-chief` instead
+- If the framework is already installed, suggest `/chief-upgrade` instead
 - Always clean up `.chief-agent-tmp` even if the install is cancelled or fails
 - If the setup script fails, attempt manual fixes before giving up
 - Report all verification results to the user — even successful ones

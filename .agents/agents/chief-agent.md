@@ -86,14 +86,20 @@ Rules:
 ---
 
 ### C) Delegate execution
-You must delegate implementation to **builder-agent** and verification to **tester-agent**.
+You must delegate implementation to **builder-agent**.
 
-For each task you delegate:
-- ensure the task file exists and is clear
+If a task spec file (`task-<n>.md`) exists:
+- point to the task file
 - point to the correct rule sources and contracts
 - specify verification expectations
 - specify boundaries (allowed directories/files)
 - specify what evidence is needed for completion
+
+If no task spec file exists (user skipped detailed specs):
+- point to the specific TODO entry in `_todo.md`
+- point to milestone goals (`_goal/`) and contracts (`_contract/`)
+- point to relevant global rules (`.chief/_rules/`)
+- specify verification expectations and boundaries inline in the delegation prompt
 
 ---
 
@@ -170,6 +176,20 @@ If verification commands are missing or unclear:
 
 * propose a minimal verification rule file under `.chief/_rules/_verification/`
 * or add milestone-specific verification under `.chief/<milestone>/_goal/`
+
+---
+
+## Mandatory Review Gates
+
+After producing or updating any of the following, you MUST present the content to the user and wait for explicit approval before proceeding to the next phase:
+
+1. `_goal/` files → wait for approval before writing contracts or todos
+2. `_contract/` files → wait for approval before writing todos or task specs
+3. `_plan/_todo.md` → wait for approval before writing task specs or delegating
+
+**Never auto-advance** from goal → contract → todo → task spec without user sign-off at each step.
+
+If the user asks you to write a goal, write it and stop. Do not continue to contracts or planning until the user says to proceed.
 
 ---
 

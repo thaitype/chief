@@ -1,336 +1,138 @@
 # AGENTS.md
 
-## Overview
+## Project Rules
 
-This project uses a structured **Chief Agent Framework** to enable goal-driven autonomous development with minimal human intervention.
-
-The system is designed so that:
-
-* Humans define **direction, rules, and constraints**
-* The **chief-agent** plans and orchestrates work
-* Builder and tester agents execute and verify tasks
-* The system progresses milestone by milestone with clear contracts and verification
-
-The primary objective is to reduce human involvement in execution while maintaining correctness, safety, and alignment with project goals.
+<!-- WRITE YOUR PROJECT-SPECIFIC RULES HERE — highest authority -->
+<!-- Examples: -->
+<!-- - NEVER use ORM in this project -->
+<!-- - All APIs MUST return JSON:API format -->
+<!-- - MUST use pnpm, not npm -->
 
 ---
 
-# `.chief` Directory Structure
+## Rules Hierarchy
 
-The `.chief` directory contains all structured planning, rules, goals, and execution state.
-
-```
-.chief
-├── _rules
-│   ├── _contract
-│   ├── _goal
-│   ├── _verification
-│   └── _standard
-├── _template
-└── milestone-1
-    ├── _contract
-    ├── _goal
-    ├── _plan
-    └── _report
-```
-
-Multiple milestones may exist.
-
-A milestone can be:
-
-* a simple numeric milestone (milestone-1, milestone-2)
-* or a real ticket reference (e.g. `milestone-PROJ-1234`)
-
----
-
-# Rules Hierarchy Priority
-
-Rules must always be resolved using the following priority:
-
-1. **AGENTS.md** (highest authority)
+1. **Project Rules** above (highest authority)
 2. `.chief/_rules`
 3. `.chief/milestone-X/_goal` (lowest authority)
 
-Example:
-If AGENTS.md states:
+If rules conflict, higher priority wins. Always.
 
-> "Do not use MongoDB ObjectId in service layer"
-
-But `.chief/_rules` states:
-
-> "MongoDB ObjectId may be used in some cases"
-
-Then **AGENTS.md always overrides**.
+Each milestone is self-contained. Only the active milestone's goals/contracts + global `.chief/_rules/` apply. Previous milestone artifacts are not inherited. To carry forward a decision from a past milestone, promote it to `.chief/_rules/`.
 
 ---
 
-# Human vs AI Responsibilities
+## User Interaction Rules
 
-## Human Responsibilities
-
-Humans focus primarily on:
-
-* Writing and refining `AGENTS.md`
-* Maintaining `_rules`
-* Defining goals clearly
-
-Humans should not micromanage implementation details.
-
-Clear rules and goals allow agents to work autonomously and safely.
-
-## AI Responsibilities
-
-AI agents must:
-
-* Follow AGENTS.md strictly
-* Follow `.chief/_rules`
-* Follow milestone goals and contracts
-* Execute tasks safely and correctly
-* Ask for clarification only when multiple valid paths exist
+- When asking the user a question, use ask_user with ONE short question only.
+- When presenting a recap, summary, or review:
+  1. Print it as formatted text first (numbered list, table, or markdown block).
+  2. Then ask_user ONCE with a short confirmation, e.g. "Proceed?" or "Any changes?"
+  3. NEVER put recap content inside ask_user.
+- Do NOT ask multiple questions in a row. Make a recommendation, summarize, then confirm once.
 
 ---
 
-# `.chief/_rules` Directory
+## Agent Behavior Principles
 
-This directory defines global rules that apply to all milestones.
+### 1. Think Before Acting
 
-It contains four subfolders:
+- Start with the smallest plausible interpretation of the request.
+- If uncertain, ask ONE clarifying question — don't assume the big interpretation.
+- Surface tradeoffs and push back when a simpler approach exists.
+- When confused, name what's unclear and stop. Don't hide confusion behind a plan.
 
-### `_standard`
+### 2. Simplicity First
 
-General rules shared across all milestones:
+- Do the minimum that solves the problem. Nothing speculative.
+- If a task can be done in 1-3 commands, do it directly. Don't delegate trivial work to builder-agent.
+- No features, abstractions, or error handling beyond what was asked.
+- If a plan starts needing an options table, pause — you may not have understood the question.
 
-* coding standards
-* security policies
-* database access rules
-* architectural constraints
+### 3. Surgical Changes
 
-### `_goal`
+- Touch only what the request requires. Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken. Match existing style.
+- Every changed line should trace directly to the user's request.
+- Clean up only what YOUR changes made unused. Don't remove pre-existing dead code unless asked.
 
-General high-level goals shared across milestones.
+### 4. Goal-Driven Execution
 
-### `_contract`
-
-Shared system contracts:
-
-* data models
-* API contracts
-* schema definitions
-* system conventions
-
-### `_verification`
-
-Defines how work must be verified:
-
-* test commands
-* build requirements
-* lint/type requirements
-* definition of done
-
-### Writing style rules for all rule files
-
-All markdown inside `_rules` must be:
-
-* concise
-* structural
-* clear
-* not overly verbose
-* include small code examples when useful
-* eliminate ambiguity
-
-Anything unclear may lead to incorrect autonomous decisions.
+- Transform vague requests into verifiable goals before starting.
+- Define what "done" looks like. Loop until verified.
+- For multi-step work, state a brief plan with verification at each step.
+- Strong success criteria let agents work independently. Weak criteria require constant clarification.
 
 ---
 
-# `.chief/milestone-X` Directory
+## Chief Agent Framework
 
-Each milestone has its own directory.
+### Human Responsibilities
+
+- Write and refine this file
+- Maintain `.chief/_rules`
+- Define milestone goals
+
+### AI Responsibilities
+
+- Follow this file strictly
+- Follow `.chief/_rules`
+- Follow milestone goals and contracts
+- Ask for clarification only when multiple valid paths exist
+
+### Directory Structure
 
 ```
-milestone-X
-├── _contract
-├── _goal
-├── _plan
-└── _report
+.chief/
+├── _rules/
+│   ├── _standard/       # Coding standards, architecture constraints
+│   ├── _contract/       # Data models, API contracts, schemas
+│   ├── _goal/           # High-level goals (shared across milestones)
+│   └── _verification/   # Test commands, build requirements, definition of done
+├── _template/           # Scaffold for new milestones
+└── milestone-X/
+    ├── _goal/           # Milestone-specific goals
+    ├── _contract/       # Milestone-specific contracts
+    ├── _plan/           # _todo.md + task-N.md specs
+    └── _report/         # Reports, investigations, task outputs
 ```
 
-## `_contract`
+### 3-Agent Architecture
 
-Milestone-specific contracts.
-May be more detailed than global contracts, but must never conflict with them.
+| Agent | Role | Does | Does NOT |
+|-------|------|------|----------|
+| **Chief** | Planner/Orchestrator | Plan, delegate, decide, update todo | Implement code |
+| **Builder** | Implementer | Code, unit test, type/lint fix, commit | Integration test, architecture decisions |
+| **Tester** | Verifier | Integration/UI/API/environment testing | Implement code, patch bugs |
 
-Examples:
+### Responsibility Boundary
 
-* API schema for this milestone
-* DB schema
-* service boundaries
+- **Builder** handles ALL fast, deterministic, local verification: unit tests, type checks, lint, build. Builder MUST run these before committing.
+- **Tester** handles ONLY slow, non-deterministic, real-world verification: integration tests, UI flows, API calls, auth flows, environment-dependent checks.
+- Tester NEVER runs unit tests, lint, build, or reads source files for code review.
+- Tester is ONLY triggered when the user explicitly requests it. Chief MUST NOT auto-delegate to tester.
 
-## `_goal`
-
-Milestone-specific goals.
-More detailed than global goals but must not conflict.
-
-## `_plan`
-
-Execution plan and task list for this milestone.
-
-## `_report`
-
-Reference material produced during the milestone. Examples: bug investigation reports, diagnostic reports, review results, performance analyses, task output folders. Not plans, contracts, or goals -- just reference documents.
-
----
-
-# `.chief/milestone-X/_plan` Directory
-
-Contains planning and execution tracking.
-
-### Files
-
-* `_todo.md` → main checklist for milestone
-* `task-1.md`, `task-2.md`, etc → detailed task specs
-
-### `_todo.md` Example
-
-```md
-# TODO List for Milestone X
-
-- [ ] task-1: implement authentication module
-- [ ] task-2: set up database schema
-- [ ] task-3: write unit tests for user service
-```
-
-Chief-agent must update `_todo.md` by marking completed tasks:
+### Execution Cycle
 
 ```
-[x]
+Human defines direction → Chief plans → Builder builds → Chief decides → Repeat
 ```
 
-Tasks should be kept small and clear.
+Tester is injected into the cycle only when the user requests real-world validation.
 
-## Task Output
+### Rules for `.chief/_rules` Files
 
-Each task can have file output when needed, the output should be placed at `.chief/milestone-X/_report/task-Y/`
+- MUST be concise, structural, clear
+- MUST eliminate ambiguity
+- Include small code examples when useful
+- Anything unclear may lead to incorrect autonomous decisions
 
----
+### Optional: Review-Plan-Agent
 
-# 3-Agent Architecture
-
-## 1. Chief-Agent (Planner / Orchestrator)
-
-The decision-making brain.
-
-Responsibilities:
-
-- Read `AGENTS.md`
-- Read global rules under `.chief/_rules`
-- Analyze milestone goals and contracts
-- Create and maintain `_plan`
-- Break work into small tasks (3–5 at a time)
-- Delegate implementation to builder-agent
-- Delegate long-running validation to tester-agent
-- Update `_todo.md`
-- Decide next steps
-
-Chief-agent resolves ambiguity, ensures rule compliance, and minimizes unnecessary human intervention.
-
----
-
-## 2. Builder-Agent (Implementer)
-
-The fast execution engine.
-
-Responsibilities:
-
-- Implement tasks defined in `.chief/<milestone>/_plan/task-X.md`
-- Follow `.chief/_rules/_standard`
-- Fix type/lint/test fallout autonomously
-- Run short deterministic verification commands
-- Commit code after verification passes
-
-Builder-agent handles:
-
-- Unit tests
-- Type checks
-- Lint
-- Local deterministic build verification
-
-Builder-agent does NOT:
-
-- Perform external acceptance testing
-- Validate real environments
-- Make architecture decisions
-- Modify contracts unless explicitly allowed
-
----
-
-## 3. Tester-Agent (Long-Running Verifier)
-
-The integration and stability validator.
-
-Responsibilities:
-
-- Execute long-running or non-deterministic tests
-- Validate UI flows
-- Validate API integrations
-- Validate authentication flows (e.g. Entra)
-- Perform integration and end-to-end testing
-- Validate environment-level behavior
-
-Tester-agent does NOT:
-
-- Implement code
-- Patch bugs
-- Refactor systems
-
-Tester-agent reports findings back to chief-agent for decision.
-
----
-
-# Responsibility Separation
-
-| Responsibility Type      | Builder-Agent | Tester-Agent    |
-| ------------------------ | ------------- | --------------- |
-| Unit tests               | ✅             | ❌               |
-| Type/lint/build checks   | ✅             | ❌               |
-| Integration testing      | ❌             | ✅               |
-| UI testing               | ❌             | ✅               |
-| External auth validation | ❌             | ✅               |
-| Cloud/environment checks | ❌             | ✅               |
-| Code fixes               | ✅             | ❌               |
-| Architecture decisions   | ❌             | ❌ (Chief)       |
-
-This separation prevents slow loops and keeps execution stable.
-
----
-
-# Core Design Philosophy
-
-This system is designed so that:
-
-Human defines direction →
-Chief-agent plans →
-Builder builds →
-Tester verifies →
-Chief decides →
-Repeat
-
-Minimal human intervention.
-Maximum clarity and safety.
-
----
-
-# Optional Agents
-
-## Review-Plan-Agent
-
-Reviews plans and decisions for internal consistency and alignment with prior discussion. Catches contradictions, hedging, and scope leaks. Does not modify plans — reports issues only.
-
-Use manually when you want to validate a plan before proceeding.
-
-Defined in `.agents/agents/review-plan-agent.md`.
+Reviews plans for internal consistency. Catches contradictions and scope leaks. Does not modify plans — reports issues only. Defined in `.agents/agents/review-plan-agent.md`.
 
 ---
 
 ## Project Configuration
 
-Project-specific details (dev commands, tech stack, architecture, directory structure) are defined in `.chief/project.md`.
+Project-specific details (dev commands, tech stack, architecture) are defined in `.chief/project.md`.

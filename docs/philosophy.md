@@ -33,17 +33,18 @@ The framework follows a repeating cycle:
 Human defines direction →
   Chief-agent plans →
     Builder builds →
-      Tester verifies →
-        Chief decides →
-          Repeat
+      Chief decides →
+        Repeat
 ```
+
+Tester is injected into the cycle only when the user explicitly requests real-world validation (integration tests, UI flows, API checks).
 
 Each role has a clear boundary:
 
 - **Human** — Sets goals, writes rules, makes judgment calls when agents surface ambiguity. Does not micromanage implementation.
-- **Chief-agent** — Reads rules and goals, creates plans, breaks work into small tasks (3-5 at a time), delegates to builder and tester, decides next steps.
-- **Builder-agent** — Implements tasks, fixes type/lint/test issues autonomously, commits code. Does not make architecture decisions.
-- **Tester-agent** — Runs integration tests, validates APIs and UI flows, checks environment-level behavior. Does not write code or fix bugs.
+- **Chief-agent** — Reads rules and goals, creates plans, breaks work into small tasks (3-5 at a time), delegates to builder, decides next steps.
+- **Builder-agent** — Implements tasks, runs unit tests, fixes type/lint/build issues autonomously, commits code. Does not make architecture decisions.
+- **Tester-agent** — Runs integration tests, validates APIs and UI flows, checks environment-level behavior. Does not write code or fix bugs. Only triggered when user requests it.
 
 The separation keeps each agent focused and prevents slow feedback loops where one agent tries to do everything.
 
