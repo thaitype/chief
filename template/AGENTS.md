@@ -20,6 +20,17 @@ If rules conflict, higher priority wins. Always.
 
 ---
 
+## User Interaction Rules
+
+- When asking the user a question, use ask_user with ONE short question only.
+- When presenting a recap, summary, or review:
+  1. Print it as formatted text first (numbered list, table, or markdown block).
+  2. Then ask_user ONCE with a short confirmation, e.g. "Proceed?" or "Any changes?"
+  3. NEVER put recap content inside ask_user.
+- Do NOT ask multiple questions in a row. Make a recommendation, summarize, then confirm once.
+
+---
+
 ## Chief Agent Framework
 
 ### Human Responsibilities
