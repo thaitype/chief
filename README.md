@@ -108,43 +108,42 @@ Milestones can be simple (`milestone-1`, `milestone-2`) or reference your projec
 | builder-agent     | Chief delegates tasks to it after plan is reviewed                              | When a task is ready and you want to start building         |
 | tester-agent      | Only when you request it — not part of the automatic flow                        | When you need integration/E2E testing beyond unit tests     |
 
-## Quick Start Example
+## Quick Start — Pick Your Style
 
-You're building a CLI that converts markdown to PDF. Here's the full workflow:
+There are two ways to work. Pick the one that fits your situation.
 
-**1. Plan a milestone**
+### Option A: Controlled (review every step)
 
-```
-/plan-milestone
-```
-
-The skill grills you on requirements, then walks through goals → contracts → TODO → task specs, pausing for your approval at each step.
-
-**2. Build (manual)**
+Best for: complex projects, unfamiliar domains, team work.
 
 ```
-builder-agent: implement task-1 from milestone-1
+/plan-milestone              # grill → goals → contracts → TODO → specs (approval at each step)
+builder-agent: implement task-1 from milestone-1   # delegate tasks one by one
+/retro-chief                 # review coverage and propose rule updates
 ```
 
-Builder implements, runs tests, fixes lint errors, and commits.
+You stay in control. Every goal, contract, and task is reviewed before execution.
 
-**2b. Or go full autopilot**
+### Option B: Autonomous (let AI drive)
 
-```
-/autopilot-chief
-```
-
-Chief-agent creates tasks and delegates to builder automatically. Runs until the milestone is done.
-
-**3. Retrospective**
+Best for: prototyping, well-defined goals, solo work.
 
 ```
-/retro-chief
+/autopilot-chief             # reads goals + contracts, creates TODO, runs all tasks
+/retro-chief                 # review what happened
 ```
 
-Checks goal/contract coverage, summarizes what was planned vs delivered, and proposes rule updates.
+Requires goals and contracts to exist. Use `/plan-milestone` first if they don't, or write them yourself.
 
-**4. Repeat for the next milestone.**
+### Mix and match
+
+You can combine both. Plan with review gates, then switch to autopilot for execution:
+
+```
+/plan-milestone              # plan carefully with approval gates
+/autopilot-chief             # execute the approved plan autonomously
+/retro-chief                 # review and learn
+```
 
 ## Common Prompts
 

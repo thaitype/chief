@@ -108,43 +108,42 @@ Milestones สามารถเป็นแบบง่าย (`milestone-1`, `
 | builder-agent     | Chief มอบหมาย task หลังจาก plan ถูก review แล้ว           | เมื่อ task พร้อมและต้องการเริ่มสร้าง                          |
 | tester-agent      | เฉพาะเมื่อคุณร้องขอเท่านั้น — ไม่ได้เป็นส่วนของ flow อัตโนมัติ | เมื่อต้องการ integration/E2E testing นอกเหนือจาก unit tests   |
 
-## ตัวอย่าง Quick Start
+## Quick Start — เลือกสไตล์ของคุณ
 
-คุณกำลังสร้าง CLI ที่แปลง markdown เป็น PDF นี่คือ workflow ทั้งหมด:
+มีสองวิธีในการทำงาน เลือกแบบที่เหมาะกับสถานการณ์
 
-**1. วางแผน milestone**
+### Option A: ควบคุมทุกขั้นตอน (review ทุก step)
 
-```
-/plan-milestone
-```
-
-Skill จะกริลคุณเรื่อง requirements จากนั้นเดินผ่าน goals → contracts → TODO → task specs โดยหยุดรอการอนุมัติในแต่ละขั้นตอน
-
-**2. สร้าง (manual)**
+เหมาะสำหรับ: โปรเจกต์ซับซ้อน, domain ที่ไม่คุ้นเคย, ทำงานเป็นทีม
 
 ```
-builder-agent: implement task-1 from milestone-1
+/plan-milestone              # กริล → goals → contracts → TODO → specs (อนุมัติทุกขั้นตอน)
+builder-agent: implement task-1 from milestone-1   # มอบหมาย tasks ทีละตัว
+/retro-chief                 # ทบทวน coverage และเสนอการอัปเดต rules
 ```
 
-Builder ลงมือทำ รัน tests แก้ lint errors และ commit
+คุณควบคุมทุกอย่าง ทุก goal, contract และ task ถูก review ก่อน execution
 
-**2b. หรือใช้ autopilot**
+### Option B: อัตโนมัติ (ให้ AI ขับเคลื่อน)
 
-```
-/autopilot-chief
-```
-
-Chief-agent สร้าง tasks และมอบหมายให้ builder อัตโนมัติ ทำจนกว่า milestone จะเสร็จ
-
-**3. Retrospective**
+เหมาะสำหรับ: prototyping, goals ที่ชัดเจน, ทำงานคนเดียว
 
 ```
-/retro-chief
+/autopilot-chief             # อ่าน goals + contracts, สร้าง TODO, รันทุก tasks
+/retro-chief                 # ทบทวนสิ่งที่เกิดขึ้น
 ```
 
-ตรวจสอบ coverage ของ goal/contract สรุปสิ่งที่วางแผนไว้กับที่ทำจริง และเสนอการอัปเดต rules
+ต้องมี goals และ contracts อยู่แล้ว ใช้ `/plan-milestone` ก่อนถ้ายังไม่มี หรือเขียนเอง
 
-**4. ทำซ้ำสำหรับ milestone ถัดไป**
+### ผสมผสานทั้งสองแบบ
+
+ใช้ทั้งสองแบบร่วมกันได้ วางแผนแบบมี review gates แล้วสลับเป็น autopilot สำหรับ execution:
+
+```
+/plan-milestone              # วางแผนอย่างรอบคอบพร้อม approval gates
+/autopilot-chief             # execute แผนที่อนุมัติแล้วแบบอัตโนมัติ
+/retro-chief                 # ทบทวนและเรียนรู้
+```
 
 ## Prompts ที่ใช้บ่อย
 
