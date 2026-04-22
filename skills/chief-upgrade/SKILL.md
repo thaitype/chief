@@ -1,15 +1,15 @@
 ---
 name: chief-upgrade
-description: Upgrade the Chief Agent Framework to a specific version. Uses upgrade.sh as the primary method, falls back to manual if script fails. Use when the user wants to upgrade the framework (e.g. "/chief-upgrade" or "/chief-upgrade canary").
+description: Upgrade the Chief to a specific version. Uses upgrade.sh as the primary method, falls back to manual if script fails. Use when the user wants to upgrade the framework (e.g. "/chief-upgrade" or "/chief-upgrade canary").
 ---
 
-Upgrade the Chief Agent Framework to the version specified in the arguments.
+Upgrade the Chief to the version specified in the arguments.
 
 ## Arguments
 
 The first argument is the target version (branch or tag). Optional.
 
-- No argument → upgrade to the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
+- No argument → upgrade to the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
 - `canary` → latest canary branch (active development, unreleased)
 - `v1.0.0`, `v2.0.0`, etc. → specific tagged version
 
@@ -34,7 +34,7 @@ Ask the user to confirm agent and mode.
 ### 1. Clone target version
 
 ```bash
-git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch <version> https://github.com/thaitype/chief.git .chief-agent-tmp
 ```
 
 ### 2. Run upgrade.sh --plan and diff AGENTS.md
@@ -51,7 +51,7 @@ diff AGENTS.md .chief-agent-tmp/template/AGENTS.md
 
 Show both outputs to the user. For AGENTS.md, explain:
 - The **Project Rules** section at the top is user-owned — NEVER overwrite it.
-- Everything below (Rules Hierarchy, Chief Agent Framework, etc.) is framework content that may need updating.
+- Everything below (Rules Hierarchy, Chief, etc.) is framework content that may need updating.
 
 ### 3. Wait for user approval
 

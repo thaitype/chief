@@ -1,18 +1,20 @@
-# Chief Agent Framework
+# Chief ⚔️
 
 **English** | **[ไทย](README.th.md)**
 
-A framework that reduces the cognitive load of working with AI coding agents — without sacrificing quality or speed.
+A portable framework that reduces the cognitive load of working with AI coding agents — without sacrificing quality or speed.
 
-> Under the hood, Chief Agent Framework is just markdown files. It defines structure for your AI agents to follow.
+> Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [elder](https://github.com/thaitype/elder) as its behavioral baseline.
 
-> You're currently on v2 document, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1)
+> Under the hood, Chief is just markdown files. It defines structure for your AI agents to follow.
 
-Chief Agent Framework is a structured workflow for AI coding agents. You define rules and goals once, and agents handle planning, building, and verification across sessions — milestone by milestone.
+> You're currently on v3 docs. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1). Chief was previously known as `chief-agent-framework`.
+
+Chief is a structured workflow for AI coding agents. You define rules and goals once, and agents handle planning, building, and verification across sessions — milestone by milestone.
 
 When you use AI on a real project, the challenge isn't writing code — it's the constant decision-making. Which architecture, which pattern, which direction next. Every AI interaction is a decision. The more you rush, the more you skip, and the more tech debt follows.
 
-This framework externalizes those decisions into a system:
+Chief externalizes those decisions into a system:
 
 - A planning agent breaks work into milestones and tasks
 - A builder agent implements them
@@ -27,14 +29,14 @@ Built for developers already using AI coding agents who want a structured workfl
 | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
 | Claude Code                                                     | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills)         |
 | GitHub Copilot                                                  | `.github/agents/` symlinks or copies                  | Full support (agents)                  |
-| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Should work out of the box (untested ⚠️ — [open an issue](https://github.com/thaitype/chief-agent-framework/issues) if you hit problems) |
+| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Should work out of the box (untested ⚠️ — [open an issue](https://github.com/thaitype/chief/issues) if you hit problems) |
 
 ## Setup
 
-Current version is v2, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below.
+Current version is v3. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework --skill chief-install
+npx skills@latest add thaitype/chief --skill chief-install
 ```
 
 ```
@@ -197,12 +199,10 @@ Skip detailed planning — let chief create TODO and delegate to builder on the 
 
 ## Upgrading
 
-> this will be upgraded to v2
-
 Install the upgrade skill:
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework --skill chief-upgrade
+npx skills@latest add thaitype/chief --skill chief-upgrade
 ```
 
 Then run:
@@ -215,18 +215,36 @@ With no arguments, it upgrades to the latest stable release. Or specify a versio
 
 ```
 /chief-upgrade canary
-/chief-upgrade v2.0.0
+/chief-upgrade v3.0.0
 ```
 
 The skill compares your current files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
 
+### Coming from v2
+
+Skills were renamed in v3:
+- `/install-chief` → `/chief-install`
+- `/upgrade-chief` → `/chief-upgrade`
+
+If you have old skills installed, remove them and install the new ones:
+```bash
+npx skills@latest add thaitype/chief --skill chief-upgrade
+```
+
+### Coming from v1
+
+See the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1) for migration details.
+
 ## Release
 
-- v1 was the initial release, focused on Claude Code support, see the [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1) for details.
+- v1 — Initial release, focused on Claude Code support. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1).
+- v2 — Multi-agent support, added skills system. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2).
+- v3 — Renamed to Chief as part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. Skills renamed to `chief-` prefix (`chief-install`, `chief-upgrade`). Repo moved to [`thaitype/chief`](https://github.com/thaitype/chief).
 
 ## Branches
-- `release/v1` — Stable v1 release, focused on Claude Code support
-- `main` - latest stable release (currently v2)
+- `release/v1` — Stable v1 release
+- `release/v2` — Stable v2 release
+- `main` - latest stable release (currently v3)
 - `canary` - active development branch, may be unstable
 
 ## Development
@@ -237,7 +255,7 @@ To test changes locally before submitting a PR:
 2. In a **separate test project** (not inside this repo), install the skill from your branch:
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill chief-install
+npx skills@latest add thaitype/chief#<your-branch> --skill chief-install
 ```
 
 3. Test it:

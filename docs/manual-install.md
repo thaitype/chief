@@ -5,7 +5,7 @@ These are alternative installation methods for the `canary` (development) versio
 ## Setup with Shell Script
 
 ```bash
-git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch canary https://github.com/thaitype/chief.git .chief-agent-tmp
 bash .chief-agent-tmp/scripts/setup.sh --agent claude-code
 rm -rf .chief-agent-tmp
 ```
@@ -17,7 +17,7 @@ Replace `claude-code` with any supported agent: `opencode`, `codex`, `cursor`, `
 ## Manual Install
 
 ```bash
-git clone --depth 1 --branch canary https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch canary https://github.com/thaitype/chief.git .chief-agent-tmp
 cp -r .chief-agent-tmp/template/.agents .agents
 cp -r .chief-agent-tmp/template/.chief .chief
 cp .chief-agent-tmp/template/AGENTS.md AGENTS.md
