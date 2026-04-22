@@ -6,7 +6,7 @@ A framework that reduces the cognitive load of working with AI coding agents —
 
 > Under the hood, Chief Agent Framework is just markdown files. It defines structure for your AI agents to follow.
 
-> You're currently on v2 document, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1)
+> You're currently on v2 document, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief/tree/release/v1)
 
 Chief Agent Framework is a structured workflow for AI coding agents. You define rules and goals once, and agents handle planning, building, and verification across sessions — milestone by milestone.
 
@@ -27,14 +27,14 @@ Built for developers already using AI coding agents who want a structured workfl
 | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
 | Claude Code                                                     | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills)         |
 | GitHub Copilot                                                  | `.github/agents/` symlinks or copies                  | Full support (agents)                  |
-| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Should work out of the box (untested ⚠️ — [open an issue](https://github.com/thaitype/chief-agent-framework/issues) if you hit problems) |
+| OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Should work out of the box (untested ⚠️ — [open an issue](https://github.com/thaitype/chief/issues) if you hit problems) |
 
 ## Setup
 
 Current version is v2, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework --skill install-chief
+npx skills@latest add thaitype/chief#v2 --skill install-chief
 ```
 
 ```
@@ -171,7 +171,7 @@ Chief-agent handles the planning — task breakdown, component contracts, verifi
 Install the upgrade skill:
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
+npx skills@latest add thaitype/chief#v2 --skill upgrade-chief
 ```
 
 Then run:
@@ -191,7 +191,7 @@ The skill compares your current files against the target version, creates an upg
 
 ## Release
 
-- v1 was the initial release, focused on Claude Code support, see the [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1) for details.
+- v1 was the initial release, focused on Claude Code support, see the [docs](https://github.com/thaitype/chief/tree/release/v1) for details.
 
 ## Branches
 - `release/v1` — Stable v1 release, focused on Claude Code support
@@ -206,7 +206,7 @@ To test changes locally before submitting a PR:
 2. In a **separate test project** (not inside this repo), install the skill from your branch:
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill install-chief
+npx skills@latest add thaitype/chief#v2#<your-branch> --skill install-chief
 ```
 
 3. Test it:

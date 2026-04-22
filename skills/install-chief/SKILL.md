@@ -9,7 +9,7 @@ Install the Chief Agent Framework into the current project.
 
 The first argument is the target version (branch or tag). Optional.
 
-- No argument → install the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
+- No argument → install the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
 - `canary` → latest canary branch (active development, unreleased)
 - `v1.0.0`, `v2.0.0`, etc. → specific tagged version
 
@@ -25,7 +25,7 @@ Check if the Chief Agent Framework is already installed by looking for these sig
 
 If **any** of these match → the framework is likely already installed. Warn the user and suggest upgrading instead. Show them:
 ```
-npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
+npx skills@latest add thaitype/chief#v2 --skill upgrade-chief
 /upgrade-chief
 ```
 Do NOT proceed unless the user explicitly confirms they want a fresh install.
@@ -46,7 +46,7 @@ Ask the user:
 ### 3. Clone and run setup script
 
 ```bash
-git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch <version> https://github.com/thaitype/chief.git .chief-agent-tmp
 bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
 ```
 
