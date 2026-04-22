@@ -9,7 +9,7 @@ Upgrade the Chief Agent Framework to the version specified in the arguments.
 
 The first argument is the target version (branch or tag). Optional.
 
-- No argument → upgrade to the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief-agent-framework.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
+- No argument → upgrade to the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
 - `canary` → latest canary branch (active development, unreleased)
 - `v1.0.0`, `v2.0.0`, etc. → specific tagged version
 
@@ -38,7 +38,7 @@ Default to the detected coding agent and mode. If no mode is detected, suggest *
 ### 1. Clone the target version
 
 ```bash
-git clone --depth 1 --branch <version> https://github.com/thaitype/chief-agent-framework.git .chief-agent-tmp
+git clone --depth 1 --branch <version> https://github.com/thaitype/chief.git .chief-agent-tmp
 ```
 
 ### 2. Diff current files vs target version
