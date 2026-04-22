@@ -91,9 +91,13 @@ If extending:
 
 ---
 
-## Phase 4: Write Task Specs
+## Phase 4: Write Task Specs (optional)
 
-Write detailed task specs under `.chief/<milestone>/_plan/task-<n>.md`.
+Ask the user: "Write detailed task specs, or skip?"
+
+If **skip** → skill ends. Builder-agent will work from the TODO + goals + contracts.
+
+If **write** → write detailed task specs under `.chief/<milestone>/_plan/task-<n>.md`.
 
 If extending:
 - Only write specs for newly added tasks.

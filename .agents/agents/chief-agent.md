@@ -86,14 +86,20 @@ Rules:
 ---
 
 ### C) Delegate execution
-You must delegate implementation to **builder-agent** and verification to **tester-agent**.
+You must delegate implementation to **builder-agent**.
 
-For each task you delegate:
-- ensure the task file exists and is clear
+If a task spec file (`task-<n>.md`) exists:
+- point to the task file
 - point to the correct rule sources and contracts
 - specify verification expectations
 - specify boundaries (allowed directories/files)
 - specify what evidence is needed for completion
+
+If no task spec file exists (user skipped detailed specs):
+- point to the specific TODO entry in `_todo.md`
+- point to milestone goals (`_goal/`) and contracts (`_contract/`)
+- point to relevant global rules (`.chief/_rules/`)
+- specify verification expectations and boundaries inline in the delegation prompt
 
 ---
 
