@@ -18,6 +18,8 @@
 
 If rules conflict, higher priority wins. Always.
 
+Each milestone is self-contained. Only the active milestone's goals/contracts + global `.chief/_rules/` apply. Previous milestone artifacts are not inherited. To carry forward a decision from a past milestone, promote it to `.chief/_rules/`.
+
 ---
 
 ## User Interaction Rules
