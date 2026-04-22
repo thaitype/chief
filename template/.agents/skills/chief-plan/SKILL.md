@@ -1,5 +1,5 @@
 ---
-name: plan-milestone
+name: chief-plan
 description: Plan a new milestone or extend an existing one step-by-step with review gates. Starts with a grill-me session to clarify requirements, then walks through goal → contract → todo → task specs, pausing for user approval at each step.
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: autopilot-chief
-description: Run chief-agent in full autopilot. Requires goals and contracts to exist. Chief creates TODO, delegates to builder, and repeats until milestone is done. Auto mode makes all decisions autonomously; safe mode stops on ambiguity. Use "/autopilot-chief" for auto or "/autopilot-chief safe" for safe mode.
+name: chief-autopilot
+description: Run chief-agent in full autopilot. Requires goals and contracts to exist. Chief creates TODO, delegates to builder, and repeats until milestone is done. Auto mode makes all decisions autonomously; safe mode stops on ambiguity. Use "/chief-autopilot" for auto or "/chief-autopilot safe" for safe mode.
 ---
 
 Run the chief-agent autonomously on the current milestone.
@@ -19,7 +19,7 @@ Before doing anything:
 3. Check that `_contract/` has at least one non-empty file.
 
 If either is missing → **STOP**. Tell the user:
-> "Goals and contracts are required for autopilot. Run `/plan-milestone` first."
+> "Goals and contracts are required for autopilot. Run `/chief-plan` first."
 
 Do NOT proceed.
 
@@ -28,7 +28,7 @@ Do NOT proceed.
 Present the current goals and contracts to the user in a brief summary (file names + 1-line description each).
 
 Ask one question:
-> "Goals and contracts look correct? Proceed with full automation, or use `/plan-milestone` to revise first?"
+> "Goals and contracts look correct? Proceed with full automation, or use `/chief-plan` to revise first?"
 
 If the user says revise → stop.
 If the user confirms → proceed.

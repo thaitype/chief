@@ -1,6 +1,6 @@
 ---
-name: upgrade-chief
-description: Upgrade the Chief Agent Framework to a specific version. Uses upgrade.sh as the primary method, falls back to manual if script fails. Use when the user wants to upgrade the framework (e.g. "/upgrade-chief" or "/upgrade-chief canary").
+name: chief-upgrade
+description: Upgrade the Chief Agent Framework to a specific version. Uses upgrade.sh as the primary method, falls back to manual if script fails. Use when the user wants to upgrade the framework (e.g. "/chief-upgrade" or "/chief-upgrade canary").
 ---
 
 Upgrade the Chief Agent Framework to the version specified in the arguments.
@@ -82,7 +82,7 @@ If upgrade.sh **fails**, proceed to step 5.
 
 ### 5. Manual fallback (if upgrade.sh fails)
 
-Perform the upgrade manually, same as install-chief fallback pattern:
+Perform the upgrade manually, same as chief-install fallback pattern:
 
 1. **Overwrite agent files** — For each `.chief-agent-tmp/template/.agents/agents/*.md`:
    - Extract current `model:` value from the local file

@@ -1,6 +1,6 @@
 ---
-name: install-chief
-description: Install the Chief Agent Framework into the current project. Uses setup.sh as the primary method, then verifies and fixes manually if needed. Use when the user wants to set up the framework (e.g. "/install-chief" or "/install-chief canary").
+name: chief-install
+description: Install the Chief Agent Framework into the current project. Uses setup.sh as the primary method, then verifies and fixes manually if needed. Use when the user wants to set up the framework (e.g. "/chief-install" or "/chief-install canary").
 ---
 
 Install the Chief Agent Framework into the current project.
@@ -25,8 +25,8 @@ Check if the Chief Agent Framework is already installed by looking for these sig
 
 If **any** of these match → the framework is likely already installed. Warn the user and suggest upgrading instead. Show them:
 ```
-npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
-/upgrade-chief
+npx skills@latest add thaitype/chief-agent-framework --skill chief-upgrade
+/chief-upgrade
 ```
 Do NOT proceed unless the user explicitly confirms they want a fresh install.
 
@@ -165,7 +165,7 @@ Tell the user:
 ## Important rules
 
 - NEVER overwrite existing files without explicit user approval
-- If the framework is already installed, suggest `/upgrade-chief` instead
+- If the framework is already installed, suggest `/chief-upgrade` instead
 - Always clean up `.chief-agent-tmp` even if the install is cancelled or fails
 - If the setup script fails, attempt manual fixes before giving up
 - Report all verification results to the user — even successful ones

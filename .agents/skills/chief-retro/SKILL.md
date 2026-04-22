@@ -1,6 +1,6 @@
 ---
-name: retro-chief
-description: Run a retrospective on the current milestone or latest batch. Checks goal/contract coverage, summarizes planned vs delivered, and proposes rule updates. Use "/retro-chief" after completing a batch or milestone.
+name: chief-retro
+description: Run a retrospective on the current milestone or latest batch. Checks goal/contract coverage, summarizes planned vs delivered, and proposes rule updates. Use "/chief-retro" after completing a batch or milestone.
 ---
 
 Run a retrospective on the current milestone.

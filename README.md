@@ -34,11 +34,11 @@ Built for developers already using AI coding agents who want a structured workfl
 Current version is v2, which supports multiple coding agents. If you have v1 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework --skill install-chief
+npx skills@latest add thaitype/chief-agent-framework --skill chief-install
 ```
 
 ```
-/install-chief
+/chief-install
 ```
 
 The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
@@ -64,9 +64,9 @@ project/
 │   │   └── review-plan-agent.md
 │   └── skills/            # Installable skills
 │       ├── grill-me/
-│       ├── plan-milestone/
-│       ├── autopilot-chief/
-│       ├── retro-chief/
+│       ├── chief-plan/
+│       ├── chief-autopilot/
+│       ├── chief-retro/
 │       └── dump-commit/
 ├── .chief/                # Plans, rules, milestones
 │   ├── project.md         # Project-specific config (tech stack, commands)
@@ -117,9 +117,9 @@ There are two ways to work. Pick the one that fits your situation.
 Best for: complex projects, unfamiliar domains, team work.
 
 ```
-/plan-milestone              # grill → goals → contracts → TODO → specs (approval at each step)
+/chief-plan              # grill → goals → contracts → TODO → specs (approval at each step)
 builder-agent: implement task-1 from milestone-1   # delegate tasks one by one
-/retro-chief                 # review coverage and propose rule updates
+/chief-retro                 # review coverage and propose rule updates
 ```
 
 You stay in control. Every goal, contract, and task is reviewed before execution.
@@ -129,30 +129,30 @@ You stay in control. Every goal, contract, and task is reviewed before execution
 Best for: prototyping, well-defined goals, solo work.
 
 ```
-/autopilot-chief             # reads goals + contracts, creates TODO, runs all tasks
-/retro-chief                 # review what happened
+/chief-autopilot             # reads goals + contracts, creates TODO, runs all tasks
+/chief-retro                 # review what happened
 ```
 
-Requires goals and contracts to exist. Use `/plan-milestone` first if they don't, or write them yourself.
+Requires goals and contracts to exist. Use `/chief-plan` first if they don't, or write them yourself.
 
 ### Mix and match
 
 You can combine both. Plan with review gates, then switch to autopilot for execution:
 
 ```
-/plan-milestone              # plan carefully with approval gates
-/autopilot-chief             # execute the approved plan autonomously
-/retro-chief                 # review and learn
+/chief-plan              # plan carefully with approval gates
+/chief-autopilot             # execute the approved plan autonomously
+/chief-retro                 # review and learn
 ```
 
 ## Common Prompts
 
 | What you want                          | What to type                                              |
 | -------------------------------------- | --------------------------------------------------------- |
-| Plan a milestone step-by-step          | `/plan-milestone`                                         |
-| Run milestone on autopilot             | `/autopilot-chief`                                        |
-| Run milestone on autopilot (safe mode) | `/autopilot-chief safe`                                   |
-| Run a retrospective                    | `/retro-chief`                                            |
+| Plan a milestone step-by-step          | `/chief-plan`                                         |
+| Run milestone on autopilot             | `/chief-autopilot`                                        |
+| Run milestone on autopilot (safe mode) | `/chief-autopilot safe`                                   |
+| Run a retrospective                    | `/chief-retro`                                            |
 | Quick commit all changes               | `/dump-commit`                                            |
 | Quick commit with message              | `/dump-commit fix auth flow`                              |
 | Stress-test a plan or design           | `/grill-me`                                               |
@@ -166,19 +166,19 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 **TypeScript SDK for a payment API**
 
 ```
-/plan-milestone
+/chief-plan
 ```
 
 The skill grills you on decisions (e.g. "fetch or axios?", "class-based or functional?"), writes goals and contracts, then breaks the work into tasks. When ready:
 
 ```
-/autopilot-chief
+/chief-autopilot
 ```
 
 Chief-agent runs through all tasks autonomously. When done:
 
 ```
-/retro-chief
+/chief-retro
 ```
 
 Review what was delivered vs planned, and update rules for next time.
@@ -186,7 +186,7 @@ Review what was delivered vs planned, and update rules for next time.
 **Quick prototyping session**
 
 ```
-/autopilot-chief
+/chief-autopilot
 ```
 
 Skip detailed planning — let chief create TODO and delegate to builder on the fly. When you're done for the day:
@@ -202,20 +202,20 @@ Skip detailed planning — let chief create TODO and delegate to builder on the 
 Install the upgrade skill:
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework --skill upgrade-chief
+npx skills@latest add thaitype/chief-agent-framework --skill chief-upgrade
 ```
 
 Then run:
 
 ```
-/upgrade-chief
+/chief-upgrade
 ```
 
 With no arguments, it upgrades to the latest stable release. Or specify a version:
 
 ```
-/upgrade-chief canary
-/upgrade-chief v2.0.0
+/chief-upgrade canary
+/chief-upgrade v2.0.0
 ```
 
 The skill compares your current files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
@@ -237,16 +237,16 @@ To test changes locally before submitting a PR:
 2. In a **separate test project** (not inside this repo), install the skill from your branch:
 
 ```bash
-npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill install-chief
+npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill chief-install
 ```
 
 3. Test it:
 
 ```
-/install-chief <your-branch>
+/chief-install <your-branch>
 ```
 
-The same pattern works for other skills like `upgrade-chief`
+The same pattern works for other skills like `chief-upgrade`
 
 ## Contributing
 

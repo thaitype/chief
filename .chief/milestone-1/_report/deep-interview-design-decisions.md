@@ -37,8 +37,8 @@ Designing a `deep-interview` skill for the Chief Agent Framework, inspired by [o
 - NOT directly to `_goal/` or `_contract/`. User promotes on approval.
 
 ### 7. Execution bridge options
-1. `/plan-milestone` — plan with review gates
-2. `/autopilot-chief` — autonomous execution
+1. `/chief-plan` — plan with review gates
+2. `/chief-autopilot` — autonomous execution
 3. Write goals/contracts only — promote spec, stop there
 4. Refine further — continue interviewing
 
@@ -57,4 +57,4 @@ Designing a `deep-interview` skill for the Chief Agent Framework, inspired by [o
 
 ## Open — Not Yet Implemented
 - The actual SKILL.md file has not been written yet.
-- plan-milestone Phase 0 still uses grill-me, not deep-interview. Both remain available as separate tools.
+- chief-plan Phase 0 still uses grill-me, not deep-interview. Both remain available as separate tools.

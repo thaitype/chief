@@ -4,10 +4,10 @@
 
 | Skill | Description |
 |-------|-------------|
-| `/plan-milestone` | Plan a milestone step-by-step with review gates |
-| `/autopilot-chief` | Run milestone on full autopilot (auto mode) |
-| `/autopilot-chief safe` | Run milestone with stops on ambiguity |
-| `/retro-chief` | Retrospective — check coverage, summarize, propose rules |
+| `/chief-plan` | Plan a milestone step-by-step with review gates |
+| `/chief-autopilot` | Run milestone on full autopilot (auto mode) |
+| `/chief-autopilot safe` | Run milestone with stops on ambiguity |
+| `/chief-retro` | Retrospective — check coverage, summarize, propose rules |
 | `/dump-commit` | Quick commit all files with 1-line message |
 | `/dump-commit fix auth` | Quick commit with custom message |
 | `/grill-me` | Stress-test a plan or design |
@@ -57,14 +57,14 @@ Report findings back — do not fix code.
 
 **Full planning + autopilot:**
 ```
-/plan-milestone          → goals → contracts → TODO → approve
-/autopilot-chief         → runs all tasks
-/retro-chief             → review + propose rule updates
+/chief-plan          → goals → contracts → TODO → approve
+/chief-autopilot         → runs all tasks
+/chief-retro             → review + propose rule updates
 ```
 
 **Quick prototyping:**
 ```
-/autopilot-chief         → chief figures out tasks from goals/contracts
+/chief-autopilot         → chief figures out tasks from goals/contracts
 /dump-commit wip: progress
 ```
 
