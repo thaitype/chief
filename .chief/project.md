@@ -16,10 +16,14 @@ project/
 ├── .chief/                # Dogfooded planning state
 ├── template/              # Installable package — what setup copies into user projects
 │   ├── .agents/           # Agent definitions with ${thinking_model}/${coding_model} placeholders
+│   │   ├── agents/        # chief-agent, builder-agent, tester-agent, review-plan-agent
+│   │   └── skills/        # grill-me, plan-milestone, autopilot-chief, retro-chief, dump-commit
 │   ├── .chief/            # Blank project scaffold (empty project.md, _rules/, etc.)
 │   └── AGENTS.md          # Framework rules file
 ├── scripts/
-│   └── setup.sh           # Installation script
+│   ├── setup.sh           # First-time installation script
+│   └── upgrade.sh         # Framework upgrade script
+├── skills/                # Skills not shipped in template (install-chief, upgrade-chief)
 └── docs/                  # Additional documentation
 ```
 

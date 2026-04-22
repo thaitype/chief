@@ -63,7 +63,11 @@ project/
 │   │   ├── tester-agent.md
 │   │   └── review-plan-agent.md
 │   └── skills/            # Installable skills
-│       └── grill-me/
+│       ├── grill-me/
+│       ├── plan-milestone/
+│       ├── autopilot-chief/
+│       ├── retro-chief/
+│       └── dump-commit/
 ├── .chief/                # Plans, rules, milestones
 │   ├── project.md         # Project-specific config (tech stack, commands)
 │   ├── MANUAL.md          # Framework usage guide
@@ -102,21 +106,21 @@ Milestones can be simple (`milestone-1`, `milestone-2`) or reference your projec
 | chief-agent       | You start here. Give it a goal.                                                 | Plan work, review progress, or change direction             |
 | review-plan-agent | Optional. Not part of the automatic flow.                                       | When you want to validate a plan for contradictions         |
 | builder-agent     | Chief delegates tasks to it after plan is reviewed                              | When a task is ready and you want to start building         |
-| tester-agent      | Runs after builder finishes                                                     | When you need integration/E2E testing beyond unit tests     |
+| tester-agent      | Only when you request it — not part of the automatic flow                        | When you need integration/E2E testing beyond unit tests     |
 
 ## Quick Start Example
 
 You're building a CLI that converts markdown to PDF. Here's the full workflow:
 
-**1. Start a milestone**
+**1. Plan a milestone**
 
 ```
-chief-agent: plan milestone-1, goal is to build a CLI that converts markdown to PDF with support for custom templates
+/plan-milestone
 ```
 
-Chief-agent reads your rules, asks you a few key design questions (e.g. "which PDF library?"), creates contracts, and breaks the work into tasks.
+The skill grills you on requirements, then walks through goals → contracts → TODO → task specs, pausing for your approval at each step.
 
-**2. Build**
+**2. Build (manual)**
 
 ```
 builder-agent: implement task-1 from milestone-1
@@ -124,45 +128,73 @@ builder-agent: implement task-1 from milestone-1
 
 Builder implements, runs tests, fixes lint errors, and commits.
 
-**3. Review progress**
+**2b. Or go full autopilot**
 
 ```
-chief-agent: review milestone-1 progress and plan next tasks
+/autopilot-chief
 ```
 
-Chief reviews completed work, plans the next batch of tasks.
+Chief-agent creates tasks and delegates to builder automatically. Runs until the milestone is done.
 
-**4. Repeat until done.**
+**3. Retrospective**
+
+```
+/retro-chief
+```
+
+Checks goal/contract coverage, summarizes what was planned vs delivered, and proposes rule updates.
+
+**4. Repeat for the next milestone.**
 
 ## Common Prompts
 
-| What you want                                                              | What to type                                              |
-| -------------------------------------------------------------------------- | --------------------------------------------------------- |
-| Start a new milestone                                                      | `chief-agent: plan milestone-1, goal is to ...`           |
-| Check progress                                                             | `chief-agent: review milestone-1 progress`                |
-| Start building a task                                                      | `builder-agent: implement task-1 from milestone-1`        |
-| Validate a plan for contradictions (optional)                              | `review-plan-agent: review milestone-1 plan`              |
-| Run integration tests                                                      | `tester-agent: validate milestone-1`                      |
-| Change direction mid-milestone                                             | `chief-agent: update milestone-1, new goal is to ...`     |
-| Set up project config with help                                            | `chief-agent: use grill-me to help me fill in project.md` |
+| What you want                          | What to type                                              |
+| -------------------------------------- | --------------------------------------------------------- |
+| Plan a milestone step-by-step          | `/plan-milestone`                                         |
+| Run milestone on autopilot             | `/autopilot-chief`                                        |
+| Run milestone on autopilot (safe mode) | `/autopilot-chief safe`                                   |
+| Run a retrospective                    | `/retro-chief`                                            |
+| Quick commit all changes               | `/dump-commit`                                            |
+| Quick commit with message              | `/dump-commit fix auth flow`                              |
+| Stress-test a plan or design           | `/grill-me`                                               |
+| Start building a task manually         | `builder-agent: implement task-1 from milestone-1`        |
+| Validate a plan for contradictions     | `review-plan-agent: review milestone-1 plan`              |
+| Run integration tests (user-triggered) | `tester-agent: validate milestone-1`                      |
+| Set up project config                  | `chief-agent: use grill-me to help me fill in project.md` |
 
 ## More Examples
 
 **TypeScript SDK for a payment API**
 
 ```
-chief-agent: plan milestone-1, goal is to create a TypeScript SDK for our payment API with typed request/response and error handling
+/plan-milestone
 ```
 
-Chief-agent will ask key decisions (e.g. "fetch or axios?", "class-based or functional?"), then plan tasks like: generate types from OpenAPI spec, implement client methods, write tests, add docs.
-
-**React component library with Storybook**
+The skill grills you on decisions (e.g. "fetch or axios?", "class-based or functional?"), writes goals and contracts, then breaks the work into tasks. When ready:
 
 ```
-chief-agent: plan milestone-1, goal is to build a React component library with Button, Input, and Modal components, documented in Storybook
+/autopilot-chief
 ```
 
-Chief-agent handles the planning — task breakdown, component contracts, verification steps. You answer a couple of design decisions, builder does the rest.
+Chief-agent runs through all tasks autonomously. When done:
+
+```
+/retro-chief
+```
+
+Review what was delivered vs planned, and update rules for next time.
+
+**Quick prototyping session**
+
+```
+/autopilot-chief
+```
+
+Skip detailed planning — let chief create TODO and delegate to builder on the fly. When you're done for the day:
+
+```
+/dump-commit wip: payment SDK progress
+```
 
 ## Upgrading
 
@@ -215,7 +247,7 @@ npx skills@latest add thaitype/chief-agent-framework#<your-branch> --skill insta
 /install-chief <your-branch>
 ```
 
-The same pattern works for other skills like `upgrade-chief`.
+The same pattern works for other skills like `upgrade-chief`
 
 ## Contributing
 

@@ -63,7 +63,11 @@ project/
 │   │   ├── tester-agent.md
 │   │   └── review-plan-agent.md
 │   └── skills/            # Skills ที่ติดตั้งได้
-│       └── grill-me/
+│       ├── grill-me/
+│       ├── plan-milestone/
+│       ├── autopilot-chief/
+│       ├── retro-chief/
+│       └── dump-commit/
 ├── .chief/                # Plans, rules, milestones
 │   ├── project.md         # Config เฉพาะโปรเจกต์ (tech stack, commands)
 │   ├── MANUAL.md          # คู่มือการใช้งาน framework
@@ -102,21 +106,21 @@ Milestones สามารถเป็นแบบง่าย (`milestone-1`, `
 | chief-agent       | เริ่มจากตรงนี้ ให้เป้าหมายมัน                             | วางแผน, ดู progress หรือเปลี่ยนทิศทาง                        |
 | review-plan-agent | ไม่บังคับ ไม่ได้เป็นส่วนของ flow อัตโนมัติ                  | เมื่อต้องการตรวจ plan หาข้อขัดแย้ง                            |
 | builder-agent     | Chief มอบหมาย task หลังจาก plan ถูก review แล้ว           | เมื่อ task พร้อมและต้องการเริ่มสร้าง                          |
-| tester-agent      | ทำงานหลัง builder เสร็จ                                   | เมื่อต้องการ integration/E2E testing นอกเหนือจาก unit tests   |
+| tester-agent      | เฉพาะเมื่อคุณร้องขอเท่านั้น — ไม่ได้เป็นส่วนของ flow อัตโนมัติ | เมื่อต้องการ integration/E2E testing นอกเหนือจาก unit tests   |
 
 ## ตัวอย่าง Quick Start
 
 คุณกำลังสร้าง CLI ที่แปลง markdown เป็น PDF นี่คือ workflow ทั้งหมด:
 
-**1. เริ่ม milestone**
+**1. วางแผน milestone**
 
 ```
-chief-agent: plan milestone-1, goal is to build a CLI that converts markdown to PDF with support for custom templates
+/plan-milestone
 ```
 
-Chief-agent อ่าน rules ของคุณ ถามคำถาม design ที่สำคัญ (เช่น "ใช้ PDF library ตัวไหน?") สร้าง contracts และแบ่งงานเป็น tasks
+Skill จะกริลคุณเรื่อง requirements จากนั้นเดินผ่าน goals → contracts → TODO → task specs โดยหยุดรอการอนุมัติในแต่ละขั้นตอน
 
-**2. สร้าง**
+**2. สร้าง (manual)**
 
 ```
 builder-agent: implement task-1 from milestone-1
@@ -124,45 +128,73 @@ builder-agent: implement task-1 from milestone-1
 
 Builder ลงมือทำ รัน tests แก้ lint errors และ commit
 
-**3. ดู progress**
+**2b. หรือใช้ autopilot**
 
 ```
-chief-agent: review milestone-1 progress and plan next tasks
+/autopilot-chief
 ```
 
-Chief ทบทวนงานที่เสร็จแล้ว วางแผน tasks ชุดถัดไป
+Chief-agent สร้าง tasks และมอบหมายให้ builder อัตโนมัติ ทำจนกว่า milestone จะเสร็จ
 
-**4. ทำซ้ำจนเสร็จ**
+**3. Retrospective**
+
+```
+/retro-chief
+```
+
+ตรวจสอบ coverage ของ goal/contract สรุปสิ่งที่วางแผนไว้กับที่ทำจริง และเสนอการอัปเดต rules
+
+**4. ทำซ้ำสำหรับ milestone ถัดไป**
 
 ## Prompts ที่ใช้บ่อย
 
-| สิ่งที่ต้องการ                                  | สิ่งที่ต้องพิมพ์                                            |
-| ---------------------------------------------- | --------------------------------------------------------- |
-| เริ่ม milestone ใหม่                             | `chief-agent: plan milestone-1, goal is to ...`           |
-| ดู progress                                     | `chief-agent: review milestone-1 progress`                |
-| เริ่มสร้าง task                                  | `builder-agent: implement task-1 from milestone-1`        |
-| ตรวจ plan หาข้อขัดแย้ง (ไม่บังคับ)                | `review-plan-agent: review milestone-1 plan`              |
-| รัน integration tests                           | `tester-agent: validate milestone-1`                      |
-| เปลี่ยนทิศทางกลาง milestone                      | `chief-agent: update milestone-1, new goal is to ...`     |
-| ตั้งค่า project config ด้วยความช่วยเหลือ          | `chief-agent: use grill-me to help me fill in project.md` |
+| สิ่งที่ต้องการ                              | สิ่งที่ต้องพิมพ์                                            |
+| ------------------------------------------ | --------------------------------------------------------- |
+| วางแผน milestone ทีละขั้น                    | `/plan-milestone`                                         |
+| รัน milestone แบบ autopilot                  | `/autopilot-chief`                                        |
+| รัน milestone แบบ autopilot (safe mode)      | `/autopilot-chief safe`                                   |
+| รัน retrospective                           | `/retro-chief`                                            |
+| Quick commit ทุกไฟล์                         | `/dump-commit`                                            |
+| Quick commit พร้อมข้อความ                    | `/dump-commit fix auth flow`                              |
+| กริลแผนหรือ design                           | `/grill-me`                                               |
+| เริ่มสร้าง task แบบ manual                    | `builder-agent: implement task-1 from milestone-1`        |
+| ตรวจ plan หาข้อขัดแย้ง                        | `review-plan-agent: review milestone-1 plan`              |
+| รัน integration tests (user-triggered)       | `tester-agent: validate milestone-1`                      |
+| ตั้งค่า project config                        | `chief-agent: use grill-me to help me fill in project.md` |
 
 ## ตัวอย่างเพิ่มเติม
 
 **TypeScript SDK สำหรับ payment API**
 
 ```
-chief-agent: plan milestone-1, goal is to create a TypeScript SDK for our payment API with typed request/response and error handling
+/plan-milestone
 ```
 
-Chief-agent จะถามการตัดสินใจสำคัญ (เช่น "fetch หรือ axios?", "class-based หรือ functional?") แล้ววางแผน tasks เช่น: generate types จาก OpenAPI spec, implement client methods, เขียน tests, เพิ่ม docs
-
-**React component library พร้อม Storybook**
+Skill จะกริลคุณเรื่องการตัดสินใจ (เช่น "fetch หรือ axios?", "class-based หรือ functional?") เขียน goals และ contracts แล้วแบ่งงานเป็น tasks เมื่อพร้อม:
 
 ```
-chief-agent: plan milestone-1, goal is to build a React component library with Button, Input, and Modal components, documented in Storybook
+/autopilot-chief
 ```
 
-Chief-agent จัดการวางแผน — task breakdown, component contracts, verification steps คุณตอบคำถาม design สองสามข้อ builder ทำที่เหลือ
+Chief-agent รันทุก tasks อัตโนมัติ เมื่อเสร็จ:
+
+```
+/retro-chief
+```
+
+ทบทวนสิ่งที่ทำได้เทียบกับแผน และอัปเดต rules สำหรับครั้งถัดไป
+
+**Prototyping แบบเร็ว**
+
+```
+/autopilot-chief
+```
+
+ข้ามการวางแผนละเอียด — ให้ chief สร้าง TODO และมอบหมายให้ builder ทันที เมื่อทำเสร็จวันนั้น:
+
+```
+/dump-commit wip: payment SDK progress
+```
 
 ## การอัปเกรด
 
