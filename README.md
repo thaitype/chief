@@ -4,7 +4,7 @@
 
 A portable framework that reduces the cognitive load of working with AI coding agents — without sacrificing quality or speed.
 
-> Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [elder](https://github.com/thaitype/elder) as its behavioral baseline.
+> Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [sage](https://github.com/thaitype/sage) as its behavioral baseline.
 
 > Under the hood, Chief is just markdown files. It defines structure for your AI agents to follow.
 
