@@ -1,0 +1,7 @@
+{
+  "name": "chief-skills",
+  "skills": [
+    "./skills/setup/chief-install",
+    "./skills/setup/chief-upgrade"
+  ]
+}
