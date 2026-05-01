@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "pluginRoot": "./"
+  },
+  "plugins": [
+    {
+      "name": "chief-skills",
+      "source": "./",
+      "skills": [
+        "./skills/setup/chief-install",
+        "./skills/setup/chief-upgrade",
+        "./skills/chief/chief-autopilot",
+        "./skills/chief/chief-plan",
+        "./skills/chief/chief-retro",
+        "./skills/misc/dump-commit"
+      ]
+    },
+    {
+      "name": "mattpocock-imports",
+      "source": "./",
+      "skills": [
+        "./skills/mattpocock/grill-me"
+      ]
+    }
+  ]
+}
