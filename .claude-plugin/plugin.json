@@ -2,6 +2,11 @@
   "name": "chief-skills",
   "skills": [
     "./skills/setup/chief-install",
-    "./skills/setup/chief-upgrade"
+    "./skills/setup/chief-upgrade",
+    "./skills/misc/dump-commit",
+    "./skills/chief/chief-autopilot",
+    "./skills/chief/chief-plan",
+    "./skills/chief/chief-retro",
+    "./skills/mattpocock/grill-me"
   ]
 }
