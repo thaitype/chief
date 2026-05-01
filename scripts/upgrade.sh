@@ -2,7 +2,7 @@
 set -eo pipefail
 
 # Chief Agent Framework - Upgrade Script
-# Overwrites .agents/ (agents + skills) from template,
+# Overwrites .agents/agents/ from template,
 # preserving user model values and updating coding agent integrations.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,7 +25,7 @@ print_usage() {
   echo "  --mode copy           Copy files instead of symlinking"
   echo ""
   echo "Agents:"
-  echo "  claude-code   Claude Code (CLAUDE.md + .claude/agents/ and .claude/skills/)"
+  echo "  claude-code   Claude Code (CLAUDE.md + .claude/agents/)"
   echo "  opencode      OpenCode (reads AGENTS.md and .agents/ directly)"
   echo "  codex         Codex CLI (reads AGENTS.md directly)"
   echo "  cursor        Cursor (reads AGENTS.md directly)"
@@ -180,67 +180,6 @@ for local_file in "$TARGET_DIR/.agents/agents"/*.md; do
   fi
 done
 
-# --- Compare skill files ---
-
-echo "========================================"
-echo ""
-echo "## Skills (.agents/skills/)"
-echo ""
-
-# Check template skills
-for template_skill_dir in "$TEMPLATE_DIR/.agents/skills"/*/; do
-  if [[ ! -d "$template_skill_dir" ]]; then
-    continue
-  fi
-  skill_name="$(basename "$template_skill_dir")"
-  local_skill_dir="$TARGET_DIR/.agents/skills/$skill_name"
-
-  if [[ -d "$local_skill_dir" ]]; then
-    # Compare all files in the skill
-    has_changes=false
-    while IFS= read -r -d '' template_file; do
-      rel="${template_file#$template_skill_dir}"
-      local_file="$local_skill_dir/$rel"
-      if [[ -f "$local_file" ]]; then
-        if ! diff -q "$local_file" "$template_file" >/dev/null 2>&1; then
-          has_changes=true
-          echo "**$skill_name/$rel** — UPDATE"
-          echo ""
-          diff "$local_file" "$template_file" --label "local/$skill_name/$rel" --label "target/$skill_name/$rel" -u || true
-          echo ""
-          UPDATES+=("skill:$skill_name/$rel")
-        fi
-      else
-        echo "**$skill_name/$rel** — NEW file in existing skill"
-        echo ""
-        NEW_FILES+=("skill:$skill_name/$rel")
-      fi
-    done < <(find "$template_skill_dir" -type f -print0)
-
-    if [[ "$has_changes" == false ]]; then
-      echo "**$skill_name/** — no changes"
-      echo ""
-    fi
-  else
-    echo "**$skill_name/** — NEW skill"
-    echo ""
-    NEW_FILES+=("skill:$skill_name")
-  fi
-done
-
-# Check for local-only skills
-for local_skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
-  if [[ ! -d "$local_skill_dir" ]]; then
-    continue
-  fi
-  skill_name="$(basename "$local_skill_dir")"
-  template_skill_dir="$TEMPLATE_DIR/.agents/skills/$skill_name"
-  if [[ ! -d "$template_skill_dir" ]]; then
-    echo "**$skill_name/** — local-only (kept)"
-    echo ""
-  fi
-done
-
 # --- Summary ---
 
 echo "========================================"
@@ -294,22 +233,6 @@ for template_file in "$TEMPLATE_DIR/.agents/agents"/*.md; do
   fi
 done
 
-# Overwrite/add skills
-for template_skill_dir in "$TEMPLATE_DIR/.agents/skills"/*/; do
-  if [[ ! -d "$template_skill_dir" ]]; then
-    continue
-  fi
-  skill_name="$(basename "$template_skill_dir")"
-  local_skill_dir="$TARGET_DIR/.agents/skills/$skill_name"
-
-  if [[ -d "$local_skill_dir" ]]; then
-    rm -rf "$local_skill_dir"
-  fi
-  cp -r "$template_skill_dir" "$local_skill_dir"
-  echo "  UPDATE .agents/skills/$skill_name/"
-done
-
-
 # --- Model replacement for new agent files ---
 
 for local_file in "$TARGET_DIR/.agents/agents"/*.md; do
@@ -335,7 +258,6 @@ echo "Updating $AGENT integration..."
 case "$AGENT" in
   claude-code)
     mkdir -p "$TARGET_DIR/.claude/agents"
-    mkdir -p "$TARGET_DIR/.claude/skills"
 
     if [[ "$MODE" == "link" ]]; then
       # Re-create agent symlinks
@@ -346,18 +268,6 @@ case "$AGENT" in
         ln -s "../../.agents/agents/$filename" "$link_path"
         echo "  LINK .claude/agents/$filename"
       done
-
-      # Re-create skill symlinks
-      for skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
-        if [[ -d "$skill_dir" ]]; then
-          skill_name="$(basename "$skill_dir")"
-          link_path="$TARGET_DIR/.claude/skills/$skill_name"
-          rm -rf "$link_path"
-          ln -s "../../.agents/skills/$skill_name" "$link_path"
-          echo "  LINK .claude/skills/$skill_name"
-        fi
-      done
-
     else
       # Re-copy agent files
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
@@ -365,17 +275,6 @@ case "$AGENT" in
         cp "$agent_file" "$TARGET_DIR/.claude/agents/$filename"
         echo "  COPY .claude/agents/$filename"
       done
-
-      # Re-copy skills
-      for skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
-        if [[ -d "$skill_dir" ]]; then
-          skill_name="$(basename "$skill_dir")"
-          rm -rf "$TARGET_DIR/.claude/skills/$skill_name"
-          cp -r "$skill_dir" "$TARGET_DIR/.claude/skills/$skill_name"
-          echo "  COPY .claude/skills/$skill_name"
-        fi
-      done
-
     fi
     ;;
 

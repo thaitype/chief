@@ -90,22 +90,16 @@ Perform the upgrade manually, same as chief-install fallback pattern:
    - Replace `${thinking_model}` and `${coding_model}` with extracted model value
    - For new agent files (no local equivalent): copy and handle model placeholders
 
-2. **Overwrite skills** — For each `.chief-agent-tmp/template/.agents/skills/*/`:
-   - Remove local skill directory
-   - Copy template skill directory
-
-3. **Update integration files** based on agent and mode:
+2. **Update integration files** based on agent and mode:
 
    **claude-code link:**
    ```bash
    for f in .agents/agents/*.md; do ln -sf "../../$f" ".claude/agents/$(basename "$f")"; done
-   for d in .agents/skills/*/; do ln -sfn "../../$d" ".claude/skills/$(basename "$d")"; done
    ```
 
    **claude-code copy:**
    ```bash
    cp .agents/agents/*.md .claude/agents/
-   cp -r .agents/skills/* .claude/skills/
    ```
 
    **copilot link:**
@@ -120,7 +114,7 @@ Perform the upgrade manually, same as chief-install fallback pattern:
 
    **Other agents** — no integration files needed.
 
-5. **Model placeholders** — If any file still has `${thinking_model}` or `${coding_model}`:
+3. **Model placeholders** — If any file still has `${thinking_model}` or `${coding_model}`:
    - claude-code: replace with `opus`/`sonnet`
    - Others: ask user for model names, replace
 

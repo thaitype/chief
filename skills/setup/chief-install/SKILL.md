@@ -70,17 +70,15 @@ For `claude-code` only, set up Claude Code integration:
 Link mode:
 ```bash
 ln -s AGENTS.md CLAUDE.md
-mkdir -p .claude/agents .claude/skills
+mkdir -p .claude/agents
 for f in .agents/agents/*.md; do ln -s "../../$f" ".claude/agents/$(basename "$f")"; done
-for d in .agents/skills/*/; do ln -s "../../$d" ".claude/skills/$(basename "$d")"; done
 ```
 
 Copy mode:
 ```bash
 cp AGENTS.md CLAUDE.md
-mkdir -p .claude/agents .claude/skills
+mkdir -p .claude/agents
 cp .agents/agents/*.md .claude/agents/
-cp -r .agents/skills/* .claude/skills/
 ```
 
 For `copilot` only, set up GitHub Copilot integration:
@@ -116,7 +114,6 @@ After the setup script or manual install completes, verify that the installation
    - `.agents/agents/builder-agent.md`
    - `.agents/agents/tester-agent.md`
    - `.agents/agents/review-plan-agent.md`
-   - `.agents/skills/grill-me/SKILL.md`
    - `.chief/project.md`
    - `.chief/_rules/`
    - `AGENTS.md`
@@ -124,7 +121,6 @@ After the setup script or manual install completes, verify that the installation
 2. **Claude Code only** (if agent is `claude-code`):
    - `CLAUDE.md` exists (symlink or copy depending on mode)
    - `.claude/agents/` contains entries for all 4 agents
-   - `.claude/skills/` contains entry for grill-me
    - If link mode: verify symlinks resolve correctly
 
 3. **Copilot only** (if agent is `copilot`):
@@ -140,9 +136,8 @@ If any verification check fails, fix it manually:
 - **Missing CLAUDE.md** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on mode
 - **Missing .claude/ symlinks** → create them individually:
   ```bash
-  mkdir -p .claude/agents .claude/skills
+  mkdir -p .claude/agents
   ln -s ../../.agents/agents/<file>.md .claude/agents/<file>.md
-  ln -s ../../.agents/skills/<skill> .claude/skills/<skill>
   ```
 - **Broken symlink** → remove and recreate
 - **Wrong mode** (e.g. user wanted link but got copy) → remove and recreate with correct mode

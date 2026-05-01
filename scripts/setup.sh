@@ -18,7 +18,7 @@ print_usage() {
   echo "Usage: bash scripts/setup.sh [--mode link|copy] --agent <agent>"
   echo ""
   echo "Agents:"
-  echo "  claude-code   Claude Code (CLAUDE.md + .claude/agents/ and .claude/skills/)"
+  echo "  claude-code   Claude Code (CLAUDE.md + .claude/agents/)"
   echo "  opencode      OpenCode (reads AGENTS.md and .agents/ directly)"
   echo "  codex         Codex CLI (reads AGENTS.md directly)"
   echo "  cursor        Cursor (reads AGENTS.md directly)"
@@ -286,7 +286,6 @@ case "$AGENT" in
     replace_models "$TARGET_DIR" ".agents/agents" "opus" "sonnet"
 
     mkdir -p "$TARGET_DIR/.claude/agents"
-    mkdir -p "$TARGET_DIR/.claude/skills"
 
     if [[ "$MODE" == "link" ]]; then
       # Symlink CLAUDE.md to AGENTS.md
@@ -297,14 +296,6 @@ case "$AGENT" in
         filename="$(basename "$agent_file")"
         create_symlink "../../.agents/agents/$filename" "$TARGET_DIR/.claude/agents/$filename" ".claude/agents/$filename"
       done
-
-      # Symlink individual skill directories
-      for skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
-        if [[ -d "$skill_dir" ]]; then
-          skill_name="$(basename "$skill_dir")"
-          create_symlink "../../.agents/skills/$skill_name" "$TARGET_DIR/.claude/skills/$skill_name" ".claude/skills/$skill_name"
-        fi
-      done
     else
       # Copy CLAUDE.md from AGENTS.md
       copy_to_dest "$TARGET_DIR/AGENTS.md" "$TARGET_DIR/CLAUDE.md" "CLAUDE.md (copy of AGENTS.md)"
@@ -313,14 +304,6 @@ case "$AGENT" in
       for agent_file in "$TARGET_DIR/.agents/agents"/*.md; do
         filename="$(basename "$agent_file")"
         copy_to_dest "$agent_file" "$TARGET_DIR/.claude/agents/$filename" ".claude/agents/$filename"
-      done
-
-      # Copy individual skill directories
-      for skill_dir in "$TARGET_DIR/.agents/skills"/*/; do
-        if [[ -d "$skill_dir" ]]; then
-          skill_name="$(basename "$skill_dir")"
-          copy_to_dest "$skill_dir" "$TARGET_DIR/.claude/skills/$skill_name" ".claude/skills/$skill_name"
-        fi
       done
     fi
     ;;

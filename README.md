@@ -8,7 +8,7 @@ A portable framework that reduces the cognitive load of working with AI coding a
 
 > Under the hood, Chief is just markdown files. It defines structure for your AI agents to follow.
 
-> You're currently on v3 docs. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1). Chief was previously known as `chief-agent-framework`.
+> You're currently on v4 docs. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1). Chief was previously known as `chief-agent-framework`.
 
 Chief is a structured workflow for AI coding agents. You define rules and goals once, and agents handle planning, building, and verification across sessions — milestone by milestone.
 
@@ -27,23 +27,25 @@ Built for developers already using AI coding agents who want a structured workfl
 
 | Coding Agent                                                    | Integration                                           | Notes                                  |
 | --------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------- |
-| Claude Code                                                     | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support (agents + skills)         |
-| GitHub Copilot                                                  | `.github/agents/` symlinks or copies                  | Full support (agents)                  |
+| Claude Code                                                     | `CLAUDE.md → AGENTS.md` symlink + `.claude/` symlinks | Full support                            |
+| GitHub Copilot                                                  | `.github/agents/` symlinks or copies                  | Full support                            |
 | OpenCode, Codex, Cursor, Gemini CLI, Amp, Windsurf, Kiro, Aider | Reads `AGENTS.md` natively                            | Should work out of the box (untested ⚠️ — [open an issue](https://github.com/thaitype/chief/issues) if you hit problems) |
 
 ## Setup
 
-Current version is v3. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below.
+Current version is v4. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
-npx skills@latest add thaitype/chief --skill chief-install
+# 1. Install Chief skills (chief-install, chief-upgrade, chief-plan, chief-autopilot, chief-retro, dump-commit, grill-me)
+npx skills@latest add thaitype/chief
 ```
 
 ```
+# 2. Install framework files (agents, .chief/, AGENTS.md)
 /chief-install
 ```
 
-The skill asks which coding agent you use, picks the install mode, copies framework files, and sets up everything.
+Step 1 fetches the slash-command skills via the [vercel skills](https://github.com/vercel-labs/skills) ecosystem. Step 2 runs the `chief-install` skill, which asks which coding agent you use, picks the install mode, and copies the framework files.
 
 For manual installation options (shell script, git clone), see [docs/manual-install.md](docs/manual-install.md).
 
@@ -60,7 +62,7 @@ project/
 ├── .github/agents/        # Copilot agent definitions (symlinks or copies)
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
-│   └── skills/            # Installable skills
+│   └── skills/            # Installed via npx skills (separate from /chief-install)
 ├── .chief/                # Plans, rules, milestones
 │   ├── project.md         # Project-specific config (tech stack, commands)
 │   ├── MANUAL.md          # Framework usage guide
@@ -68,12 +70,12 @@ project/
 │   └── milestone-1/       # First milestone
 ├── .claude/               # Claude Code integration (symlinks)
 │   ├── agents/ → .agents/agents/*
-│   └── skills/ → .agents/skills/*
+│   └── skills/ → .agents/skills/*   # Installed via npx skills
 ```
 
 ## How It Works
 
-- `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions and skills
+- `.agents/` is the **canonical, coding-agent-agnostic** location for agent definitions; skills are managed separately by `npx skills` and land under `.agents/skills/`
 - `.chief/` contains planning, rules, milestones, and project configuration
 - `AGENTS.md` defines the highest-authority framework rules
 - `CLAUDE.md` is a symlink to `AGENTS.md` (Claude Code only)
@@ -190,26 +192,24 @@ Skip detailed planning — let chief create TODO and delegate to builder on the 
 
 ## Upgrading
 
-Install the upgrade skill:
-
 ```bash
-npx skills@latest add thaitype/chief --skill chief-upgrade
+# 1. Refresh Chief skills
+npx skills@latest add thaitype/chief
 ```
 
-Then run:
-
 ```
+# 2. Upgrade framework files
 /chief-upgrade
 ```
 
-With no arguments, it upgrades to the latest stable release. Or specify a version:
+Step 1 re-installs every Chief skill at the latest version (the picker shows you what's new — `npx skills add` is idempotent, so re-running it is the supported refresh path). Step 2 runs the `chief-upgrade` skill, which compares your current framework files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
+
+With no arguments, `/chief-upgrade` targets the latest stable release. Or specify a version:
 
 ```
 /chief-upgrade canary
-/chief-upgrade v3.0.0
+/chief-upgrade v4.0.0
 ```
-
-The skill compares your current files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
 
 ### Coming from v2
 
@@ -231,11 +231,12 @@ See the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release
 - v1 — Initial release, focused on Claude Code support. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1).
 - v2 — Multi-agent support, added skills system. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2).
 - v3 — Renamed to Chief as part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. Skills renamed to `chief-` prefix (`chief-install`, `chief-upgrade`). Repo moved to [`thaitype/chief`](https://github.com/thaitype/chief).
+- v4 — Skills decoupled from framework install. `/chief-install` and `/chief-upgrade` no longer manage skills; install and refresh skills via `npx skills@latest add thaitype/chief`.
 
 ## Branches
 - `release/v1` — Stable v1 release
 - `release/v2` — Stable v2 release
-- `main` - latest stable release (currently v3)
+- `main` - latest stable release (currently v4)
 - `canary` - active development branch, may be unstable
 
 ## Development
@@ -255,7 +256,7 @@ npx skills@latest add thaitype/chief#<your-branch> --skill chief-install
 /chief-install <your-branch>
 ```
 
-The same pattern works for other skills like `chief-upgrade`
+The same pattern works for other skills like `chief-upgrade`. To pull the entire bundle from a branch instead of a single skill, drop the `--skill` flag: `npx skills@latest add thaitype/chief#<your-branch>`.
 
 ## Contributing
 
