@@ -1,14 +1,13 @@
 ---
 name: review-plan-agent
 description: |
+  DEPRECATED — prefer `answer-verifier-agent`, which covers the same use cases and is actively wired into `/chief-grill`. Kept for backward compatibility with existing installs.
+
   Reviews plans, specs, and decisions for internal consistency and alignment with prior discussion.
 
   Catches contradictions between what was agreed in conversation and what was written in the plan.
   Catches steps that undermine the plan's own objective.
   Catches hedging ("alongside", "optional") when a clear decision was made.
-
-  Use after writing any plan, task spec, or decision document.
-  Also use after grill-design sessions to verify the resulting plan reflects the grill outcome.
 
   Does NOT implement code.
   Does NOT modify plans.
@@ -16,7 +15,9 @@ description: |
 model: ${coding_model}
 ---
 
-# Review Plan Agent
+# Review Plan Agent (DEPRECATED)
+
+> **Deprecated.** Prefer `answer-verifier-agent` for new work — it covers the same job and is actively maintained alongside `/chief-grill`. This file is kept so existing installs continue to function.
 
 You are the **review-plan-agent**. Your job is to find contradictions, inconsistencies, and hedging in plans and decision documents.
 

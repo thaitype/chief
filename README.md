@@ -111,10 +111,11 @@ Milestones can be simple (`milestone-1`, `milestone-2`) or reference your projec
 
 | Agent             | When it works                                                                   | When to call manually                                       |
 | ----------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| chief-agent       | You start here. Give it a goal.                                                 | Plan work, review progress, or change direction             |
-| review-plan-agent | Optional. Not part of the automatic flow.                                       | When you want to validate a plan for contradictions         |
-| builder-agent     | Chief delegates tasks to it after plan is reviewed                              | When a task is ready and you want to start building         |
-| tester-agent      | Only when you request it — not part of the automatic flow                        | When you need integration/E2E testing beyond unit tests     |
+| chief-agent          | You start here. Give it a goal.                                                 | Plan work, review progress, or change direction             |
+| builder-agent        | Chief delegates tasks to it after plan is reviewed                              | When a task is ready and you want to start building         |
+| tester-agent         | Only when you request it — not part of the automatic flow                       | When you need integration/E2E testing beyond unit tests     |
+| answer-verifier-agent | Spawned by `/chief-grill` per question (background) and at end-of-grill         | When you want a codebase-grounded second opinion on a claim |
+| review-plan-agent    | **Deprecated** — prefer `answer-verifier-agent`. Kept for backward compatibility | (legacy) Validate a static plan document for contradictions |
 
 ## Quick Start — Pick Your Style
 
@@ -166,7 +167,7 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 | Stress-test a design or decision tree  | `/grill-design`                                           |
 | Deep grill with codebase verification  | `/chief-grill`                                            |
 | Start building a task manually         | `builder-agent: implement task-1 from milestone-1`        |
-| Validate a plan for contradictions     | `review-plan-agent: review milestone-1 plan`              |
+| Validate a plan for contradictions     | `/chief-grill` (or, legacy: `review-plan-agent: review milestone-1 plan`) |
 | Run integration tests (user-triggered) | `tester-agent: validate milestone-1`                      |
 | Set up project config                  | `/chief-init`                                             |
 | Add a rule to .chief/_rules/           | `/chief-rule`                                             |
