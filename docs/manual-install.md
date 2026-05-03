@@ -35,7 +35,6 @@ mkdir -p .claude/agents .claude/skills
 ln -s ../../.agents/agents/chief-agent.md .claude/agents/chief-agent.md
 ln -s ../../.agents/agents/builder-agent.md .claude/agents/builder-agent.md
 ln -s ../../.agents/agents/tester-agent.md .claude/agents/tester-agent.md
-ln -s ../../.agents/agents/review-plan-agent.md .claude/agents/review-plan-agent.md
 ln -s ../../.agents/agents/answer-verifier-agent.md .claude/agents/answer-verifier-agent.md
 ```
 
@@ -47,7 +46,6 @@ mkdir -p .github/agents
 ln -s ../../.agents/agents/chief-agent.md .github/agents/chief-agent.md
 ln -s ../../.agents/agents/builder-agent.md .github/agents/builder-agent.md
 ln -s ../../.agents/agents/tester-agent.md .github/agents/tester-agent.md
-ln -s ../../.agents/agents/review-plan-agent.md .github/agents/review-plan-agent.md
 ```
 
 Copy mode:
