@@ -18,6 +18,7 @@
         "./skills/chief/chief-autopilot",
         "./skills/chief/chief-plan",
         "./skills/chief/chief-retro",
+        "./skills/chief/chief-rule",
         "./skills/engineering/shape-up",
         "./skills/misc/dump-commit"
       ]
