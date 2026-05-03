@@ -4,11 +4,11 @@
 
 A structured workflow for AI coding agents. Drop it into any project, set your rules once, and stop re-explaining your codebase every chat. Used daily across [thaitype](https://github.com/thaitype) projects since Chief was first built.
 
-> Note: Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
->
+Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
+
 > Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [sage](https://github.com/thaitype/sage) as its behavioral baseline.
 
-#### Quickstart (30-second setup)
+## Quickstart (30-second setup)
 
 Install Chief skills:
 
@@ -27,15 +27,15 @@ Run `/chief-install` in your agent. It will:
 
 That's it — you're ready to go.
 
-**Optional:** Run `/chief-init` to bootstrap project context. It interviews you about your tech stack, architecture, and dev commands. You can also write it by hand later, or skip it entirely if you don't need project-level rules yet.
+**Optional:** Run `/chief-init` to bootstrap project context. It interviews you about your tech stack, architecture, and dev commands, then writes the answers to `.chief/project.md`. You can also write it by hand later, or skip it entirely if you don't need project-level rules yet.
 
 For manual installation options (shell script, git clone), see [docs/manual-install.md](docs/manual-install.md).
 
 > **Windows users:** Link mode requires Developer Mode enabled and `git config --global core.symlinks true`. The setup script auto-detects this — if symlinks aren't available, it falls back to copy mode.
 
-> Current version is v4, If you come from the older version follow the [upgrade instructions](#upgrading).
+> Current version is v4. If you're coming from an older version, follow the [upgrade instructions](#upgrading).
 
-### Compatibility
+## Compatibility
 
 Chief has three main parts: `AGENTS.md`, subagents (or custom agents), and skills.
 
@@ -101,7 +101,7 @@ A milestone moves through five stages. You'll skip some depending on what you're
 | tester-agent          | Only when you request it — not part of the automatic flow                | When you need integration/E2E testing beyond unit tests     |
 | answer-verifier-agent | Spawned by `/chief-grill` per question (background) and at end-of-grill | When you want a codebase-grounded second opinion on a claim |
 
-## Quick Start — Pick Your Style
+## Working Styles — Pick Yours
 
 There are two ways to work. Pick the one that fits your situation.
 
@@ -112,9 +112,9 @@ There are two ways to work. Pick the one that fits your situation.
 Best for: complex projects, unfamiliar domains, team work.
 
 ```
-/chief-plan              # grill → goals → contracts → TODO → specs (approval at each step)
-builder-agent: implement task-1 from milestone-1   # delegate tasks one by one
-/chief-retro                 # review coverage and propose rule updates
+/chief-plan                                       # grill → goals → contracts → TODO → specs (approval at each step)
+builder-agent: implement task-1 from milestone-1  # delegate tasks one by one
+/chief-retro                                      # review coverage and propose rule updates
 ```
 
 You stay in control. Every goal, contract, and task is reviewed before execution.
@@ -124,20 +124,20 @@ You stay in control. Every goal, contract, and task is reviewed before execution
 Best for: prototyping, well-defined goals, solo work.
 
 ```
-/chief-autopilot             # reads goals + contracts, creates TODO, runs all tasks
-/chief-retro                 # review what happened
+/chief-autopilot  # reads goals + contracts, creates TODO, runs all tasks
+/chief-retro      # review what happened
 ```
 
 Requires goals and contracts to exist. Use `/chief-plan` first if they don't, or write them yourself.
 
-### Mix and match
+### Mix and Match
 
 You can combine both. Plan with review gates, then switch to autopilot for execution:
 
 ```
-/chief-plan              # plan carefully with approval gates
-/chief-autopilot             # execute the approved plan autonomously
-/chief-retro                 # review and learn
+/chief-plan       # plan carefully with approval gates
+/chief-autopilot  # execute the approved plan autonomously
+/chief-retro      # review and learn
 ```
 
 ## Common Prompts
@@ -150,11 +150,9 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 | Run a retrospective                    | `/chief-retro`                                     |
 | Quick commit all changes               | `/dump-commit`                                     |
 | Quick commit with message              | `/dump-commit fix auth flow`                       |
-| Shape a top-down design spec           | `/shape-up`                                        |
 | Stress-test a design or decision tree  | `/grill-design`                                    |
-| Deep grill with codebase verification  | `/chief-grill`                                     |
+| Deep grill or validate a plan          | `/chief-grill`                                     |
 | Start building a task manually         | `builder-agent: implement task-1 from milestone-1` |
-| Validate a plan for contradictions     | `/chief-grill`                                     |
 | Run integration tests (user-triggered) | `tester-agent: validate milestone-1`               |
 | Set up project config                  | `/chief-init`                                      |
 | Add a rule to .chief/_rules/           | `/chief-rule`                                      |
@@ -281,7 +279,7 @@ The same pattern works for other skills like `chief-upgrade`. To pull the entire
 4. Push and open a PR targeting `canary`
 5. Follow existing commit style: `type: description` (e.g. `fix: resolve merge issue`, `feat: add kiro agent support`)
 
-## Acknowledgement
+## Acknowledgements
 
 - The grill-me concept (now `/grill-design` and `/chief-grill`) originated from [mattpocock&#39;s grill-me skill](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
 - Multi-agent architecture inspired by [vercel-labs/skills](https://github.com/vercel-labs/skills)
