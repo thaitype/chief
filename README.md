@@ -60,7 +60,7 @@ Chief has three main parts: `AGENTS.md`, subagents (or custom agents), and skill
 * **Skills** — Compatible with most major agents through the [vercel skills](https://github.com/vercel-labs/skills) ecosystem, the de facto open standard for installing skills.
 * **Subagents** — Skills alone are enough for most cases. Pair them with `AGENTS.md` and subagents (or custom agents), and Chief becomes much more effective.
 
-Learn more in the **compatibility guide**.
+Learn more in the [compatibility guide](docs/compatibility.md).
 
 ## Getting Started
 
@@ -82,7 +82,6 @@ Milestones can be simple (`milestone-1`, `milestone-2`) or reference your projec
 | builder-agent         | Chief delegates tasks to it after plan is reviewed                                        | When a task is ready and you want to start building         |
 | tester-agent          | Only when you request it — not part of the automatic flow                                | When you need integration/E2E testing beyond unit tests     |
 | answer-verifier-agent | Spawned by `/chief-grill` per question (background) and at end-of-grill                 | When you want a codebase-grounded second opinion on a claim |
-| review-plan-agent     | **Deprecated** — prefer `answer-verifier-agent`. Kept for backward compatibility | (legacy) Validate a static plan document for contradictions |
 
 ## Quick Start — Pick Your Style
 
@@ -131,10 +130,11 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 | Run a retrospective                    | `/chief-retro`                                                              |
 | Quick commit all changes               | `/dump-commit`                                                              |
 | Quick commit with message              | `/dump-commit fix auth flow`                                                |
+| Shape a top-down design spec           | `/shape-up`                                                                 |
 | Stress-test a design or decision tree  | `/grill-design`                                                             |
 | Deep grill with codebase verification  | `/chief-grill`                                                              |
 | Start building a task manually         | `builder-agent: implement task-1 from milestone-1`                          |
-| Validate a plan for contradictions     | `/chief-grill` (or, legacy: `review-plan-agent: review milestone-1 plan`) |
+| Validate a plan for contradictions     | `/chief-grill`                                                              |
 | Run integration tests (user-triggered) | `tester-agent: validate milestone-1`                                        |
 | Set up project config                  | `/chief-init`                                                               |
 | Add a rule to .chief/_rules/           | `/chief-rule`                                                               |
@@ -172,6 +172,14 @@ Skip detailed planning — let chief create TODO and delegate to builder on the 
 ```
 /dump-commit wip: payment SDK progress
 ```
+
+**High-stakes decision (e.g. picking a database, redesigning auth)**
+
+```
+/chief-grill
+```
+
+Walks the decision tree one question at a time, recommends an answer with self-critique, and verifies each answer against your actual repo via the `answer-verifier-agent` in the background. The session is logged to `.chief/_grill/opened/NNNN-topic.md` so it survives context resets. Capture any rules that come out of the discussion with `/chief-rule`.
 
 ## Upgrading
 
@@ -217,6 +225,7 @@ See the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release
 - v2 — Multi-agent support, added skills system. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2).
 - v3 — Renamed to Chief as part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. Skills renamed to `chief-` prefix (`chief-install`, `chief-upgrade`). Repo moved to [`thaitype/chief`](https://github.com/thaitype/chief).
 - v4 — Skills decoupled from framework install. `/chief-install` and `/chief-upgrade` no longer manage skills; install and refresh skills via `npx skills@latest add thaitype/chief`.
+- v4.x — Lazy `.chief/` install. `/chief-install` ships only subagents and `AGENTS.md`; `.chief/` (project.md, milestones, rules) is created on demand by chief-agent or `/chief-init`. New skills: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`. `review-plan-agent` deprecated in favor of `answer-verifier-agent`.
 
 ## Branches
 
@@ -254,5 +263,5 @@ The same pattern works for other skills like `chief-upgrade`. To pull the entire
 
 ## Acknowledgement
 
-- Grill me Skill from [mattpocock](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
+- The grill-me concept (now `/grill-design` and `/chief-grill`) originated from [mattpocock's grill-me skill](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
 - Multi-agent architecture inspired by [vercel-labs/skills](https://github.com/vercel-labs/skills)
