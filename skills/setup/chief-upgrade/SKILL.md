@@ -66,15 +66,23 @@ Ask the user to review. They may:
 bash .chief-agent-tmp/scripts/upgrade.sh --agent <agent> --mode <mode>
 ```
 
-Then merge AGENTS.md manually:
+Then merge AGENTS.md manually. Use this priority order:
 
-1. Read the user's current `AGENTS.md` — identify the **Project Rules** section (everything between `## Project Rules` and the next `---`).
-2. Read `.chief-agent-tmp/template/AGENTS.md` — this is the new framework version.
-3. Replace everything in the user's `AGENTS.md` **below** the Project Rules section with the new framework content from template.
-4. Keep the user's Project Rules section exactly as-is.
-5. Show the user the merged result and get confirmation before writing.
+1. **If the user's `AGENTS.md` contains `<!-- chief-framework:begin -->` and `<!-- chief-framework:end -->` markers** (new lazy-install convention):
+   - Replace everything between the markers with the contents of `.chief-agent-tmp/template/AGENTS.md`.
+   - Keep everything outside the markers exactly as-is.
 
-If the user's AGENTS.md has no `## Project Rules` section, treat the entire file as framework content and overwrite it from template.
+2. **Else if the user's `AGENTS.md` has a `## Project Rules` section** (legacy v4 layout):
+   - Treat everything from `## Project Rules` to the next `---` as user-owned.
+   - Replace everything below that section with the new framework content from template.
+   - Keep the user's Project Rules section exactly as-is.
+
+3. **Else** (no markers, no Project Rules section):
+   - Treat the entire file as framework content and overwrite from template.
+
+Show the user the merged result and get confirmation before writing.
+
+`.chief/` (project.md, milestones, rules) is **never** touched by upgrade — it is user state, even when empty.
 
 If upgrade.sh **succeeds**, skip to step 6.
 

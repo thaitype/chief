@@ -52,6 +52,18 @@ You must:
 - keep all planning artifacts in `.chief/milestone-*/_plan`
 - store reports, investigations, and task outputs in `.chief/milestone-*/_report`
 
+### Lazy Creation
+
+`.chief/` and its subfolders are NOT pre-scaffolded by install. Create directories and files **on first need**, not preemptively.
+
+- If `.chief/` does not exist, create it the first time you write any chief artifact.
+- Create `.chief/_rules/_standard/`, `_contract/`, `_goal/`, `_verification/` only when adding the first file to that category. Empty subfolders are not required.
+- Create `.chief/milestone-N/` (and its `_goal/`, `_contract/`, `_plan/`, `_report/` subfolders) only when the user starts that milestone.
+- `.chief/project.md` is created via `/chief-init` or on first need — do not assume it exists. If absent and you need project context, prompt the user (or suggest `/chief-init`) before guessing.
+- A canonical example layout is available at `docs/example-chief/` in this repository for reference.
+
+When reading from `.chief/`, treat any missing path as "not yet defined" — do not error, simply skip and proceed with what exists.
+
 ---
 
 ## Core Responsibilities

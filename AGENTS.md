@@ -1,37 +1,5 @@
 # AGENTS.md
 
-## Project Rules
-
-- This repo IS the chief-agent framework. Source of truth is `template/`.
-- Product changes (agent definitions, skills, AGENTS.md content, .chief/ scaffolding) → MUST edit `template/` first, then sync to root.
-- Dogfooding-only changes (milestone plans, todos, reports) → edit root `.chief/` directly.
-- NEVER let root and template drift without explicit reason.
-
----
-
-## Rules Hierarchy
-
-1. **Project Rules** above (highest authority)
-2. `.chief/_rules`
-3. `.chief/milestone-X/_goal` (lowest authority)
-
-If rules conflict, higher priority wins. Always.
-
-Each milestone is self-contained. Only the active milestone's goals/contracts + global `.chief/_rules/` apply. Previous milestone artifacts are not inherited. To carry forward a decision from a past milestone, promote it to `.chief/_rules/`.
-
----
-
-## User Interaction Rules
-
-- When asking the user a question, use ask_user with ONE short question only.
-- When presenting a recap, summary, or review:
-  1. Print it as formatted text first (numbered list, table, or markdown block).
-  2. Then ask_user ONCE with a short confirmation, e.g. "Proceed?" or "Any changes?"
-  3. NEVER put recap content inside ask_user.
-- Do NOT ask multiple questions in a row. Make a recommendation, summarize, then confirm once.
-
----
-
 ## Agent Behavior Principles
 
 ### 1. Think Before Acting
@@ -62,33 +30,43 @@ Each milestone is self-contained. Only the active milestone's goals/contracts + 
 - For multi-step work, state a brief plan with verification at each step.
 - Strong success criteria let agents work independently. Weak criteria require constant clarification.
 
+## User Interaction Rules
+
+- When asking the user a question, use ask_user with ONE short question only.
+- When presenting a recap, summary, or review:
+  1. Print it as formatted text first (numbered list, table, or markdown block).
+  2. Then ask_user ONCE with a short confirmation, e.g. "Proceed?" or "Any changes?"
+  3. NEVER put recap content inside ask_user.
+- Do NOT ask multiple questions in a row. Make a recommendation, summarize, then confirm once.
+
 ---
 
 ## Chief Agent Framework
 
-### Human Responsibilities
+## Rules Hierarchy
 
-- Write and refine this file
-- Maintain `.chief/_rules`
-- Define milestone goals
+1. **Project Rules** above (highest authority)
+2. `.chief/_rules`
+3. `.chief/milestone-X/_goal` (lowest authority)
 
-### AI Responsibilities
+If rules conflict, higher priority wins. Always.
 
-- Follow this file strictly
-- Follow `.chief/_rules`
-- Follow milestone goals and contracts
-- Ask for clarification only when multiple valid paths exist
+Each milestone is self-contained. Only the active milestone's goals/contracts + global `.chief/_rules/` apply. Previous milestone artifacts are not inherited. To carry forward a decision from a past milestone, promote it to `.chief/_rules/`.
+
+---
 
 ### Directory Structure
 
+`.chief/` is created lazily — folders and files are added on first need, not pre-scaffolded. The shape below is the canonical layout that emerges as you use the framework:
+
 ```
 .chief/
+├── project.md           # Created by /chief-init
 ├── _rules/
 │   ├── _standard/       # Coding standards, architecture constraints
 │   ├── _contract/       # Data models, API contracts, schemas
 │   ├── _goal/           # High-level goals (shared across milestones)
 │   └── _verification/   # Test commands, build requirements, definition of done
-├── _template/           # Scaffold for new milestones
 └── milestone-X/
     ├── _goal/           # Milestone-specific goals
     ├── _contract/       # Milestone-specific contracts
@@ -110,14 +88,7 @@ Each milestone is self-contained. Only the active milestone's goals/contracts + 
 - **Tester** handles ONLY slow, non-deterministic, real-world verification: integration tests, UI flows, API calls, auth flows, environment-dependent checks.
 - Tester NEVER runs unit tests, lint, build, or reads source files for code review.
 - Tester is ONLY triggered when the user explicitly requests it. Chief MUST NOT auto-delegate to tester.
-
-### Execution Cycle
-
-```
-Human defines direction → Chief plans → Builder builds → Chief decides → Repeat
-```
-
-Tester is injected into the cycle only when the user requests real-world validation.
+- Tester is injected into the cycle only when the user requests real-world validation.
 
 ### Rules for `.chief/_rules` Files
 
@@ -126,9 +97,19 @@ Tester is injected into the cycle only when the user requests real-world validat
 - Include small code examples when useful
 - Anything unclear may lead to incorrect autonomous decisions
 
-### Optional: Review-Plan-Agent
+---
 
-Reviews plans for internal consistency. Catches contradictions and scope leaks. Does not modify plans — reports issues only. Defined in `.agents/agents/review-plan-agent.md`.
+## Project Rules
+
+- This repo IS the chief-agent framework. Sources of truth:
+  - Subagent definitions: `template/.agents/agents/`
+  - Framework rules file: `template/AGENTS.md`
+  - Skills: `skills/` (chief, setup)
+  - Example `.chief/` layout (reference only, not consumed by install): `docs/example-chief/`
+- Product changes (agent definitions, AGENTS.md content, skills) → MUST edit the source-of-truth path first, then sync to root if applicable.
+- `.chief/` is created lazily at runtime by chief-agent. There is no `template/.chief/` to scaffold from anymore.
+- Dogfooding-only changes (milestone plans, todos, reports) → edit root `.chief/` directly.
+- NEVER let root and template drift without explicit reason.
 
 ---
 

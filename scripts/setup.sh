@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # Chief Agent Framework - Setup Script
-# Installs .agents/, .chief/, and AGENTS.md into a project,
+# Installs .agents/ and AGENTS.md into a project,
 # then sets up agent-specific integrations.
+# .chief/ is created lazily by chief-agent at runtime.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -188,6 +189,33 @@ copy_file() {
   fi
 }
 
+CHIEF_FRAMEWORK_MARKER="<!-- chief-framework:begin -->"
+CHIEF_FRAMEWORK_END="<!-- chief-framework:end -->"
+
+install_agents_md() {
+  local src="$1"
+  local dest="$2"
+
+  if [[ ! -f "$dest" ]]; then
+    cp "$src" "$dest"
+    echo "  WRITE AGENTS.md (fresh)"
+    return
+  fi
+
+  if grep -qF "$CHIEF_FRAMEWORK_MARKER" "$dest"; then
+    echo "  SKIP AGENTS.md (chief framework section already present)"
+    return
+  fi
+
+  {
+    echo ""
+    echo "$CHIEF_FRAMEWORK_MARKER"
+    cat "$src"
+    echo "$CHIEF_FRAMEWORK_END"
+  } >> "$dest"
+  echo "  APPEND AGENTS.md (chief framework section appended)"
+}
+
 create_symlink() {
   local target="$1"
   local link_path="$2"
@@ -272,8 +300,7 @@ prompt_and_replace_models() {
 
 echo "Copying core files..."
 merge_dir "$TEMPLATE_DIR/.agents" "$TARGET_DIR/.agents" ".agents"
-copy_dir "$TEMPLATE_DIR/.chief" "$TARGET_DIR/.chief" ".chief"
-copy_file "$TEMPLATE_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md" "AGENTS.md"
+install_agents_md "$TEMPLATE_DIR/AGENTS.md" "$TARGET_DIR/AGENTS.md"
 echo ""
 
 # --- Step 2: Agent-specific setup ---
@@ -345,6 +372,6 @@ echo ""
 echo "Done! Chief Agent Framework installed successfully."
 echo ""
 echo "Next steps:"
-echo "  1. Edit .chief/project.md with your project details"
+echo "  1. Run /chief-init to bootstrap .chief/project.md"
 echo "  2. Review AGENTS.md and customize if needed"
-echo "  3. Start using: ask chief-agent to plan your first milestone"
+echo "  3. Start using: /chief-plan or ask chief-agent to plan your first milestone"

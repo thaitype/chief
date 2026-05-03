@@ -36,16 +36,23 @@ Built for developers already using AI coding agents who want a structured workfl
 Current version is v4. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
-# 1. Install Chief skills (chief-install, chief-upgrade, chief-plan, chief-autopilot, chief-retro, dump-commit, grill-me)
+# 1. Install Chief skills (chief-install, chief-init, chief-upgrade, chief-plan, chief-autopilot, chief-retro, dump-commit, grill-me)
 npx skills@latest add thaitype/chief
 ```
 
 ```
-# 2. Install framework files (agents, .chief/, AGENTS.md)
+# 2. Install framework files (subagents + AGENTS.md)
 /chief-install
 ```
 
-Step 1 fetches the slash-command skills via the [vercel skills](https://github.com/vercel-labs/skills) ecosystem. Step 2 runs the `chief-install` skill, which asks which coding agent you use, picks the install mode, and copies the framework files.
+```
+# 3. Bootstrap your project context (creates .chief/project.md)
+/chief-init
+```
+
+Step 1 fetches the slash-command skills via the [vercel skills](https://github.com/vercel-labs/skills) ecosystem. Step 2 runs the `chief-install` skill, which asks which coding agent you use, picks the install mode, and installs subagents + `AGENTS.md`. Step 3 runs `chief-init` to interview you about your project and write `.chief/project.md`.
+
+`.chief/` is created **lazily**: `chief-init` writes `project.md`, and chief-agent creates milestone folders, rule subfolders, and reports on demand as you work. There is no upfront `.chief/` scaffold to clean up.
 
 For manual installation options (shell script, git clone), see [docs/manual-install.md](docs/manual-install.md).
 
@@ -53,25 +60,31 @@ For manual installation options (shell script, git clone), see [docs/manual-inst
 
 ## Directory Structure
 
-After setup, your project will have:
+After `/chief-install` your project will have:
 
 ```
 project/
-├── AGENTS.md               # Framework rules — canonical file (highest authority)
+├── AGENTS.md               # Framework rules (fresh write, or appended to existing)
 ├── CLAUDE.md → AGENTS.md   # Symlink (Claude Code only)
 ├── .github/agents/        # Copilot agent definitions (symlinks or copies)
 ├── .agents/               # Canonical agent definitions (coding-agent-agnostic)
 │   ├── agents/            # Agent role definitions
 │   └── skills/            # Installed via npx skills (separate from /chief-install)
-├── .chief/                # Plans, rules, milestones
-│   ├── project.md         # Project-specific config (tech stack, commands)
-│   ├── MANUAL.md          # Framework usage guide
-│   ├── _rules/            # Global rules
-│   └── milestone-1/       # First milestone
 ├── .claude/               # Claude Code integration (symlinks)
 │   ├── agents/ → .agents/agents/*
 │   └── skills/ → .agents/skills/*   # Installed via npx skills
 ```
+
+`.chief/` is **not** created at install time. It grows on demand:
+
+```
+.chief/                    # Created lazily as you use the framework
+├── project.md             # Created by /chief-init
+├── _rules/                # Subfolders (_standard/_contract/_goal/_verification) created on first rule
+└── milestone-N/           # Created by /chief-plan or chief-agent on first milestone
+```
+
+A canonical example layout lives at [`docs/example-chief/`](docs/example-chief/) for reference.
 
 ## How It Works
 
@@ -84,13 +97,13 @@ project/
 
 ## Getting Started
 
-After installing, set up your project context in `.chief/project.md` (not `AGENTS.md` — that contains framework rules only):
+After installing, set up your project context in `.chief/project.md`:
 
 ```
-chief-agent: use grill-me to help me fill in project.md
+/chief-init
 ```
 
-Chief-agent will interview you about your tech stack, architecture, and dev commands, then fill in `.chief/project.md`. Or edit it manually if you prefer.
+The `chief-init` skill interviews you about your tech stack, architecture, and dev commands, then writes `.chief/project.md`. You can also edit it manually after creation.
 
 Milestones can be simple (`milestone-1`, `milestone-2`) or reference your project tracker (`milestone-JIRA-123`, `milestone-CU-456`).
 
@@ -154,7 +167,7 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 | Start building a task manually         | `builder-agent: implement task-1 from milestone-1`        |
 | Validate a plan for contradictions     | `review-plan-agent: review milestone-1 plan`              |
 | Run integration tests (user-triggered) | `tester-agent: validate milestone-1`                      |
-| Set up project config                  | `chief-agent: use grill-me to help me fill in project.md` |
+| Set up project config                  | `/chief-init`                                             |
 
 ## More Examples
 

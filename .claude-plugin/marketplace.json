@@ -1,4 +1,9 @@
 {
+  "name": "chief",
+  "owner": {
+    "name": "thaitype",
+    "url": "https://github.com/thaitype"
+  },
   "metadata": {
     "pluginRoot": "./"
   },
@@ -7,12 +12,13 @@
       "name": "chief-skills",
       "source": "./",
       "skills": [
-        "./skills/engineering/shape-up",
         "./skills/setup/chief-install",
         "./skills/setup/chief-upgrade",
+        "./skills/chief/chief-init",
         "./skills/chief/chief-autopilot",
         "./skills/chief/chief-plan",
         "./skills/chief/chief-retro",
+        "./skills/engineering/shape-up",
         "./skills/misc/dump-commit"
       ]
     },
