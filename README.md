@@ -1,5 +1,7 @@
 # Chief ⚔️
 
+![](https://img.shields.io/badge/chief_version-v4.0.0-blue)
+
 **English** | **[ไทย](README.th.md)**
 
 A structured workflow for AI coding agents. Drop it into any project, set your rules once, and stop re-explaining your codebase every chat. Used daily across [thaitype](https://github.com/thaitype) projects since Chief was first built.
@@ -7,6 +9,16 @@ A structured workflow for AI coding agents. Drop it into any project, set your r
 Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
 
 > Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [sage](https://github.com/thaitype/sage) as its behavioral baseline.
+
+## Why Chief exists
+
+Every project has its own context — the patterns, the decisions you made six months ago, the weird workaround for that one bug, all the "why we do it this way" stuff. It lives in your head, in scattered docs, in a Notion page nobody updates. So every time you start a fresh chat with an AI agent, you re-explain. Then you do it again next chat. By the end of the day your brain is fried, and not even from the actual work — just from being a human context proxy.
+
+Chief stops that. The idea is dumb-simple: give every project the same shape, in markdown, in places that don't move. `AGENTS.md` holds the rules. `.chief/_rules/` holds the shared standards. `.chief/milestone-N/` holds whatever you're building this week.
+
+Once the layout is fixed, subagents and skills already know where to read and where to write. Nobody has to tell them. Which means your prompts can be one sentence. "Plan milestone 3." "Build task 2." "What changed?" The agents figure out the rest because everything they need is exactly where they expect it.
+
+You stop repeating yourself, you stop burning brain cycles deciding where to put things, and you actually ship.
 
 ## Quickstart (30-second setup)
 
@@ -45,19 +57,9 @@ Chief has three main parts: `AGENTS.md`, subagents (or custom agents), and skill
 
 Learn more in the [compatibility guide](docs/compatibility.md).
 
-## Getting Started
+## How Chief Works
 
-### Why Chief exists
-
-Every project has its own context — the patterns, the decisions you made six months ago, the weird workaround for that one bug, all the "why we do it this way" stuff. It lives in your head, in scattered docs, in a Notion page nobody updates. So every time you start a fresh chat with an AI agent, you re-explain. Then you do it again next chat. By the end of the day your brain is fried, and not even from the actual work — just from being a human context proxy.
-
-Chief stops that. The idea is dumb-simple: give every project the same shape, in markdown, in places that don't move. `AGENTS.md` holds the rules. `.chief/_rules/` holds the shared standards. `.chief/milestone-N/` holds whatever you're building this week.
-
-Once the layout is fixed, subagents and skills already know where to read and where to write. Nobody has to tell them. Which means your prompts can be one sentence. "Plan milestone 3." "Build task 2." "What changed?" The agents figure out the rest because everything they need is exactly where they expect it.
-
-You stop repeating yourself, you stop burning brain cycles deciding where to put things, and you actually ship.
-
-### How Chief is structured
+### Structure
 
 Chief is markdown files in three places. That's it.
 
@@ -92,7 +94,7 @@ A milestone moves through five stages. You'll skip some depending on what you're
 4. **Verify** — call `tester-agent` when unit tests aren't enough and you need integration or E2E coverage.
 5. **Reflect** — `/chief-retro` compares what shipped to what was planned and proposes rule updates, so the same mistakes don't keep showing up next time.
 
-## Agents at a Glance
+### Agents
 
 | Agent                 | When it works                                                             | When to call manually                                       |
 | --------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -140,7 +142,9 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 /chief-retro      # review and learn
 ```
 
-## Common Prompts
+## Examples
+
+### Common prompts
 
 | What you want                          | What to type                                         |
 | -------------------------------------- | ---------------------------------------------------- |
@@ -157,7 +161,7 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 | Set up project config                  | `/chief-init`                                      |
 | Add a rule to .chief/_rules/           | `/chief-rule`                                      |
 
-## More Examples
+### Walkthroughs
 
 **TypeScript SDK for a payment API**
 
@@ -220,24 +224,11 @@ With no arguments, `/chief-upgrade` targets the latest stable release. Or specif
 /chief-upgrade v4.0.0
 ```
 
-### Coming from v2
+---
 
-Skills were renamed in v3:
 
-- `/install-chief` → `/chief-install`
-- `/upgrade-chief` → `/chief-upgrade`
 
-If you have old skills installed, remove them and install the new ones:
-
-```bash
-npx skills@latest add thaitype/chief --skill chief-upgrade
-```
-
-### Coming from v1
-
-See the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1) for migration details.
-
-## Release
+## Releases
 
 - v1 — Initial release, focused on Claude Code support. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1).
 - v2 — Multi-agent support, added skills system. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2).
