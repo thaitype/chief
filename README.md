@@ -64,28 +64,67 @@ Learn more in the [compatibility guide](docs/compatibility.md).
 
 ## Getting Started
 
-After installing, set up your project context in `.chief/project.md`:
+### How Chief is structured
+
+Chief lives in three places:
+
+- **`AGENTS.md`** — framework + project rules. The highest authority.
+- **`.chief/_rules/`** — governance shared across milestones (standards, contracts, goals, verification).
+- **`.chief/milestone-N/`** — the active unit of work (goals, contracts, plan, reports).
+
+```
+project/
+├── AGENTS.md
+└── .chief/
+    ├── project.md
+    ├── _rules/
+    └── milestone-1/
+```
+
+### Rules hierarchy
+
+When rules conflict, the higher level wins:
+
+1. `AGENTS.md` (highest)
+2. `.chief/_rules/`
+3. `.chief/milestone-N/_goal/` (lowest)
+
+### Per-milestone lifecycle
+
+For each milestone you typically:
+
+1. **Clarify** — for high-stakes or ambiguous goals, run `/chief-grill` first to interview yourself with codebase verification.
+2. **Plan** — `/chief-plan` walks goals → contracts → TODO → tasks with review gates.
+3. **Build** — chief-agent delegates to `builder-agent` (controlled), or `/chief-autopilot` runs everything.
+4. **Verify** — `tester-agent` is invoked on demand for integration/E2E checks.
+5. **Reflect** — `/chief-retro` reviews coverage and proposes rule updates.
+
+### First run
+
+After installing, bootstrap project context:
 
 ```
 /chief-init
 ```
 
-The `chief-init` skill interviews you about your tech stack, architecture, and dev commands, then writes `.chief/project.md`. You can also edit it manually after creation.
+It interviews you about your tech stack, architecture, and dev commands, then writes `.chief/project.md`. Edit by hand later if needed.
 
 Milestones can be simple (`milestone-1`, `milestone-2`) or reference your project tracker (`milestone-JIRA-123`, `milestone-CU-456`).
 
 ## Agents at a Glance
 
-| Agent                 | When it works                                                                             | When to call manually                                       |
-| --------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| chief-agent           | You start here. Give it a goal.                                                           | Plan work, review progress, or change direction             |
-| builder-agent         | Chief delegates tasks to it after plan is reviewed                                        | When a task is ready and you want to start building         |
-| tester-agent          | Only when you request it — not part of the automatic flow                                | When you need integration/E2E testing beyond unit tests     |
-| answer-verifier-agent | Spawned by `/chief-grill` per question (background) and at end-of-grill                 | When you want a codebase-grounded second opinion on a claim |
+| Agent                 | When it works                                                             | When to call manually                                       |
+| --------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| chief-agent           | You start here. Give it a goal.                                           | Plan work, review progress, or change direction             |
+| builder-agent         | Chief delegates tasks to it after plan is reviewed                        | When a task is ready and you want to start building         |
+| tester-agent          | Only when you request it — not part of the automatic flow                | When you need integration/E2E testing beyond unit tests     |
+| answer-verifier-agent | Spawned by `/chief-grill` per question (background) and at end-of-grill | When you want a codebase-grounded second opinion on a claim |
 
 ## Quick Start — Pick Your Style
 
 There are two ways to work. Pick the one that fits your situation.
+
+> **High-stakes or ambiguous goal?** Run `/chief-grill` first to clarify before planning. The grill outcome feeds straight into `/chief-plan` (or skip into `/chief-autopilot` if the answer is clear). Skip the grill when the goal is already concrete.
 
 ### Option A: Controlled (review every step)
 
@@ -122,22 +161,22 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 
 ## Common Prompts
 
-| What you want                          | What to type                                                                  |
-| -------------------------------------- | ----------------------------------------------------------------------------- |
-| Plan a milestone step-by-step          | `/chief-plan`                                                               |
-| Run milestone on autopilot             | `/chief-autopilot`                                                          |
-| Run milestone on autopilot (safe mode) | `/chief-autopilot safe`                                                     |
-| Run a retrospective                    | `/chief-retro`                                                              |
-| Quick commit all changes               | `/dump-commit`                                                              |
-| Quick commit with message              | `/dump-commit fix auth flow`                                                |
-| Shape a top-down design spec           | `/shape-up`                                                                 |
-| Stress-test a design or decision tree  | `/grill-design`                                                             |
-| Deep grill with codebase verification  | `/chief-grill`                                                              |
-| Start building a task manually         | `builder-agent: implement task-1 from milestone-1`                          |
-| Validate a plan for contradictions     | `/chief-grill`                                                              |
-| Run integration tests (user-triggered) | `tester-agent: validate milestone-1`                                        |
-| Set up project config                  | `/chief-init`                                                               |
-| Add a rule to .chief/_rules/           | `/chief-rule`                                                               |
+| What you want                          | What to type                                         |
+| -------------------------------------- | ---------------------------------------------------- |
+| Plan a milestone step-by-step          | `/chief-plan`                                      |
+| Run milestone on autopilot             | `/chief-autopilot`                                 |
+| Run milestone on autopilot (safe mode) | `/chief-autopilot safe`                            |
+| Run a retrospective                    | `/chief-retro`                                     |
+| Quick commit all changes               | `/dump-commit`                                     |
+| Quick commit with message              | `/dump-commit fix auth flow`                       |
+| Shape a top-down design spec           | `/shape-up`                                        |
+| Stress-test a design or decision tree  | `/grill-design`                                    |
+| Deep grill with codebase verification  | `/chief-grill`                                     |
+| Start building a task manually         | `builder-agent: implement task-1 from milestone-1` |
+| Validate a plan for contradictions     | `/chief-grill`                                     |
+| Run integration tests (user-triggered) | `tester-agent: validate milestone-1`               |
+| Set up project config                  | `/chief-init`                                      |
+| Add a rule to .chief/_rules/           | `/chief-rule`                                      |
 
 ## More Examples
 
@@ -263,5 +302,5 @@ The same pattern works for other skills like `chief-upgrade`. To pull the entire
 
 ## Acknowledgement
 
-- The grill-me concept (now `/grill-design` and `/chief-grill`) originated from [mattpocock's grill-me skill](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
+- The grill-me concept (now `/grill-design` and `/chief-grill`) originated from [mattpocock&#39;s grill-me skill](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
 - Multi-agent architecture inspired by [vercel-labs/skills](https://github.com/vercel-labs/skills)
