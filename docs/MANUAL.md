@@ -10,7 +10,10 @@
 | `/chief-retro` | Retrospective — check coverage, summarize, propose rules |
 | `/dump-commit` | Quick commit all files with 1-line message |
 | `/dump-commit fix auth` | Quick commit with custom message |
-| `/grill-me` | Stress-test a plan or design |
+| `/grill-design` | Stress-test a design, idea, or decision tree |
+| `/chief-grill` | Deep grill with codebase verification + session log |
+| `/chief-rule` | Add a rule to `.chief/_rules/` |
+| `/chief-init` | Bootstrap `.chief/project.md` |
 
 ## Manual Agent Prompts
 

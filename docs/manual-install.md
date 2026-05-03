@@ -36,7 +36,7 @@ ln -s ../../.agents/agents/chief-agent.md .claude/agents/chief-agent.md
 ln -s ../../.agents/agents/builder-agent.md .claude/agents/builder-agent.md
 ln -s ../../.agents/agents/tester-agent.md .claude/agents/tester-agent.md
 ln -s ../../.agents/agents/review-plan-agent.md .claude/agents/review-plan-agent.md
-ln -s ../../.agents/skills/grill-me .claude/skills/grill-me
+ln -s ../../.agents/agents/answer-verifier-agent.md .claude/agents/answer-verifier-agent.md
 ```
 
 For **GitHub Copilot**, create symlinks or copies in `.github/agents/`:

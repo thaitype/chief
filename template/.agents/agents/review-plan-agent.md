@@ -8,7 +8,7 @@ description: |
   Catches hedging ("alongside", "optional") when a clear decision was made.
 
   Use after writing any plan, task spec, or decision document.
-  Also use after grill-me sessions to verify the resulting plan reflects the grill outcome.
+  Also use after grill-design sessions to verify the resulting plan reflects the grill outcome.
 
   Does NOT implement code.
   Does NOT modify plans.

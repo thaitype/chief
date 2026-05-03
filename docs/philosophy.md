@@ -82,17 +82,17 @@ When rules conflict, higher authority wins. This prevents milestone-level except
 
 The hardest bugs to fix are the ones baked into the plan. If you start building on a vague goal or unexamined assumption, you'll discover the problem three tasks in — after code has been written, tests have been built, and changing direction means rework.
 
-The grill-me session is a structured interview that forces clarity before building begins. It challenges your assumptions, surfaces hidden decisions, and resolves ambiguity up front — when the cost of changing your mind is zero.
+The grill-design session is a structured interview that forces clarity before building begins. It challenges your assumptions, surfaces hidden decisions, and resolves ambiguity up front — when the cost of changing your mind is zero.
 
 ### How It Works
 
-Grill-me walks down each branch of the decision tree one question at a time. It doesn't accept vague answers — it pushes until there's a concrete, actionable decision. Each question builds on the previous answer, so by the end you have a complete picture rather than a collection of isolated choices.
+Grill-design walks down each branch of the decision tree one question at a time. It doesn't accept vague answers — it pushes until there's a concrete, actionable decision. Each question builds on the previous answer, so by the end you have a complete picture rather than a collection of isolated choices.
 
 ### When to Use It
 
-- **Filling in `project.md`** — When setting up a new project, grill-me interviews you about your tech stack, architecture, and dev commands to build a complete project configuration.
-- **Before starting a milestone** — When a goal is ambiguous or has multiple valid approaches, use grill-me to resolve the decision tree before planning begins.
-- **Stress-testing a plan** — When you have a plan but aren't confident in it, grill-me can challenge the assumptions and surface gaps you missed.
-- **Design decisions** — When you're choosing between architectures, patterns, or approaches, grill-me forces you to articulate trade-offs rather than going with gut feeling.
+- **Filling in `project.md`** — When setting up a new project, grill-design interviews you about your tech stack, architecture, and dev commands to build a complete project configuration.
+- **Before starting a milestone** — When a goal is ambiguous or has multiple valid approaches, use grill-design to resolve the decision tree before planning begins.
+- **Stress-testing a plan** — When you have a plan but aren't confident in it, grill-design can challenge the assumptions and surface gaps you missed.
+- **Design decisions** — When you're choosing between architectures, patterns, or approaches, grill-design forces you to articulate trade-offs rather than going with gut feeling.
 
 The goal is to make decisions explicit and deliberate, not to slow you down. A 5-minute grill session can save hours of rework.

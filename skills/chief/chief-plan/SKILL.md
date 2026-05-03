@@ -1,6 +1,6 @@
 ---
 name: chief-plan
-description: Plan a new milestone or extend an existing one step-by-step with review gates. Starts with a grill-me session to clarify requirements, then walks through goal → contract → todo → task specs, pausing for user approval at each step.
+description: Plan a new milestone or extend an existing one step-by-step with review gates. Starts with a grill-design session to clarify requirements, then walks through goal → contract → todo → task specs, pausing for user approval at each step.
 ---
 
 You are planning a milestone. Follow this process strictly, one phase at a time. **Never skip ahead.**
@@ -26,9 +26,9 @@ If extending an existing milestone:
 
 ## Phase 0: Grill-Me Session
 
-**NEVER SKIP THIS PHASE.** Even if goals or contracts already exist, you must grill the user first. Existing files do not substitute for a grill-me session — they may contain outdated or wrong assumptions that only surface through questioning.
+**NEVER SKIP THIS PHASE.** Even if goals or contracts already exist, you must grill the user first. Existing files do not substitute for a grill-design session — they may contain outdated or wrong assumptions that only surface through questioning.
 
-Before writing anything, run a grill-me session to clarify requirements:
+Before writing anything, run a grill-design session to clarify requirements:
 
 - Interview the user relentlessly about every aspect of this milestone until you reach a shared understanding.
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
@@ -41,7 +41,7 @@ When extending an existing milestone, include questions about:
 - Whether any existing goals or contracts need revision.
 - Whether existing tasks are affected or should be re-prioritized.
 
-When the grill-me session is complete, summarize the key decisions and confirm with the user before moving on.
+When the grill-design session is complete, summarize the key decisions and confirm with the user before moving on.
 
 ---
 
@@ -49,11 +49,11 @@ When the grill-me session is complete, summarize the key decisions and confirm w
 
 **NEVER SKIP THIS PHASE.** Even if goal files already exist, you must present them to the user for review and approval before moving to contracts.
 
-Based on the grill-me session, write or update milestone goal files under `.chief/<milestone>/_goal/`.
+Based on the grill-design session, write or update milestone goal files under `.chief/<milestone>/_goal/`.
 
 If goals already exist:
 - Read each goal file and verify it still matches the decisions from Phase 0.
-- If the grill-me session revealed that an existing goal is wrong or incomplete, update it now.
+- If the grill-design session revealed that an existing goal is wrong or incomplete, update it now.
 - Present both existing and new/modified goals to the user.
 
 If extending:

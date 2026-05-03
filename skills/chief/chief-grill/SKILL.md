@@ -1,9 +1,9 @@
 ---
 name: chief-grill
-description: Deep grill that interviews the user one question at a time AND verifies each answer against the codebase via background `answer-verifier-agent` calls. Catches factual conflicts, contradictions with prior decisions, and unfounded assumptions inline. Persists the session to `.chief/_grill/opened/NNNN-topic.md` so it survives context compaction. Use when the user wants a stress-tested grill — when stakes are high, when claims must be cross-checked against actual repo state, or when the topic spans many decisions. Heavier than `/grill-me`; prefer this when correctness matters more than speed.
+description: Deep grill that interviews the user one question at a time AND verifies each answer against the codebase via background `answer-verifier-agent` calls. Catches factual conflicts, contradictions with prior decisions, and unfounded assumptions inline. Persists the session to `.chief/_grill/opened/NNNN-topic.md` so it survives context compaction. Use when the user wants a stress-tested grill — when stakes are high, when claims must be cross-checked against actual repo state, or when the topic spans many decisions. Heavier than `/grill-design`; prefer this when correctness matters more than speed.
 ---
 
-You are running a verified grill session. This is `/grill-me` with two extra things bolted on:
+You are running a verified grill session. This is `/grill-design` with two extra things bolted on:
 
 1. **Per-question self-review (in-skill).** Before recommending an answer, you critique your own pick. After the user answers, you stress-test their answer.
 2. **Per-question background verification by `answer-verifier-agent`.** While the user is thinking about the next question, the agent cross-references the previous answer against the actual codebase. Findings surface as a sidebar.
@@ -165,7 +165,7 @@ If the user says "stop" / "pause" / leaves without closing → leave the file in
 - NEVER move stale opened sessions. They sit until the user closes or deletes them manually.
 - The agent's verdict is YAML — parse it, don't paraphrase. Render sidebars only for `concern` and `conflict`.
 
-## Differences from `/grill-me`
+## Differences from `/grill-design`
 
-- `/grill-me` is single-pass, in-context only, no verification. Light and fast.
-- `/chief-grill` adds self-critique, codebase verification, and a persistent log. Heavier — use when stakes are high or the topic spans many cross-checked decisions.
+- `/grill-design` adds self-critique and stress-test, conversation-only. Light, no files, no subagents.
+- `/chief-grill` adds codebase verification (background subagent) and a persistent session log under `.chief/_grill/`. Heavier — use when stakes are high or the topic spans many cross-checked decisions.

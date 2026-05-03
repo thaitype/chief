@@ -1,6 +1,6 @@
 ---
 name: shape-up
-description: Co-write a top-down design spec for software projects. Shape vague ideas into clear specs by working layer-by-layer — vision, scope, building blocks, then detail. Use when user wants to design a system, plan a project, write a design spec, or needs to see the big picture before diving into details. Use before /grill-me to prevent losing focus on large projects.
+description: Co-write a top-down design spec for software projects. Shape vague ideas into clear specs by working layer-by-layer — vision, scope, building blocks, then detail. Use when user wants to design a system, plan a project, write a design spec, or needs to see the big picture before diving into details. Use before /grill-design to prevent losing focus on large projects.
 ---
 # Shape Up — Top-Down Design Spec
 
@@ -10,7 +10,7 @@ Shape a vague idea into a clear design spec by working **top-down**: start from 
 
 - User says "shape up", "design spec", "let's design", "plan a system", "I need to think through this"
 - User has a large or ambiguous project and needs to see the big picture first
-- Before `/grill-me` — when the scope isn't clear enough to grill on details yet
+- Before `/grill-design` — when the scope isn't clear enough to grill on details yet
 
 ## Core Principle
 
@@ -84,7 +84,7 @@ The spec can have multiple drafts — e.g., `draft/phase-1.md`, `draft/final-spe
 
 ## What NOT to Do
 
-- Don't start with 10 clarifying questions (that's grill-me's job)
+- Don't start with 10 clarifying questions (that's grill-design's job)
 - Don't discuss implementation details in Layer 1-2
 - Don't expand `[TBD]` items unless the user asks
 - Don't write a full spec in one shot — layer by layer

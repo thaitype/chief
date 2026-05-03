@@ -85,7 +85,7 @@ project/
 หลังติดตั้ง ตั้งค่า context โปรเจกต์ใน `.chief/project.md` (ไม่ใช่ `AGENTS.md` — ไฟล์นั้นเก็บกฎของ framework เท่านั้น):
 
 ```
-chief-agent: use grill-me to help me fill in project.md
+/chief-init
 ```
 
 Chief-agent จะสัมภาษณ์คุณเกี่ยวกับ tech stack, architecture และ dev commands แล้วกรอก `.chief/project.md` ให้ หรือจะแก้ไขเองก็ได้
@@ -148,11 +148,11 @@ builder-agent: implement task-1 from milestone-1   # มอบหมาย tasks
 | รัน retrospective                           | `/chief-retro`                                            |
 | Quick commit ทุกไฟล์                         | `/dump-commit`                                            |
 | Quick commit พร้อมข้อความ                    | `/dump-commit fix auth flow`                              |
-| กริลแผนหรือ design                           | `/grill-me`                                               |
+| กริลแผนหรือ design                           | `/grill-design`                                               |
 | เริ่มสร้าง task แบบ manual                    | `builder-agent: implement task-1 from milestone-1`        |
 | ตรวจ plan หาข้อขัดแย้ง                        | `review-plan-agent: review milestone-1 plan`              |
 | รัน integration tests (user-triggered)       | `tester-agent: validate milestone-1`                      |
-| ตั้งค่า project config                        | `chief-agent: use grill-me to help me fill in project.md` |
+| ตั้งค่า project config                        | `/chief-init` |
 
 ## ตัวอย่างเพิ่มเติม
 
@@ -267,5 +267,5 @@ Pattern เดียวกันใช้ได้กับ skills อื่น 
 
 ## Acknowledgement
 
-- Grill me Skill จาก [mattpocock](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md)
+- Grill me Skill จาก [mattpocock](https://github.com/mattpocock/skills/blob/main/grill-design/SKILL.md)
 - Multi-agent architecture ได้แรงบันดาลใจจาก [vercel-labs/skills](https://github.com/vercel-labs/skills)

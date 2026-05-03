@@ -21,14 +21,8 @@
         "./skills/chief/chief-rule",
         "./skills/chief/chief-grill",
         "./skills/engineering/shape-up",
+        "./skills/engineering/grill-design",
         "./skills/misc/dump-commit"
-      ]
-    },
-    {
-      "name": "mattpocock-imports",
-      "source": "./",
-      "skills": [
-        "./skills/mattpocock/grill-me"
       ]
     }
   ]
