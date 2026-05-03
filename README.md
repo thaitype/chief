@@ -2,28 +2,11 @@
 
 **English** | **[ไทย](README.th.md)**
 
-A portable framework that reduces the cognitive load of working with AI coding agents — without sacrificing quality or speed.
+A structured workflow for AI coding agents. Drop it into any project, set your rules once, and stop re-explaining your codebase every chat. Used daily across [thaitype](https://github.com/thaitype) projects since Chief was first built.
 
+> Note: Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
+>
 > Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [sage](https://github.com/thaitype/sage) as its behavioral baseline.
-
-> You're currently on v4 docs. If you have older version installed, follow the [upgrade instructions](#upgrading) below or see the [v1 docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1). Chief was previously known as `chief-agent-framework`.
-
-Chief is a structured workflow for AI coding agents. It's the backbone you can drop into any project — domain doesn't matter.
-
-Your job:
-
-* Set the rules and goals once. Agents handle the rest — planning, building, verifying — one milestone at a time.
-* Pull in specialized subagents or skills when something needs domain expertise.
-
-On a real project, writing code isn't the hard part. The hard part is deciding. Which architecture. Which pattern. What to do next. Every prompt you send is a decision, and when you rush them, you get tech debt.
-
-Chief takes those decisions out of your head and puts them in a system:
-
-* A planning agent breaks work into milestones and tasks
-* A builder agent implements them
-* A tester agent verifies the results
-
-Built for developers already using AI coding agents who want a structured workflow instead of ad-hoc prompting. Learn more about the [design philosophy](docs/philosophy.md).
 
 #### Quickstart (30-second setup)
 
@@ -64,13 +47,23 @@ Learn more in the [compatibility guide](docs/compatibility.md).
 
 ## Getting Started
 
+### Why Chief exists
+
+Every project has its own context — the patterns, the decisions you made six months ago, the weird workaround for that one bug, all the "why we do it this way" stuff. It lives in your head, in scattered docs, in a Notion page nobody updates. So every time you start a fresh chat with an AI agent, you re-explain. Then you do it again next chat. By the end of the day your brain is fried, and not even from the actual work — just from being a human context proxy.
+
+Chief stops that. The idea is dumb-simple: give every project the same shape, in markdown, in places that don't move. `AGENTS.md` holds the rules. `.chief/_rules/` holds the shared standards. `.chief/milestone-N/` holds whatever you're building this week.
+
+Once the layout is fixed, subagents and skills already know where to read and where to write. Nobody has to tell them. Which means your prompts can be one sentence. "Plan milestone 3." "Build task 2." "What changed?" The agents figure out the rest because everything they need is exactly where they expect it.
+
+You stop repeating yourself, you stop burning brain cycles deciding where to put things, and you actually ship.
+
 ### How Chief is structured
 
-Chief lives in three places:
+Chief is markdown files in three places. That's it.
 
-- **`AGENTS.md`** — framework + project rules. The highest authority.
-- **`.chief/_rules/`** — governance shared across milestones (standards, contracts, goals, verification).
-- **`.chief/milestone-N/`** — the active unit of work (goals, contracts, plan, reports).
+* **`AGENTS.md`** — your framework and project rules. Top of the chain; when something contradicts, this wins.
+* **`.chief/_rules/`** — the rules that apply across every milestone (standards, contracts, goals, verification).
+* **`.chief/milestone-N/`** — wherever you're working right now.
 
 ```
 project/
@@ -83,33 +76,21 @@ project/
 
 ### Rules hierarchy
 
-When rules conflict, the higher level wins:
+When rules disagree, higher up the tree wins:
 
-1. `AGENTS.md` (highest)
-2. `.chief/_rules/`
-3. `.chief/milestone-N/_goal/` (lowest)
+1. `AGENTS.md` — the law
+2. `.chief/_rules/` — house rules
+3. `.chief/milestone-N/_goal/` — what this milestone cares about
 
 ### Per-milestone lifecycle
 
-For each milestone you typically:
+A milestone moves through five stages. You'll skip some depending on what you're building:
 
-1. **Clarify** — for high-stakes or ambiguous goals, run `/chief-grill` first to interview yourself with codebase verification.
-2. **Plan** — `/chief-plan` walks goals → contracts → TODO → tasks with review gates.
-3. **Build** — chief-agent delegates to `builder-agent` (controlled), or `/chief-autopilot` runs everything.
-4. **Verify** — `tester-agent` is invoked on demand for integration/E2E checks.
-5. **Reflect** — `/chief-retro` reviews coverage and proposes rule updates.
-
-### First run
-
-After installing, bootstrap project context:
-
-```
-/chief-init
-```
-
-It interviews you about your tech stack, architecture, and dev commands, then writes `.chief/project.md`. Edit by hand later if needed.
-
-Milestones can be simple (`milestone-1`, `milestone-2`) or reference your project tracker (`milestone-JIRA-123`, `milestone-CU-456`).
+1. **Clarify** — if the goal is fuzzy or the stakes are high, run `/chief-grill` first. It pushes back on your assumptions using the actual codebase, so you don't end up planning on top of things that aren't true.
+2. **Plan** — `/chief-plan` walks you through goals → contracts → TODO → tasks, with a review gate at each step.
+3. **Build** — chief-agent hands tasks to `builder-agent` one at a time. Or skip the hand-holding and let `/chief-autopilot` rip through the list.
+4. **Verify** — call `tester-agent` when unit tests aren't enough and you need integration or E2E coverage.
+5. **Reflect** — `/chief-retro` compares what shipped to what was planned and proposes rule updates, so the same mistakes don't keep showing up next time.
 
 ## Agents at a Glance
 
