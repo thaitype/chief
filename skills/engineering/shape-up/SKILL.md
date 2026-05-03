@@ -1,14 +1,14 @@
 ---
-name: design-spec
-description: Co-write a top-down design spec for software projects. Starts from vision and works down through scope, building blocks, and draft specs. Use when user wants to design a system, plan a project, write a design spec, or needs to see the big picture before diving into details. Prevents losing focus on large projects by enforcing layer-by-layer progression.
+name: shape-up
+description: Co-write a top-down design spec for software projects. Shape vague ideas into clear specs by working layer-by-layer — vision, scope, building blocks, then detail. Use when user wants to design a system, plan a project, write a design spec, or needs to see the big picture before diving into details. Use before /grill-me to prevent losing focus on large projects.
 ---
-# Design Spec — Top-Down Co-Writing
+# Shape Up — Top-Down Design Spec
 
-Help the user co-write a design spec by working **top-down**: start from the big picture, confirm alignment at each layer, then go deeper. This is NOT an interview — it's collaborative writing where the agent drafts and the user shapes.
+Shape a vague idea into a clear design spec by working **top-down**: start from the big picture, confirm alignment at each layer, then go deeper. This is NOT an interview — it's collaborative writing where the agent drafts and the user shapes.
 
 ## When to Use
 
-- User says "design spec", "let's design", "plan a system", "I need to think through this"
+- User says "shape up", "design spec", "let's design", "plan a system", "I need to think through this"
 - User has a large or ambiguous project and needs to see the big picture first
 - Before `/grill-me` — when the scope isn't clear enough to grill on details yet
 
