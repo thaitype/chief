@@ -203,6 +203,8 @@ Skip detailed planning — let chief create TODO and delegate to builder on the 
 
 Walks the decision tree one question at a time, recommends an answer with self-critique, and verifies each answer against your actual repo via the `answer-verifier-agent` in the background. The session is logged to `.chief/_grill/opened/NNNN-topic.md` so it survives context resets. Capture any rules that come out of the discussion with `/chief-rule`.
 
+---
+
 ## Upgrading
 
 ```bash
@@ -215,26 +217,30 @@ npx skills@latest add thaitype/chief
 /chief-upgrade
 ```
 
-Step 1 re-installs every Chief skill at the latest version (the picker shows you what's new — `npx skills add` is idempotent, so re-running it is the supported refresh path). Step 2 runs the `chief-upgrade` skill, which compares your current framework files against the target version, creates an upgrade plan, and waits for your approval before applying any changes.
+**What each step does:**
 
-With no arguments, `/chief-upgrade` targets the latest stable release. Or specify a version:
+* **Step 1** pulls the latest version of every Chief skill. The picker shows what changed. Safe to re-run anytime — `npx skills add` is idempotent.
+* **Step 2** runs `chief-upgrade`. It diffs your framework files against the target version, builds an upgrade plan, and waits for your sign-off before changing anything.
+
+By default, both commands target the latest stable release. To pin a specific version:
+
+```bash
+# Skills (any git ref — tag, branch, or commit)
+npx skills@latest add thaitype/chief#<git-ref>
+```
 
 ```
+# Framework files
 /chief-upgrade canary
 /chief-upgrade v4.0.0
 ```
-
----
-
-
 
 ## Releases
 
 - v1 — Initial release, focused on Claude Code support. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v1).
 - v2 — Multi-agent support, added skills system. See [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2).
 - v3 — Renamed to Chief as part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. Skills renamed to `chief-` prefix (`chief-install`, `chief-upgrade`). Repo moved to [`thaitype/chief`](https://github.com/thaitype/chief).
-- v4 — Skills decoupled from framework install. `/chief-install` and `/chief-upgrade` no longer manage skills; install and refresh skills via `npx skills@latest add thaitype/chief`.
-- v4.x — Lazy `.chief/` install. `/chief-install` ships only subagents and `AGENTS.md`; `.chief/` (project.md, milestones, rules) is created on demand by chief-agent or `/chief-init`. New skills: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`. `review-plan-agent` deprecated in favor of `answer-verifier-agent`.
+- v4 — Skills managed via `npx skills@latest add thaitype/chief` (decoupled from framework install). Lazy `.chief/`: install ships only subagents and `AGENTS.md`; `.chief/` is created on demand by `/chief-init` and chief-agent. New skills: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`. `review-plan-agent` deprecated in favor of `answer-verifier-agent`.
 
 ## Branches
 
