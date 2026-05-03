@@ -36,7 +36,7 @@ Built for developers already using AI coding agents who want a structured workfl
 Current version is v4. If you have v1 or v2 installed, follow the [upgrade instructions](#upgrading) below.
 
 ```bash
-# 1. Install Chief skills (chief-install, chief-init, chief-upgrade, chief-plan, chief-autopilot, chief-retro, chief-rule, dump-commit, grill-me)
+# 1. Install Chief skills (chief-install, chief-init, chief-upgrade, chief-plan, chief-autopilot, chief-retro, chief-rule, chief-grill, dump-commit, grill-me)
 npx skills@latest add thaitype/chief
 ```
 
@@ -164,6 +164,7 @@ You can combine both. Plan with review gates, then switch to autopilot for execu
 | Quick commit all changes               | `/dump-commit`                                            |
 | Quick commit with message              | `/dump-commit fix auth flow`                              |
 | Stress-test a plan or design           | `/grill-me`                                               |
+| Deep grill with codebase verification  | `/chief-grill`                                            |
 | Start building a task manually         | `builder-agent: implement task-1 from milestone-1`        |
 | Validate a plan for contradictions     | `review-plan-agent: review milestone-1 plan`              |
 | Run integration tests (user-triggered) | `tester-agent: validate milestone-1`                      |

@@ -135,16 +135,17 @@ After the setup script or manual install completes, verify:
    - `.agents/agents/builder-agent.md`
    - `.agents/agents/tester-agent.md`
    - `.agents/agents/review-plan-agent.md`
+   - `.agents/agents/answer-verifier-agent.md`
 
 2. **AGENTS.md exists** and contains chief framework content (either the whole file or a `<!-- chief-framework:begin -->` block).
 
 3. **Claude Code only** (if agent is `claude-code`):
    - `CLAUDE.md` exists (symlink or copy depending on mode)
-   - `.claude/agents/` contains entries for all 4 agents
+   - `.claude/agents/` contains entries for all 5 agents
    - If link mode: verify symlinks resolve correctly
 
 4. **Copilot only** (if agent is `copilot`):
-   - `.github/agents/` contains entries for all 4 agents (symlinks or copies depending on mode)
+   - `.github/agents/` contains entries for all 5 agents (symlinks or copies depending on mode)
    - If link mode: verify symlinks resolve correctly
    - Model values have been replaced if the user provided model names
 
