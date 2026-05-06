@@ -22,6 +22,7 @@
         "./skills/chief/chief-grill",
         "./skills/engineering/shape-up",
         "./skills/engineering/grill-design",
+        "./skills/engineering/slim-down",
         "./skills/misc/dump-commit"
       ]
     }
