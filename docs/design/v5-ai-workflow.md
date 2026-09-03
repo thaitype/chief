@@ -12,7 +12,7 @@ that [mattpocock/skills](https://github.com/mattpocock/skills) has since worked 
 a configurable issue-tracker backend instead of a hardcoded path, a ticket task-graph instead
 of a flat todo list, a thin single-purpose `implement` step, and `wayfinder` for planning work
 too large for one session. v5 pulls these ideas into Chief without losing what Chief already
-does that matt's skillset doesn't: milestone-scoped review gates, an auto/safe-mode autopilot
+does that matt's skillset doesn't: story-scoped review gates, an auto/safe-mode autopilot
 loop, and long-running/integration verification.
 
 Two structural moves ship together in v5:
@@ -22,43 +22,66 @@ Two structural moves ship together in v5:
    skill group) — `v4 → v5`, with a `release/v4` branch cut before merge so existing users can
    pin the old behavior.
 
+## Naming: "milestone" → "story"
+
+v4's `.chief/milestone-N/` is renamed to `.chief/story-N/` in v5. This is not cosmetic — it
+was mis-scaled from the start. Chief's own tutorial example goal is `"Implement user listing
+endpoint"` (`rules-hierarchy.md`), which is the size of a single Jira/GitHub/ClickUp **issue**,
+not the size of a "Milestone" in any of those tools (a Milestone/Epic/Sprint groups *many*
+issues, typically spanning weeks). Proof this actually confuses people: mid-session, this doc's
+own author (the agent) defaulted to reading "milestone" as "the container GitHub Milestones
+group issues into" — exactly backwards.
+
+"story" fits the actual scale: Chief's unit (goal + contract + its tickets + reports) is the
+size of one agile story / one GitHub Issue / one Jira ticket / one ClickUp ticket — a single
+coherent piece of shippable work. This also sets up a clean future mapping once a GitHub
+backend exists (deferred, see "Storage backend" below): **1 Chief story ≈ 1 GitHub Issue**, not
+1 GitHub Milestone.
+
+Every occurrence of "milestone" in skill files, docs, `AGENTS.md`, and directory names becomes
+"story" (`.chief/milestone-N/` → `.chief/story-N/`, `_rules/_goal/` description "scoped to one
+milestone" → "scoped to one story", etc.). Rules-hierarchy Level 3 stays structurally the same
+(`_goal/`, `_contract/`), only the English word describing its scope changes.
+
 ## Pipeline
 
 ```
-milestone (root container — "milestone" as a name is kept; still Level 3 of the rules
-           hierarchy, still the container between global rules and a single ticket)
+story (root container — .chief/story-N/, sized like one issue/ticket in any other tool)
   │
   ├─ /chief-wayfinder (optional, explicit invocation, callable at any point in the
-  │     milestone's life — not only before /chief-plan, not auto-detected)
+  │     story's life — not only before /chief-plan, not auto-detected)
   │     → produces decision-tickets (research / prototype / grilling / task),
   │       resolved one at a time, same "frontier" model as matt's wayfinder
   │
   ├─ /chief-plan
   │     Phase 0 now opens with an explicit choice: "grill normally, or use
-  │     /chief-wayfinder for this milestone?" — this is the discovery surface for
+  │     /chief-wayfinder for this story?" — this is the discovery surface for
   │     wayfinder; the skill itself must still be invoked explicitly, this just
   │     means the user doesn't need to already know it exists.
-  │     Phase 1 → _goal/goal.md   (kept as its own file/gate)
-  │     Phase 2 → _contract/contract.md   (kept as its own file/gate)
+  │     Phase 1 → _goal/goal.md   (kept as its own file/gate; gains an
+  │                                "## Out of Scope" subsection, see below)
+  │     Phase 2 → _contract/contract.md   (kept as its own file/gate; gains a
+  │                                "## Testing Decisions" subsection, see below)
   │     Both phases keep Chief's existing 2-phase approve-then-continue gate —
-  │     this is deliberately NOT merged into one to-spec-style file (see
-  │     "Decisions" #6 below), because the two-gate review is Chief's own value
-  │     that matt's single-shot to-spec doesn't have.
-  │     Phase 3 → tickets, not _todo.md (see #1)
+  │     this is deliberately NOT merged into one to-spec-style file, because the
+  │     two-gate review is Chief's own value that matt's single-shot to-spec
+  │     doesn't have.
+  │     Phase 3 → tickets, not _todo.md (see "Ticket model")
   │
-  ├─ tickets/  (to-tickets-style vertical slices, each with explicit blocking
-  │     edges, tracer-bullet sized to one fresh context window)
+  ├─ _tickets/  (to-tickets-style vertical slices, each with explicit blocking
+  │     edges, tracer-bullet sized to one fresh context window — see "Ticket
+  │     model" for the file shape)
   │     — lives in the SAME store as wayfinder's decision-tickets, distinguished
-  │       by a type/label field (decision vs implementation), matching how matt's
+  │       by a `Type:` field (decision vs implementation), matching how matt's
   │       own vocabulary treats a "Decision ticket" as just a labelled Issue
   │
-  ├─ /chief-build <ticket>        (per ticket, see #3)
-  ├─ /chief-test <ticket|milestone>   (long-running/integration verification, see #3)
-  ├─ /chief-review-code               (called as part of /chief-build, see #7)
+  ├─ /chief-build <ticket>            (per ticket, see "Execution skills")
+  ├─ /chief-test <ticket|story>       (long-running/integration verification)
+  ├─ /chief-review-code               (called as part of /chief-build)
   │
   └─ /chief-loop, /chief-autopilot
         Still the real orchestrators: pick the next frontier ticket, delegate to
-        /chief-build, mark ticket status, write milestone-level reports, and —
+        /chief-build, mark ticket status, write story-level reports, and —
         unlike anything in matt's skillset — check "goal met AND contract
         satisfied" as the actual termination condition for the loop.
 ```
@@ -67,44 +90,92 @@ milestone (root container — "milestone" as a name is kept; still Level 3 of th
 
 ### 1. Ticket model replaces the todo list
 
-`_plan/_todo.md` (the batch-of-3–5 checklist) is removed entirely. `chief-loop` /
-`chief-autopilot` work a **ticket frontier** instead: any ticket whose blockers are all
-resolved is takeable, tracked via a `Status: claimed | resolved` field per ticket (same
-convention matt's local-markdown tracker uses), not a shared checklist file. This is the
-single biggest mechanical change in v5 — everything else follows from it.
+`_plan/_todo.md` (the batch-of-3–5 checklist) is removed entirely, and `_plan/` is renamed to
+`_tickets/` (there is no more "plan" artifact distinct from the tickets themselves).
+`chief-loop` / `chief-autopilot` work a **ticket frontier** instead: any ticket whose blockers
+are all resolved is takeable.
 
-### 2. "Milestone" is kept as a name
+**File shape** (`.chief/story-N/_tickets/<N>-<seq>-<slug>.md`, numbered `<story-number>-<seq>`,
+e.g. `1-1-user-listing-schema.md` for story-1's first ticket):
 
-Considered renaming to "epic"/"initiative", or dropping the layer entirely so a ticket-bearing
-spec is the top-level unit. Kept "milestone": it is Level 3 of the existing rules hierarchy
-(`AGENTS.md > _rules/ > milestone-N/_goal/`), `chief-plan` already supports extending one
-milestone with multiple goal/contract pairs over time, and a `/chief-wayfinder` map's scope is
-smaller now (nested inside one milestone) rather than spanning several — so milestone remains
-a genuinely distinct grain, not a redundant wrapper.
+```markdown
+# 1-1: <ticket title>
 
-### 3. `/chief-wayfinder`: explicit, not auto-detected, callable anytime
+Type: wayfinder:research | wayfinder:prototype | wayfinder:grilling | wayfinder:task | implementation
+Status: open | claimed | resolved
+Blocked by: 1-2, 1-5  (or "None (can start immediately)")
 
-- Triggered only by explicit invocation (`/chief-wayfinder`), never by the model deciding on
-  its own that a milestone "looks foggy enough."
-- Discoverable via `/chief-plan` Phase 0, which now asks the user to choose grill-vs-wayfinder
-  up front, rather than requiring the user already know the skill exists.
-- Not restricted to running before `/chief-plan` starts — the milestone can already exist, and
-  `/chief-wayfinder` can be invoked again mid-milestone if new fog surfaces later.
-- Feeds `/chief-plan`'s Phase 0/1/2: resolved decision-tickets are read as already-settled
-  input, so Phase 0 only grills what wayfinder didn't already cover.
+## Question / What to build
+<the question, if a wayfinder:* ticket — or the end-to-end behaviour, if implementation>
 
-### 4. Storage backend: full abstraction, local-only implementation
+## Acceptance Criteria
+(implementation tickets only)
+- [ ] ...
+
+## Answer
+(filled in on resolve — wayfinder:* tickets only)
+```
+
+`Type:` reuses matt's own wayfinder label vocabulary verbatim for decision-tickets, plus a
+fifth value (`implementation`) for to-tickets-style tickets — both kinds share one numbering
+sequence and one folder, distinguished only by this field.
+
+**No separate backlog concept.** Considered a `.chief/backlog/tickets/` parking lot for tickets
+not yet assigned to a story; rejected as scope creep beyond the original six concepts — a
+ticket belongs to exactly one story, full stop.
+
+**Tickets are git-tracked, same as everything else under `.chief/`.** Checked: this repo's own
+`.gitignore` has no entry excluding `.chief/` today (goal/contract/report files are already
+committed), and `chief-retro` depends on reading git history + past reports for its coverage
+check — tickets need the same persistence. Matt's own hesitation about local-markdown tickets
+("not recommended: storing this material in the repo tends to lead to accidental persistence" —
+`docs/engineering/wayfinder.md`) is about a different problem (ephemeral planning noise
+never getting cleaned up in a system with no lifecycle), not about git-tracking `.scratch/`
+itself (matt's own `.gitignore` does not exclude it either). Chief's whole value proposition is
+persistent project memory — the opposite goal from what that caution is warning against — so
+this doesn't apply here.
+
+### 2. Story-vs-wayfinder-map topology
+
+- A **story** is the root container, created first.
+- **`/chief-wayfinder`** is optional, explicit-invocation-only (never auto-detected), and can be
+  called at any point in a story's life — not only before `/chief-plan` starts. A story can
+  pre-exist before wayfinder is invoked on it.
+- `/chief-plan`'s Phase 0 surfaces the choice ("grill normally, or use wayfinder?") so the user
+  doesn't need to already know `/chief-wayfinder` exists.
+- Both wayfinder's decision-tickets and to-tickets-style implementation-tickets live in the
+  same story's `_tickets/` store (see "Ticket model").
+
+### 3. Storage backend: full abstraction, local-only implementation
 
 Adopts matt's pattern of a per-repo pointer/config file that every skill reads instead of
 hardcoding a path — but, unlike matt (who ships GitHub/GitLab/local out of the box), v5 ships
 **only the local backend**, still named `.chief/` (matching matt's own practice of a fixed
 name per backend choice — the backend is configurable, its name isn't). GitHub/GitLab/other
-backends are a seam for later, not implemented now.
+backends are a seam for later, not implemented now. (When a GitHub backend does eventually
+land: 1 Chief story ≈ 1 GitHub Issue, per the naming rationale above — not a GitHub Milestone.)
 
 Even though there is only one working backend at launch, `/chief-init` (or a new small setup
 step) explicitly surfaces a "where should planning artifacts live?" question rather than
 silently defaulting — this is a deliberate choice to make "not fixed" visible from day one,
 not just true internally.
+
+### 4. Goal/contract stay two files; gain matt's missing sections
+
+Matt's `to-spec` has two sections Chief's `goal`/`contract` don't: **Testing Decisions** and
+**Out of Scope**. Placement, decided by fit rather than by matt's document order:
+
+- **Out of Scope → `_goal/goal.md`** (new `## Out of Scope` subsection). It's the natural
+  complement of "what this story delivers" — answerable at the same time as the goal itself,
+  no dependency on the contract existing yet.
+- **Testing Decisions → `_contract/contract.md`** (new `## Testing Decisions` subsection), not
+  goal. Its actual content ("which modules will be tested," "prior art for the tests") needs
+  the module/interface shape that Phase 2 (contract) is what determines — writing it during
+  Phase 1 (goal) would mean naming modules before they're decided. Phase 1 can still gesture at
+  test intent at a high level if useful; the concrete version belongs with the contract.
+
+Goal/contract stay as two files (not merged into one matt-style `spec.md`) specifically to keep
+Chief's 2-phase approve-then-continue gate, which matt's single-shot `to-spec` doesn't have.
 
 ### 5. Termination condition stays Chief's own
 
@@ -117,16 +188,16 @@ contract satisfied" — is Chief's own logic and is kept unchanged in v5.**
 
 ### 6. `/chief-build` (replaces `builder-agent`, absorbs matt's `implement`)
 
-- New skill, not a call into matt's `/implement` and not a rename of it — the user does not
-  want any direct reference to an unmodified third-party skill file.
+- New skill, not a call into matt's `/implement` and not a rename of it — no direct reference
+  to an unmodified third-party skill file.
 - Internal recipe follows matt's 5 beats: TDD at pre-agreed seams → typecheck often → run a
   single test file often → run the full suite once at the end → code review
-  (`/chief-review-code`, see #7) → commit.
+  (`/chief-review-code`, see below) → commit.
 - Everything `builder-agent.md` had that matt's `implement` doesn't — the escalation format,
-  the progress-based auto-fix policy, the milestone-scoping boundary, the commit-message
+  the progress-based auto-fix policy, the story-scoping boundary, the commit-message
   convention — is kept, folded into the same skill file.
 - **Not an orchestrator.** Scope is deliberately narrow: given one ticket, build it correctly.
-  It does not decide what's next and does not check milestone completion — same self-description
+  It does not decide what's next and does not check story completion — same self-description
   matt gives `/implement` ("it never reopens the plan... whatever was settled upstream is the
   input"). `chief-loop` / `chief-autopilot` remain the orchestrators.
 - Two invocation surfaces, one file: a human can run `/chief-build <ticket>` directly at the
@@ -152,15 +223,15 @@ Mapped onto Chief's own artifacts instead of matt's "issue tracker" vocabulary:
 - **Spec source**: the ticket's originating `_goal/goal.md` + `_contract/contract.md`, not a
   freeform spec file.
 
-Called as the review beat inside `/chief-build`'s recipe (#6), and directly invocable by a
-human the same way matt's `/code-review` is.
+Called as the review beat inside `/chief-build`'s recipe, and directly invocable by a human the
+same way matt's `/code-review` is.
 
 ### 8. All persistent subagents (`.agents/agents/*`) are deprecated
 
 | v4 file | v5 disposition |
 |---|---|
 | `chief-agent.md` | Deprecated outright — its content duplicates `chief-plan`/`chief-loop`/`chief-autopilot`'s own (more precise) instructions. No replacement identity needed: "the orchestration brain" is just whichever `chief-*` skill is currently running. |
-| `builder-agent.md` | Folded into `/chief-build` (#6). |
+| `builder-agent.md` | Folded into `/chief-build`. |
 | `tester-agent.md` | Renamed and folded into **`/chief-test`** — same dual-invocation pattern as `/chief-build`: human-callable directly, and a spawn target for `chief-loop`/`chief-autopilot` when long-running/integration/external validation is needed. Scope (short deterministic tests are `/chief-build`'s job; long-running/integration/external is `/chief-test`'s) is unchanged from today's tester-agent boundary. |
 | `answer-verifier-agent.md` | Folded inline into whichever skill needs per-answer verification against the codebase — `/chief-grill`, and now also `/chief-wayfinder`'s `grilling`-type tickets. Spawned as a throwaway subagent per call; no persistent file. |
 
@@ -180,9 +251,10 @@ systems side by side was never actually proposed once the details were worked ou
   `release/v1` / `release/v2` / `release/v3` convention already in this repo.
 - `main` becomes v5 once merged. Existing users pin `#v4.0.0` or `release/v4` to keep the old
   behavior.
-- **No automated `.chief/` migration script.** A milestone in flight on v4 finishes on a
-  pinned v4 checkout; there is no supported path to migrate a half-done v4 milestone's
-  `_todo.md`/`task-N.md` into v5's ticket shape mid-flight.
+- **No automated `.chief/` migration script.** A story in flight on v4 (a "milestone" there)
+  finishes on a pinned v4 checkout; there is no supported path to migrate a half-done v4
+  milestone's `_todo.md`/`task-N.md` into v5's ticket shape, or its directory name from
+  `milestone-N/` to `story-N/`, mid-flight.
 - README version badge, version-history section, and `/chief-upgrade` pin instructions need
   updating to add the v5 entry (there is precedent for deprecating an agent across a version
   bump already — v4's changelog line says "`answer-verifier-agent` replaces deprecated
@@ -190,21 +262,23 @@ systems side by side was never actually proposed once the details were worked ou
 
 ## Open items (not blocking, need resolving during implementation)
 
-- Where matt's to-spec sections that Chief's `goal`/`contract` don't currently have —
-  **Testing Decisions** and **Out of Scope** — land. Likely new subsections of
-  `contract.md`, not decided.
-- Exact ticket file template and status vocabulary for the local backend (mirrors matt's
-  `.scratch/<feature>/issues/NN-slug.md` with `Status:`/`Blocked by:` fields, adapted under
-  `.chief/milestone-N/`) — naming (`_tickets/`? `_plan/tickets/`?) not decided.
-- Exact location/filename of the storage-backend pointer file (#4) — not decided; matt's own
-  equivalent is `docs/agents/issue-tracker.md`.
-- The subagent-spawn mechanism noted under #6.
+- Exact location/filename of the storage-backend pointer file (#3 above) — not decided; matt's
+  own equivalent is `docs/agents/issue-tracker.md`.
+- The subagent-spawn mechanism noted under `/chief-build` (#6 above).
+- Full inventory of every doc file that says "milestone" and needs updating to "story"
+  (`rules-hierarchy.md`, `directory-structure.md`, `your-first-milestone.md` tutorial —
+  possibly renamed to `your-first-story.md`, `template/AGENTS.md`, `README.md`,
+  `README.th.md`, `docs/example-chief/`, `docs/manual/reference/agents.md`,
+  `docs/manual/reference/skills.md`, `scripts/setup.sh`, `scripts/upgrade.sh`) — not yet
+  enumerated exhaustively.
 
 ## Non-goals for v5
 
-- GitHub/GitLab/Linear backend implementations (seam only, see #4).
+- GitHub/GitLab/Linear backend implementations (seam only, see "Storage backend").
 - A `researcher`/exploration throwaway subagent ahead of `/chief-build` (matt's
   `implement-spec` pattern) — considered and explicitly deferred; scope creep risk against an
   already-large change set.
 - Concurrent/parallel ticket execution (matt's `implement-spec` "maximum concurrency" model) —
   Chief's loop stays one-ticket-at-a-time, unchanged from v4.
+- A global backlog store for unassigned tickets — considered and rejected; a ticket belongs to
+  exactly one story.
