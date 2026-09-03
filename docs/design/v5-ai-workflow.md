@@ -193,12 +193,17 @@ At v5 scope `<storage-root>/config.md` has nothing to hold yet (there's only one
 stays uncreated until a real setting needs it, same lazy-creation convention as the rest of
 `.chief/`.
 
-Every skill resolves the storage root through `.chief.config.md` rather than hardcoding
-`.chief/`. Defaults to `.chief/` if the file is absent (so v4-style projects with no
-`.chief.config.md` keep working without any migration step). `/chief-init` (or a new small
-setup step) explicitly surfaces a "where should planning artifacts live?" question even though
-there's only one working answer today — a deliberate choice to make "not fixed" visible from
-day one, not just true internally.
+Every skill resolves the storage root by checking for `.chief.config.md` first. **Most projects
+will never have this file at all**: its absence means "use the default, `.chief/`," so a
+project happy with the default goes straight to creating `.chief/config.md` (or nothing, if
+there's no setting to store yet) without ever touching the root. `.chief.config.md` only comes
+into existence as an escape hatch, the rare case where a project wants the storage root to be
+named something other than `.chief/`. This keeps the common case at zero or one file, not two,
+while still making the rename possible for the projects that want it — and v4-style projects
+with no `.chief.config.md` keep working with no migration step, since absence already means
+"default." `/chief-init` (or a new small setup step) explicitly surfaces a "where should
+planning artifacts live?" question even though there's only one working answer today — a
+deliberate choice to make "not fixed" visible from day one, not just true internally.
 
 ### 4. Goal/contract stay two files; gain matt's missing sections
 
