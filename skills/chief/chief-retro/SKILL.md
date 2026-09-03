@@ -1,38 +1,43 @@
 ---
 name: chief-retro
-description: Run a retrospective on the current milestone or latest batch. Checks goal/contract coverage, summarizes planned vs delivered, and proposes rule updates. Use "/chief-retro" after completing a batch or milestone.
+description: Run a retrospective on the current story or latest round. Checks goal/contract coverage, summarizes planned vs delivered, and proposes rule updates. Use "/chief-retro" after completing a round or a story.
 ---
 
-Run a retrospective on the current milestone.
+Run a retrospective on the current story.
 
 ## Scope Detection
 
 Auto-detect the scope:
 
-1. Read `_plan/_todo.md` in the active milestone.
-2. If ALL tasks are marked `[x]` → **milestone retro**.
-3. If some tasks remain → **batch retro** (covers only the latest completed batch).
+1. Scan `.chief/story-N/_tickets/` for `Type: implementation` tickets.
+2. If ALL of them are `Status: resolved` (and no ticket is still blocked awaiting a future
+   `/chief-plan` round) → **story retro**.
+3. If some remain `open`/`claimed`, or the goal/contract aren't yet satisfied → **round retro**
+   (covers only the latest completed round of tickets — since `/chief-loop`/`/chief-autopilot`
+   dropped the fixed-size batch, a "round" is whatever set of tickets was worked before this
+   retro was invoked, inferred from the most recent `_report/` files' timestamps/content).
 
 ## Input Sources
 
-### Batch retro
-- Latest `_report/autopilot-run-batch-<N>.md`
-- `_plan/_todo.md` (completed vs remaining)
+### Round retro
+- The most recent `_report/ticket-<id>-report.md` files and/or
+  `_report/autopilot-run-batch-<N>.md` (whichever the loop/autopilot run produced)
+- `_tickets/` (resolved vs open vs blocked)
 - `_goal/` and `_contract/` files
-- `git log` for commits since the previous batch report (or milestone start)
+- `git log` for commits since the previous round's report (or story start)
 
-### Milestone retro
-- ALL `_report/` files (batch reports, task outputs, etc.)
-- `_plan/_todo.md` (full history)
+### Story retro
+- ALL `_report/` files (ticket reports, batch reports, investigations)
+- `_tickets/` (full history)
 - `_goal/` and `_contract/` files
-- `git log` for the entire milestone
+- `git log` for the entire story
 
 ## Report Sections
 
 Write the report with these sections:
 
 ```md
-# Retro: <milestone> — <batch N | milestone>
+# Retro: story-N — <round N | story>
 
 ## Coverage Check
 
@@ -40,14 +45,14 @@ For each goal and contract file, check whether the work done satisfies it:
 
 | File | Status | Notes |
 |------|--------|-------|
-| _goal/xxx.md | ✅ Satisfied / ⚠️ Partial / ❌ Missing | what's done or missing |
-| _contract/xxx.md | ✅ / ⚠️ / ❌ | ... |
+| _goal/goal.md | ✅ Satisfied / ⚠️ Partial / ❌ Missing | what's done or missing |
+| _contract/contract.md | ✅ / ⚠️ / ❌ | ... |
 
 ## Planned vs Delivered
 
-- What was in the TODO
-- What was actually completed
-- What was skipped or changed mid-execution
+- What the ticket breakdown called for
+- What was actually completed (resolved tickets)
+- What was skipped, split, or changed mid-execution
 
 ## Blockers Hit
 
@@ -72,17 +77,18 @@ For each proposal:
 ## User Action Needed
 
 Items requiring human decision:
-- Uncovered goals or contracts that need another batch
+- Uncovered goal/contract areas that need another round of tickets
 - Decisions to promote to permanent rules
 - Manual steps that automation couldn't handle
 ```
 
 ## Output File
 
-- Batch retro → `.chief/<milestone>/_report/retro-batch-<N>.md`
-- Milestone retro → `.chief/<milestone>/_report/retro-milestone.md`
+- Round retro → `.chief/story-N/_report/retro-round-<N>.md`
+- Story retro → `.chief/story-N/_report/retro-story.md`
 
-Where `<N>` matches the batch number being reviewed.
+Where `<N>` matches the round being reviewed (infer it from existing `retro-round-*.md` files —
+next available number).
 
 ## After Report
 
@@ -97,6 +103,7 @@ Present the proposed rule updates to the user. Ask:
 
 - NEVER skip the coverage check — this is the primary value of the retro.
 - NEVER auto-apply rule proposals — always ask first.
-- NEVER modify goals, contracts, or plans — retro is read-only on those. Only `_rules/` can be updated.
+- NEVER modify the goal, contract, or tickets — retro is read-only on those. Only `_rules/` can
+  be updated.
 - Use actual git log and file content — do not summarize from memory.
-- Follow the rules hierarchy: AGENTS.md > .chief/_rules > milestone goals.
+- Follow the rules hierarchy: `AGENTS.md` > `.chief/_rules` > story goal.
