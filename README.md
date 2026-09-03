@@ -42,7 +42,7 @@ It asks which coding agent you use, whether to symlink or copy, and whether to i
 
 Interviews you about your stack and dev commands, writes `.chief/project.md`. Skip it and write the file by hand later if you prefer.
 
-→ [Full tutorial: your first milestone](docs/manual/tutorials/your-first-milestone.md)→ [Manual install options](docs/manual/how-to/install.md)
+→ [Full tutorial: your first milestone](docs/manual/tutorials/your-first-story.md)→ [Manual install options](docs/manual/how-to/install.md)
 
 > **Windows users:** Symlink mode requires Developer Mode and `git config --global core.symlinks true`. The install skill auto-detects and falls back to copy mode.
 
@@ -147,7 +147,7 @@ Full documentation lives in [`docs/manual/`](docs/manual/):
 
 | Section                                                | Content                                               |
 | ------------------------------------------------------ | ----------------------------------------------------- |
-| [Tutorial](docs/manual/tutorials/your-first-milestone.md) | Your first milestone, end to end                      |
+| [Tutorial](docs/manual/tutorials/your-first-story.md) | Your first milestone, end to end                      |
 | [How-to guides](docs/manual/how-to/)                      | Install, upgrade, pick a skill, write rules           |
 | [Reference](docs/manual/reference/)                       | Skills, agents, directory structure, rules hierarchy  |
 | [Explanation](docs/manual/explanation/)                   | Why Chief exists, pre-coding first, three-agent model |

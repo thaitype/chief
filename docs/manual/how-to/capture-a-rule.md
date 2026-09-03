@@ -1,6 +1,6 @@
 # How to capture a decision as a permanent rule
 
-Use this guide when you've made a decision — in a grill session, a retro, or just mid-work — that should apply to every future milestone, not just this one.
+Use this guide when you've made a decision — in a grill session, a retro, or just mid-work — that should apply to every future story, not just this one.
 
 ---
 
@@ -20,11 +20,11 @@ Use this guide when you've made a decision — in a grill session, a retro, or j
 
 Describe the rule in plain language when prompted. The skill determines the right category (`_standard`, `_contract`, `_goal`, or `_verification`), drafts the rule in the correct format, and asks you to confirm before writing it to `.chief/_rules/`.
 
-Rules written here apply to **every future milestone** — subagents read `.chief/_rules/` at the start of each session.
+Rules written here apply to **every future story** — every `chief-*` skill reads `.chief/_rules/` at the start of each session.
 
 ---
 
-## Using `/chief-retro` (after a milestone)
+## Using `/chief-retro` (after a story)
 
 If you're running a retrospective and patterns emerge:
 

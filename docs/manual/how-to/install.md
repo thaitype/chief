@@ -1,6 +1,6 @@
 # How to install Chief
 
-This guide covers installing Chief into an existing project. If you want to understand the full workflow first, start with the [tutorial](../tutorials/your-first-milestone.md).
+This guide covers installing Chief into an existing project. If you want to understand the full workflow first, start with the [tutorial](../tutorials/your-first-story.md).
 
 ---
 
@@ -29,10 +29,11 @@ Select the skills you want. At minimum, select `chief-install`. Press `a` to sel
 
 The skill asks:
 - Which coding agent you use
-- Whether to use symlink or copy mode
-- Whether to install subagents
+- Whether to use symlink or copy mode (Claude Code only)
 
-When done, your project has `AGENTS.md` and the subagent definitions.
+There's no subagent roster to install in v5 — see
+[chief-* execution skills reference](../reference/agents.md). When done, your project has
+`AGENTS.md` (and, for Claude Code, a `CLAUDE.md` pointer to it).
 
 ---
 
@@ -70,7 +71,7 @@ The setup script detects symlink support automatically and falls back to copy mo
 
 ## After install
 
-Run `/chief-init` to bootstrap project context. See [the tutorial](../tutorials/your-first-milestone.md#step-3--bootstrap-project-context) for what this does.
+Run `/chief-init` to bootstrap project context. See [the tutorial](../tutorials/your-first-story.md#step-3--bootstrap-project-context) for what this does.
 
 To verify the install worked, check that `AGENTS.md` exists in your project root and that your agent can read it.
 

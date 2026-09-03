@@ -42,7 +42,7 @@ npx skills@latest add thaitype/chief
 
 สัมภาษณ์เรื่อง stack และ dev commands แล้วเขียนไปที่ `.chief/project.md` จะข้ามและเขียนไฟล์เองทีหลังก็ได้
 
-→ [Tutorial เต็ม: milestone แรกของคุณ](docs/manual/tutorials/your-first-milestone.md)→ [ตัวเลือกการติดตั้งแบบ manual](docs/manual/how-to/install.md)
+→ [Tutorial เต็ม: milestone แรกของคุณ](docs/manual/tutorials/your-first-story.md)→ [ตัวเลือกการติดตั้งแบบ manual](docs/manual/how-to/install.md)
 
 > **ผู้ใช้ Windows:** Symlink mode ต้องเปิด Developer Mode และตั้ง `git config --global core.symlinks true` install skill จะตรวจจับอัตโนมัติและ fallback เป็น copy mode
 
@@ -144,7 +144,7 @@ npx skills@latest add thaitype/chief
 
 | หมวด                                               | เนื้อหา                                                        |
 | ------------------------------------------------------ | --------------------------------------------------------------------- |
-| [Tutorial](docs/manual/tutorials/your-first-milestone.md) | milestone แรกของคุณตั้งแต่ต้นจนจบ              |
+| [Tutorial](docs/manual/tutorials/your-first-story.md) | milestone แรกของคุณตั้งแต่ต้นจนจบ              |
 | [How-to guides](docs/manual/how-to/)                      | ติดตั้ง, อัปเกรด, เลือก skill, เขียน rules    |
 | [Reference](docs/manual/reference/)                       | Skills, agents, โครงสร้างไดเรกทอรี, rules hierarchy |
 | [Explanation](docs/manual/explanation/)                   | ทำไมถึงมี Chief, pre-coding first, three-agent model         |

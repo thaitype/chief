@@ -40,7 +40,7 @@ Name the session when prompted (e.g. "auth redesign", "database migration strate
 1. Opens a session file at `.chief/_grill/opened/NNNN-topic.md`
 2. Asks questions one at a time
 3. Writes every Q&A to the file as it goes — survives context resets
-4. Spawns `answer-verifier-agent` in the background to verify each answer against your actual repo before moving to the next question
+4. Spawns a throwaway verifier subagent in the background to verify each answer against your actual repo before moving to the next question
 
 At the end, the skill summarises the session and asks whether to proceed or revise any answers. The session file is moved to `.chief/_grill/coach/` when closed.
 
@@ -58,7 +58,7 @@ If any decisions should be permanent rules — not just one-off choices — capt
 
 See [How to capture a decision as a permanent rule](capture-a-rule.md).
 
-If you're ready to plan the milestone:
+If you're ready to plan the story:
 
 ```
 /chief-plan

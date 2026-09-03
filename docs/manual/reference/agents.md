@@ -1,80 +1,114 @@
-# Subagents reference
+# chief-* execution skills reference
 
-Chief ships four subagents. Each has a defined role and clear boundaries — they don't cross into each other's territory.
+v5 has **no persistent subagent roster**. What v4 shipped as four `.agents/agents/*.md` files
+(`chief-agent`, `builder-agent`, `tester-agent`, `answer-verifier-agent`) are now `chief-*`
+skills. Each still has a defined role and clear boundaries — they don't cross into each other's
+territory — but there's nothing to install separately anymore: a skill spawns its own throwaway
+subagent when it needs isolated context, rather than referencing a registered agent type.
 
 ---
 
-## chief-agent
+## `/chief-plan`
 
-**Role:** Planner and orchestrator.
+**Role:** Planner.
 
-Reads `AGENTS.md`, `.chief/_rules/`, and the current milestone's goals and contracts. Creates plans, breaks work into tasks, delegates to `builder-agent`, and decides what to do next.
+Offers a grill-vs-`/chief-wayfinder` choice, then writes the story's goal and contract, then
+breaks the work into tickets. Waits for approval at every phase.
 
 Does **not** write code.
 
-**When to call:**
-- Give it a goal: `"Plan milestone 3"`
-- Ask it for status: `"What's left in milestone 2?"`
-- Change direction mid-milestone: `"Descope the export feature from milestone 1"`
+---
+
+## `/chief-wayfinder`
+
+**Role:** Fog-charter.
+
+Optional. Charts a story's open decisions as a map of decision-tickets when it's too foggy for
+one grill session, resolves them one at a time. Feeds `/chief-plan`'s goal/contract phases —
+never loops straight into implementation itself.
+
+Does **not** write the goal or contract itself, and does **not** write code.
 
 ---
 
-## builder-agent
+## `/chief-build`
 
-**Role:** Implementer.
+**Role:** Implementer. Replaces `builder-agent`.
 
-Receives a task spec and implements it. Runs unit tests, fixes type and lint errors, and commits. Handles all fast, local, deterministic verification.
+Given one ticket, drives TDD at pre-agreed seams, typechecks and runs tests as it goes, runs
+`/chief-review-code`, and commits. All fast, local, deterministic verification is its
+responsibility.
 
-Does **not** make architecture decisions. Does **not** run integration tests or UI flows.
+Does **not** decide what's next, and does **not** decide whether the story is done — that's
+`/chief-loop`/`/chief-autopilot`'s job even when they're the ones spawning it.
 
 **When to call:**
 ```
-builder-agent: implement task-1 from milestone-1
+/chief-build 1-3
 ```
 
-Or via `/chief-autopilot` (called automatically).
+Or automatically, spawned per ticket by `/chief-loop`/`/chief-autopilot`.
 
 ---
 
-## tester-agent
+## `/chief-test`
 
-**Role:** Integration and environment verifier.
+**Role:** Real-world verifier. Replaces `tester-agent`.
 
-Runs integration tests, validates API responses, tests UI flows, checks environment-level behavior. Handles slow, non-deterministic, real-world verification.
+Runs integration tests, validates API responses, tests UI flows, checks environment-level
+behavior. Handles slow, non-deterministic, real-world verification that `/chief-build` doesn't
+touch.
 
 Does **not** write code. Does **not** run unit tests, lint, or build.
 
-**Only triggered when you explicitly request it** — chief-agent does not call tester-agent automatically.
+**Only triggered when you explicitly request it** — `/chief-loop`/`/chief-autopilot` never call
+it automatically.
 
 **When to call:**
 ```
-tester-agent: validate milestone-1
+/chief-test story-1
 ```
 
 Use when unit tests aren't enough and you need real-world coverage.
 
 ---
 
-## answer-verifier-agent
+## `/chief-review-code`
 
-**Role:** Background answer verifier.
+**Role:** Two-axis reviewer.
 
-Spawned by `/chief-grill` — one instance per question, running in the background while the main grill session continues. Receives only the most recent question and answer as context (not the full session) to stay focused.
+Reviews a diff along Standards (does it follow `.chief/_rules/_standard` + a Fowler-smell
+baseline?) and Spec (does it faithfully implement the story's goal/contract?) — run as two
+parallel throwaway sub-agents, reported separately.
 
-Checks whether an answer is grounded in the actual codebase, not just plausible in general. Writes its findings to the grill session file.
+Called automatically as the last beat of `/chief-build`, before commit. Also directly
+invocable.
 
-**Not called manually.** Triggered automatically by `/chief-grill`.
+---
 
-> This agent replaces `review-plan-agent`, which is deprecated as of v4.
+## The verifier pattern (was `answer-verifier-agent`)
+
+`/chief-grill` and `/chief-wayfinder`'s `grilling`-type tickets both need to check a per-answer
+claim against the actual codebase, in the background, with narrow context (just the current
+question, not the whole session). v4 shipped this as a standing agent file
+(`answer-verifier-agent`) that both could reference by name.
+
+v5 folds the same prompt inline into each skill instead — spawned fresh, per call, as a plain
+throwaway `Agent` invocation. No registered agent type, and nothing to install: the prompt is
+the appendix in `chief-grill`'s own `SKILL.md`.
+
+> This pattern replaced `review-plan-agent` (deprecated in v4), then the standalone
+> `answer-verifier-agent` file itself was folded inline in v5.
 
 ---
 
 ## Compatibility
 
-| Coding agent | How subagents are wired |
+| Coding agent | How `chief-*` skills are wired |
 |---|---|
-| Claude Code | `.claude/agents/` symlinks → `.agents/agents/` |
-| GitHub Copilot | `.github/agents/` symlinks or copies → `.agents/agents/` |
-| Other agents | Read `.agents/agents/*.md` directly (if supported) |
+| Claude Code | `CLAUDE.md → AGENTS.md` symlink; skills installed via `npx skills` |
+| GitHub Copilot | Reads `AGENTS.md` directly; skills installed via `npx skills` |
+| Other agents | Read `AGENTS.md` directly (if supported); skills installed via `npx skills` |
 
-`/chief-install` handles this wiring automatically for Claude Code and GitHub Copilot.
+`/chief-install` only ever wires `AGENTS.md` (and, for Claude Code, the `CLAUDE.md` pointer) —
+there's no per-agent subagent-file wiring left to do.

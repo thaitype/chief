@@ -13,7 +13,7 @@ Chief is a structured workflow for AI coding agents. These docs follow the [Diá
 
 ## Tutorials
 
-- [Your first milestone with Chief](tutorials/your-first-milestone.md) — Install Chief and ship a milestone from plan to commit, end-to-end.
+- [Your first story with Chief](tutorials/your-first-story.md) — Install Chief and ship a story from plan to commit, end-to-end.
 
 ## How-to guides
 
@@ -27,7 +27,7 @@ Chief is a structured workflow for AI coding agents. These docs follow the [Diá
 ## Reference
 
 - [Skills](reference/skills.md) — All available skills and what each does
-- [Subagents](reference/agents.md) — All subagents and when they run
+- [chief-* execution skills](reference/agents.md) — What replaced the v4 subagent roster, and when each runs
 - [Directory structure](reference/directory-structure.md) — Every file and folder Chief touches
 - [Rules hierarchy](reference/rules-hierarchy.md) — Priority order and conflict resolution
 
@@ -35,4 +35,4 @@ Chief is a structured workflow for AI coding agents. These docs follow the [Diá
 
 - [Why Chief exists](explanation/why-chief.md) — The problem Chief solves, and the idea behind it
 - [Pre-coding first](explanation/pre-coding-first.md) — Why planning before coding saves more time than it costs
-- [The three-agent model](explanation/three-agent-model.md) — Why Chief, Builder, and Tester are separate, and what each owns
+- [The separation of concerns](explanation/three-agent-model.md) — Why planning, building, and real-world verification are separate, and what each owns

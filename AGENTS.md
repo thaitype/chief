@@ -12,7 +12,7 @@
 ### 2. Simplicity First
 
 - Do the minimum that solves the problem. Nothing speculative.
-- If a task can be done in 1-3 commands, do it directly. Don't delegate trivial work to builder-agent.
+- If a task can be done in 1-3 commands, do it directly. Don't delegate trivial work to `/chief-build`.
 - No features, abstractions, or error handling beyond what was asked.
 - If a plan starts needing an options table, pause — you may not have understood the question.
 
@@ -41,23 +41,33 @@
 
 ---
 
-## Chief Agent Framework
+## Chief Framework
 
-## Rules Hierarchy
+### Storage location
+
+Planning artifacts (project context, stories, rules) live under `.chief/` by default. If
+`.chief.config.md` exists at the repo root, it names a different location instead
+(`storage-root: <path>`) — check for it before assuming `.chief/`. Most projects never create
+this file; its absence means the default. See `/chief-init`.
+
+### Rules Hierarchy
 
 1. **Project Rules** above (highest authority)
 2. `.chief/_rules`
-3. `.chief/milestone-X/_goal` (lowest authority)
+3. `.chief/story-X/_goal` (lowest authority)
 
 If rules conflict, higher priority wins. Always.
 
-Each milestone is self-contained. Only the active milestone's goals/contracts + global `.chief/_rules/` apply. Previous milestone artifacts are not inherited. To carry forward a decision from a past milestone, promote it to `.chief/_rules/`.
+Each story is self-contained. Only the active story's goal/contract + global `.chief/_rules/`
+apply. Previous stories' artifacts are not inherited. To carry forward a decision from a past
+story, promote it to `.chief/_rules/`.
 
 ---
 
 ### Directory Structure
 
-`.chief/` is created lazily — folders and files are added on first need, not pre-scaffolded. The shape below is the canonical layout that emerges as you use the framework:
+`.chief/` is created lazily — folders and files are added on first need, not pre-scaffolded. The
+shape below is the canonical layout that emerges as you use the framework:
 
 ```
 .chief/
@@ -65,30 +75,40 @@ Each milestone is self-contained. Only the active milestone's goals/contracts + 
 ├── _rules/
 │   ├── _standard/       # Coding standards, architecture constraints
 │   ├── _contract/       # Data models, API contracts, schemas
-│   ├── _goal/           # High-level goals (shared across milestones)
+│   ├── _goal/           # High-level goals (shared across stories)
 │   └── _verification/   # Test commands, build requirements, definition of done
-└── milestone-X/
-    ├── _goal/           # Milestone-specific goals
-    ├── _contract/       # Milestone-specific contracts
-    ├── _plan/           # _todo.md + task-N.md specs
-    └── _report/         # Reports, investigations, task outputs
+└── story-X/
+    ├── _map.md          # Only if /chief-wayfinder was used
+    ├── _goal/           # Story goal + Out of Scope
+    ├── _contract/       # Story contract + Testing Decisions
+    ├── _tickets/         # Decision-tickets and implementation tickets
+    └── _report/          # Ticket reports, batch reports, retros, investigations
 ```
 
-### 3-Agent Architecture
+### The `chief-*` skill family
 
-| Agent | Role | Does | Does NOT |
+There is no persistent subagent roster in v5 — `/chief-build` and `/chief-test` are skills that
+spawn their own throwaway subagents for isolated context when they need it, not registered
+agent files.
+
+| Skill | Role | Does | Does NOT |
 |-------|------|------|----------|
-| **Chief** | Planner/Orchestrator | Plan, delegate, decide, update todo | Implement code |
-| **Builder** | Implementer | Code, unit test, type/lint fix, commit | Integration test, architecture decisions |
-| **Tester** | Verifier | Integration/UI/API/environment testing | Implement code, patch bugs |
+| `/chief-plan` | Planner | Grill or hand off to `/chief-wayfinder`, write goal + contract, break into tickets | Implement code |
+| `/chief-wayfinder` | Fog-charter | Map a story's open decisions as tickets, resolve one at a time | Write goal/contract itself, implement code |
+| `/chief-loop`, `/chief-autopilot` | Orchestrator | Work the ticket frontier via `/chief-build`, decide what's next, check goal+contract satisfied | Implement code directly |
+| `/chief-build` | Implementer | Build ONE ticket: TDD at seams, typecheck, test, `/chief-review-code`, commit | Decide what's next, check story completion |
+| `/chief-test` | Verifier | Integration/UI/API/environment testing, ONLY when explicitly requested | Implement code, patch bugs |
+| `/chief-review-code` | Reviewer | Standards + Spec review of a diff, two parallel axes | Decide, implement |
 
 ### Responsibility Boundary
 
-- **Builder** handles ALL fast, deterministic, local verification: unit tests, type checks, lint, build. Builder MUST run these before committing.
-- **Tester** handles ONLY slow, non-deterministic, real-world verification: integration tests, UI flows, API calls, auth flows, environment-dependent checks.
-- Tester NEVER runs unit tests, lint, build, or reads source files for code review.
-- Tester is ONLY triggered when the user explicitly requests it. Chief MUST NOT auto-delegate to tester.
-- Tester is injected into the cycle only when the user requests real-world validation.
+- `/chief-build` handles ALL fast, deterministic, local verification: unit tests, type checks,
+  lint, build. It MUST run these before committing.
+- `/chief-test` handles ONLY slow, non-deterministic, real-world verification: integration
+  tests, UI flows, API calls, auth flows, environment-dependent checks.
+- `/chief-test` NEVER runs unit tests, lint, build, or reviews code for style.
+- `/chief-test` is ONLY triggered when the user explicitly requests it. `/chief-loop` and
+  `/chief-autopilot` MUST NOT auto-delegate to it.
 
 ### Rules for `.chief/_rules` Files
 
@@ -101,18 +121,22 @@ Each milestone is self-contained. Only the active milestone's goals/contracts + 
 
 ## Project Rules
 
-- This repo IS the chief-agent framework. Sources of truth:
-  - Subagent definitions: `template/.agents/agents/`
+- This repo IS the Chief framework. Sources of truth:
   - Framework rules file: `template/AGENTS.md`
   - Skills: `skills/` (chief, setup)
   - Example `.chief/` layout (reference only, not consumed by install): `docs/example-chief/`
-- Product changes (agent definitions, AGENTS.md content, skills) → MUST edit the source-of-truth path first, then sync to root if applicable.
-- `.chief/` is created lazily at runtime by chief-agent. There is no `template/.chief/` to scaffold from anymore.
-- Dogfooding-only changes (milestone plans, todos, reports) → edit root `.chief/` directly.
+- v5 has no `template/.agents/agents/` subagent roster anymore — `/chief-build`/`/chief-test`
+  are skills under `skills/chief/`, not agent files. Don't recreate `.agents/agents/`.
+- Product changes (AGENTS.md content, skills) → MUST edit the source-of-truth path first, then
+  sync to root if applicable.
+- `.chief/` is created lazily at runtime by whichever `chief-*` skill runs first. There is no
+  `template/.chief/` to scaffold from.
+- Dogfooding-only changes (story plans, tickets, reports) → edit root `.chief/` directly.
 - NEVER let root and template drift without explicit reason.
 
 ---
 
 ## Project Configuration
 
-Project-specific details (dev commands, tech stack, architecture) are defined in `.chief/project.md`.
+Project-specific details (dev commands, tech stack, architecture) are defined in
+`.chief/project.md`.
