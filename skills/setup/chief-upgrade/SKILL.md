@@ -1,35 +1,46 @@
 ---
 name: chief-upgrade
-description: Upgrade the Chief to a specific version. Uses upgrade.sh as the primary method, falls back to manual if script fails. Use when the user wants to upgrade the framework (e.g. "/chief-upgrade" or "/chief-upgrade canary").
+description: Upgrade the Chief framework to a specific version. Clones the target version, diffs and merges AGENTS.md with user approval. Detects a v4-or-earlier install and explains the v5 breaking change before proceeding. Use when the user wants to upgrade the framework (e.g. "/chief-upgrade" or "/chief-upgrade canary").
 ---
 
-Upgrade the Chief to the version specified in the arguments.
+Upgrade the Chief framework to the version specified in the arguments.
 
 ## Arguments
 
 The first argument is the target version (branch or tag). Optional.
 
-- No argument → upgrade to the latest stable release (highest semver tag). Find it by running `git ls-remote --tags https://github.com/thaitype/chief.git`, strip `refs/tags/`, ignore `^{}` entries, and pick the highest semver version.
+- No argument → upgrade to the latest stable release (highest semver tag). Find it by running
+  `git ls-remote --tags https://github.com/thaitype/chief.git`, strip `refs/tags/`, ignore
+  `^{}` entries, and pick the highest semver version.
 - `canary` → latest canary branch (active development, unreleased)
-- `v1.0.0`, `v2.0.0`, etc. → specific tagged version
+- `v5.0.0`, etc. → specific tagged version
 
 ## Steps
 
-### 0. Detect coding agent and install mode
+### 0. Detect a pre-v5 install
 
-Detect which coding agent the user has set up:
+Check for `.agents/agents/chief-agent.md`. If it exists, this project is on **v4 or earlier**,
+and the target is v5+. This is a **major breaking upgrade**, not a routine refresh — stop and
+explain to the user before touching anything:
 
-1. `.claude/agents/` exists → suggest **claude-code**
-2. `.github/agents/` exists → suggest **copilot**
-3. Only `.agents/` exists → suggest **opencode**
+- `.agents/agents/` (chief-agent, builder-agent, tester-agent, answer-verifier-agent) is
+  **removed entirely** in v5. There is nothing to migrate it to — `/chief-build` and
+  `/chief-test` replace `builder-agent`/`tester-agent` as skills, not agent files; the other two
+  are gone outright (see `docs/design/v5-ai-workflow.md`).
+- `.chief/milestone-N/` (goal, contract, `_plan/_todo.md`, task specs) is **not migrated**. v5
+  uses `.chief/story-N/` with a different shape (ticket files instead of a todo list). Any
+  story/milestone in flight should be finished on a pinned v4 checkout
+  (`npx skills@latest add thaitype/chief#v4.0.0` or the `release/v4` branch) — starting a new
+  one after upgrading will use the v5 shape automatically via `/chief-plan`.
+- Old `.chief/milestone-N/` directories are left on disk untouched (upgrade never deletes local
+  content) but nothing in v5 reads them anymore.
 
-Detect install mode:
+Ask the user to confirm they understand this is a one-way jump before proceeding. If they'd
+rather stay on v4, stop here and point them at pinning `#v4.0.0` / `release/v4` instead.
 
-1. Any file in the agent-specific directory is a symlink → **link**
-2. Files are regular files → **copy**
-3. No agent-specific directory → suggest **link**
-
-Ask the user to confirm agent and mode.
+If `.agents/agents/chief-agent.md` is absent, this is either a fresh v5 install (use
+`/chief-install` instead — stop and say so) or an already-on-v5 project doing a routine
+refresh; continue to step 1.
 
 ### 1. Clone target version
 
@@ -37,98 +48,58 @@ Ask the user to confirm agent and mode.
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief.git .chief-agent-tmp
 ```
 
-### 2. Run upgrade.sh --plan and diff AGENTS.md
+### 2. Diff AGENTS.md
 
-Run the upgrade script plan:
-```bash
-bash .chief-agent-tmp/scripts/upgrade.sh --plan --agent <agent> --mode <mode>
-```
-
-Then separately diff AGENTS.md (the script does not handle this file):
 ```bash
 diff AGENTS.md .chief-agent-tmp/template/AGENTS.md
 ```
 
-Show both outputs to the user. For AGENTS.md, explain:
-- The **Project Rules** section at the top is user-owned — NEVER overwrite it.
-- Everything below (Rules Hierarchy, Chief, etc.) is framework content that may need updating.
+Show the diff to the user. Explain:
+- The **Project Rules** section (or, in the lazy-install convention, everything outside the
+  `<!-- chief-framework:begin/end -->` markers) is user-owned — NEVER overwrite it.
+- Everything else is framework content that may need updating.
+
+If coming from a pre-v4 layout, also note that `.agents/agents/` and any `.claude/agents/` /
+`.github/agents/` symlinks/copies pointing at it should be removed — they no longer serve a
+purpose. Confirm with the user before deleting anything (removal, unlike everything else this
+skill does, is destructive).
 
 ### 3. Wait for user approval
 
-Ask the user to review. They may:
-- Approve all
-- Cancel
-- Ask for more detail on a specific file
+Ask the user to review. They may approve all, cancel, or ask for more detail.
 
-### 4. Run upgrade.sh (apply) and merge AGENTS.md
+### 4. Merge AGENTS.md
+
+Use this priority order:
+
+1. **If the user's `AGENTS.md` contains `<!-- chief-framework:begin -->` /
+   `<!-- chief-framework:end -->` markers**: replace everything between the markers with
+   `.chief-agent-tmp/template/AGENTS.md`'s content. Keep everything outside the markers exactly
+   as-is.
+2. **Else if the user's `AGENTS.md` has a `## Project Rules` section** (legacy layout): treat
+   everything from `## Project Rules` to the next `---` as user-owned; replace everything below
+   it with the new framework content. Keep Project Rules exactly as-is.
+3. **Else** (no markers, no Project Rules section): treat the whole file as framework content
+   and overwrite from the template.
+
+Show the merged result and get confirmation before writing.
+
+`.chief/` (project.md, stories, rules) is **never** touched by upgrade — it is user state, even
+when empty.
+
+### 5. Clean up stale pre-v5 artifacts (only if the user confirmed removal in step 2)
 
 ```bash
-bash .chief-agent-tmp/scripts/upgrade.sh --agent <agent> --mode <mode>
+rm -rf .agents .claude/agents .github/agents
 ```
 
-Then merge AGENTS.md manually. Use this priority order:
-
-1. **If the user's `AGENTS.md` contains `<!-- chief-framework:begin -->` and `<!-- chief-framework:end -->` markers** (new lazy-install convention):
-   - Replace everything between the markers with the contents of `.chief-agent-tmp/template/AGENTS.md`.
-   - Keep everything outside the markers exactly as-is.
-
-2. **Else if the user's `AGENTS.md` has a `## Project Rules` section** (legacy v4 layout):
-   - Treat everything from `## Project Rules` to the next `---` as user-owned.
-   - Replace everything below that section with the new framework content from template.
-   - Keep the user's Project Rules section exactly as-is.
-
-3. **Else** (no markers, no Project Rules section):
-   - Treat the entire file as framework content and overwrite from template.
-
-Show the user the merged result and get confirmation before writing.
-
-`.chief/` (project.md, milestones, rules) is **never** touched by upgrade — it is user state, even when empty.
-
-If upgrade.sh **succeeds**, skip to step 6.
-
-If upgrade.sh **fails**, proceed to step 5.
-
-### 5. Manual fallback (if upgrade.sh fails)
-
-Perform the upgrade manually, same as chief-install fallback pattern:
-
-1. **Overwrite agent files** — For each `.chief-agent-tmp/template/.agents/agents/*.md`:
-   - Extract current `model:` value from the local file
-   - Copy template file over local file
-   - Replace `${thinking_model}` and `${coding_model}` with extracted model value
-   - For new agent files (no local equivalent): copy and handle model placeholders
-
-2. **Update integration files** based on agent and mode:
-
-   **claude-code link:**
-   ```bash
-   for f in .agents/agents/*.md; do ln -sf "../../$f" ".claude/agents/$(basename "$f")"; done
-   ```
-
-   **claude-code copy:**
-   ```bash
-   cp .agents/agents/*.md .claude/agents/
-   ```
-
-   **copilot link:**
-   ```bash
-   for f in .agents/agents/*.md; do ln -sf "../../$f" ".github/agents/$(basename "$f")"; done
-   ```
-
-   **copilot copy:**
-   ```bash
-   cp .agents/agents/*.md .github/agents/
-   ```
-
-   **Other agents** — no integration files needed.
-
-3. **Model placeholders** — If any file still has `${thinking_model}` or `${coding_model}`:
-   - claude-code: replace with `opus`/`sonnet`
-   - Others: ask user for model names, replace
+Only run this if coming from a pre-v5 install and the user explicitly approved it. Never run it
+unprompted — a user might have local-only files under `.agents/agents/` that aren't part of the
+framework roster.
 
 ### 6. Verify
 
-Check that all expected files exist and symlinks resolve (if link mode). Fix any issues found.
+Check `AGENTS.md` merged correctly and (for Claude Code) `CLAUDE.md` still resolves.
 
 ### 7. Clean up
 
@@ -138,13 +109,19 @@ rm -rf .chief-agent-tmp
 
 ### 8. Summary
 
-Report what was changed, what was skipped, and any manual steps remaining.
+Report what was changed, what was skipped, and any manual steps remaining. If this was a v4→v5
+jump, remind the user: any story in flight should finish on the pinned v4 checkout; new work
+started with `/chief-plan` from here on uses the v5 shape.
 
 ## Important rules
 
-- ALL temporary files MUST be inside `.chief-agent-tmp/`. NEVER write to `/tmp`, session dirs, home dirs, or any other location outside the repo.
-- NEVER apply changes without user approval
-- NEVER overwrite user content in `.chief/` milestones (goals, contracts, plans, reports)
-- NEVER remove local-only files — upgrade only updates and adds, never deletes
-- NEVER summarize diffs from memory — always use actual diff output (from upgrade.sh or manual commands)
-- Always clean up `.chief-agent-tmp` even if the upgrade is cancelled
+- ALL temporary files MUST be inside `.chief-agent-tmp/`. NEVER write to `/tmp`, session dirs,
+  home dirs, or any other location outside the repo.
+- NEVER apply changes without user approval.
+- NEVER overwrite user content in `.chief/` — stories, goals, contracts, tickets, reports.
+- NEVER remove local-only files without explicit confirmation for that specific removal (step 5
+  is the one exception this skill ever proposes, and only after explaining why).
+- NEVER summarize diffs from memory — always use actual diff output.
+- Always clean up `.chief-agent-tmp` even if the upgrade is cancelled.
+- A v4→v5 jump is a **major, one-way** upgrade — always detect and explain it (step 0) before
+  doing anything else. Never silently treat it as a routine refresh.
