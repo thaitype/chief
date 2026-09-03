@@ -165,8 +165,9 @@ configurable `.scratch/`, never inside it): the pointer lives at a **fixed locat
 configurable directory**.
 
 **`.chief.config.md`** at the repo root (naming convention borrowed from `.eslintrc` /
-`.prettierrc`-style tool configs) is that fixed anchor. Its only job at v5 scope is naming the
-storage root:
+`.prettierrc`-style tool configs) is that fixed anchor. Its only job, forever, is naming the
+storage root — kept deliberately minimal and stable since it has to be readable before anything
+else is known:
 
 ```markdown
 # Chief config
@@ -174,12 +175,30 @@ storage root:
 storage-root: .chief/
 ```
 
-Every skill resolves the storage root through this file rather than hardcoding `.chief/`.
-Defaults to `.chief/` if the file is absent (so v4-style projects with no `.chief.config.md`
-keep working without any migration step). `/chief-init` (or a new small setup step) explicitly
-surfaces a "where should planning artifacts live?" question even though there's only one
-working answer today — a deliberate choice to make "not fixed" visible from day one, not just
-true internally.
+**Two-tier config, local-backend-specific.** Anything else Chief needs to configure that *isn't*
+about locating the storage root in the first place belongs in a second file,
+`<storage-root>/config.md` (i.e. `.chief/config.md` under the default root) — resolved only
+after `.chief.config.md` has already answered "where." This mirrors matt's own two-tier pattern
+(a short pointer in `AGENTS.md`/`CLAUDE.md`, full detail in `docs/agents/issue-tracker.md`),
+adapted to respect the bootstrap constraint above: nothing may need `<storage-root>/config.md`
+to be resolvable before `storage-root` itself is known.
+
+This second tier only makes sense for the local backend — it's a file *inside* a local
+directory. `.chief.config.md` at the root is the one thing every backend needs (it answers
+"where/what backend," full stop, e.g. a future `backend: github` value instead of
+`storage-root:`); a non-local backend wouldn't have a local directory for a second config file
+to live inside, and would need its own equivalent, decided when that backend is built.
+
+At v5 scope `<storage-root>/config.md` has nothing to hold yet (there's only one backend) — it
+stays uncreated until a real setting needs it, same lazy-creation convention as the rest of
+`.chief/`.
+
+Every skill resolves the storage root through `.chief.config.md` rather than hardcoding
+`.chief/`. Defaults to `.chief/` if the file is absent (so v4-style projects with no
+`.chief.config.md` keep working without any migration step). `/chief-init` (or a new small
+setup step) explicitly surfaces a "where should planning artifacts live?" question even though
+there's only one working answer today — a deliberate choice to make "not fixed" visible from
+day one, not just true internally.
 
 ### 4. Goal/contract stay two files; gain matt's missing sections
 
