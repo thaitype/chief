@@ -146,19 +146,40 @@ this doesn't apply here.
 - Both wayfinder's decision-tickets and to-tickets-style implementation-tickets live in the
   same story's `_tickets/` store (see "Ticket model").
 
-### 3. Storage backend: full abstraction, local-only implementation
+### 3. Storage backend: full abstraction, local-only implementation, directory name not hardcoded
 
 Adopts matt's pattern of a per-repo pointer/config file that every skill reads instead of
 hardcoding a path — but, unlike matt (who ships GitHub/GitLab/local out of the box), v5 ships
-**only the local backend**, still named `.chief/` (matching matt's own practice of a fixed
-name per backend choice — the backend is configurable, its name isn't). GitHub/GitLab/other
-backends are a seam for later, not implemented now. (When a GitHub backend does eventually
-land: 1 Chief story ≈ 1 GitHub Issue, per the naming rationale above — not a GitHub Milestone.)
+**only the local backend**. GitHub/GitLab/other backends are a seam for later, not implemented
+now. (When a GitHub backend does eventually land: 1 Chief story ≈ 1 GitHub Issue, per the
+naming rationale above — not a GitHub Milestone.)
 
-Even though there is only one working backend at launch, `/chief-init` (or a new small setup
-step) explicitly surfaces a "where should planning artifacts live?" question rather than
-silently defaulting — this is a deliberate choice to make "not fixed" visible from day one,
-not just true internally.
+**The local backend's directory name is itself not hardcoded** — `.chief/` is the *default*,
+not a requirement. This is the literal reading of the original ask ("chief จะไม่ fix dir
+`.chief`"), not just "which backend" being configurable.
+
+That creates a bootstrap problem the first draft of this doc got wrong: a pointer file that
+lives *inside* the directory it's naming can't be found before you already know the directory's
+name. The fix (same one matt uses — `docs/agents/issue-tracker.md` lives outside the
+configurable `.scratch/`, never inside it): the pointer lives at a **fixed location outside any
+configurable directory**.
+
+**`.chief.config.md`** at the repo root (naming convention borrowed from `.eslintrc` /
+`.prettierrc`-style tool configs) is that fixed anchor. Its only job at v5 scope is naming the
+storage root:
+
+```markdown
+# Chief config
+
+storage-root: .chief/
+```
+
+Every skill resolves the storage root through this file rather than hardcoding `.chief/`.
+Defaults to `.chief/` if the file is absent (so v4-style projects with no `.chief.config.md`
+keep working without any migration step). `/chief-init` (or a new small setup step) explicitly
+surfaces a "where should planning artifacts live?" question even though there's only one
+working answer today — a deliberate choice to make "not fixed" visible from day one, not just
+true internally.
 
 ### 4. Goal/contract stay two files; gain matt's missing sections
 
@@ -262,8 +283,6 @@ systems side by side was never actually proposed once the details were worked ou
 
 ## Open items (not blocking, need resolving during implementation)
 
-- Exact location/filename of the storage-backend pointer file (#3 above) — not decided; matt's
-  own equivalent is `docs/agents/issue-tracker.md`.
 - The subagent-spawn mechanism noted under `/chief-build` (#6 above).
 - Full inventory of every doc file that says "milestone" and needs updating to "story"
   (`rules-hierarchy.md`, `directory-structure.md`, `your-first-milestone.md` tutorial —
