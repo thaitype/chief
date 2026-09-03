@@ -123,7 +123,7 @@ Then report:
 
 - Path written
 - Backup path (if collision triggered a `.bak`)
-- Reminder: chief-agent will pick up this rule on its next read of `.chief/_rules/**`
+- Reminder: every `chief-*` skill picks up this rule on its next read of `.chief/_rules/**`
 
 Stop. Do not ask "add another?" — one rule per invocation. User re-runs for the next.
 
