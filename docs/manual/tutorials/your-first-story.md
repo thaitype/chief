@@ -110,7 +110,7 @@ At each step, the skill waits for your sign-off before proceeding.
 With the plan approved, build a ticket:
 
 ```
-/chief-build 1-1
+/chief-build 1
 ```
 
 Or, if you want the agent to work through every ticket autonomously:

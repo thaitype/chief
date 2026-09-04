@@ -53,7 +53,7 @@ Builds one ticket. Replaces `builder-agent`.
 Drives TDD at pre-agreed seams, typechecks and runs tests as it goes, runs
 `/chief-review-code`, and commits. Never decides what's next or whether the story is done.
 
-Invoke directly (`/chief-build 1-3`) or let `/chief-loop`/`/chief-autopilot` spawn it per
+Invoke directly (`/chief-build 3`) or let `/chief-loop`/`/chief-autopilot` spawn it per
 ticket, in its own isolated context.
 
 ---

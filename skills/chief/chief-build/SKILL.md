@@ -1,6 +1,6 @@
 ---
 name: chief-build
-description: Build one ticket, correctly. Drives TDD at pre-agreed seams, typechecks and runs tests as it goes, runs /chief-review-code, and commits. Replaces builder-agent — invoke directly ("/chief-build 1-3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
+description: Build one ticket, correctly. Drives TDD at pre-agreed seams, typechecks and runs tests as it goes, runs /chief-review-code, and commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
 ---
 
 # Chief Build
@@ -150,8 +150,8 @@ ticket. Do not sweep in unrelated refactors or touch other stories.
 **Examples:**
 
 ```
-feat(story-1/ticket-1-1): implement sqlite todo schema and repository
-fix(story-1/ticket-1-2): resolve type mismatch in auth service
+feat(story-1/ticket-1): implement sqlite todo schema and repository
+fix(story-1/ticket-2): resolve type mismatch in auth service
 ```
 
 ---

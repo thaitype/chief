@@ -69,11 +69,11 @@ Decision-tickets live in the **same** `.chief/story-N/_tickets/` folder as
 one shared numbering sequence, one shared file shape, distinguished by the `Type:` field:
 
 ```markdown
-# 1-3: <the question>
+# 3: <the question>
 
 Type: wayfinder:research | wayfinder:prototype | wayfinder:grilling | wayfinder:task
 Status: open | claimed | resolved
-Blocked by: 1-1  (or "None (can start immediately)")
+Blocked by: 1  (or "None (can start immediately)")
 
 ## Question
 

@@ -75,7 +75,7 @@ project/
 
 ```
 /chief-plan        # grill (หรือ /chief-wayfinder) → goal → contract → tickets (อนุมัติทุกขั้นตอน)
-/chief-build 1-1   # build ทีละ ticket
+/chief-build 1   # build ทีละ ticket
 /chief-retro       # ทบทวนและบันทึกบทเรียนเป็น rules
 ```
 

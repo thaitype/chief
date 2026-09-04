@@ -16,7 +16,7 @@ Chief's premise is simple: give every project the same shape, in markdown, in pl
 - `.chief/_rules/` holds the shared standards.
 - `.chief/story-N/` holds whatever you're building right now.
 
-Once the layout is fixed, agents already know where to read and where to write. You don't have to tell them. Your prompts can be one sentence: `"Plan story 3."` `"Build ticket 1-2."` `"What changed?"` The agents figure out the rest because everything they need is exactly where they expect it.
+Once the layout is fixed, agents already know where to read and where to write. You don't have to tell them. Your prompts can be one sentence: `"Plan story 3."` `"Build ticket 2."` `"What changed?"` The agents figure out the rest because everything they need is exactly where they expect it.
 
 The result: you stop repeating yourself. You stop burning mental cycles deciding where to put things. You ship.
 

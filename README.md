@@ -80,7 +80,7 @@ Best for complex projects, unfamiliar domains, team work.
 
 ```
 /chief-plan        # grill (or /chief-wayfinder) → goal → contract → tickets (approval at each step)
-/chief-build 1-1   # build one ticket at a time
+/chief-build 1   # build one ticket at a time
 /chief-retro       # review and capture lessons as rules
 ```
 

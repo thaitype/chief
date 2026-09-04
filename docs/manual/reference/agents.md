@@ -44,7 +44,7 @@ Does **not** decide what's next, and does **not** decide whether the story is do
 
 **When to call:**
 ```
-/chief-build 1-3
+/chief-build 3
 ```
 
 Or automatically, spawned per ticket by `/chief-loop`/`/chief-autopilot`.

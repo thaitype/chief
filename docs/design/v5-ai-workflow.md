@@ -95,15 +95,21 @@ story (root container — .chief/story-N/, sized like one issue/ticket in any ot
 `chief-loop` / `chief-autopilot` work a **ticket frontier** instead: any ticket whose blockers
 are all resolved is takeable.
 
-**File shape** (`.chief/story-N/_tickets/<N>-<seq>-<slug>.md`, numbered `<story-number>-<seq>`,
-e.g. `1-1-user-listing-schema.md` for story-1's first ticket):
+**File shape** (`.chief/story-N/_tickets/<seq>-<slug>.md`, numbered per-story from 1, e.g.
+`1-user-listing-schema.md` for this story's first ticket — **no story-number prefix**: the
+folder (`.chief/story-N/_tickets/`) already scopes it, so repeating the story number in the
+filename would be redundant. An earlier draft of this doc did prefix it (`<story>-<seq>`,
+carried over from a `.chief/backlog/` concept that would have let a ticket exist before being
+assigned to a story); once backlog was considered and rejected — see below — nothing produces
+a ticket that isn't already inside a story folder, so the prefix's only reason to exist went
+with it):
 
 ```markdown
-# 1-1: <ticket title>
+# 1: <ticket title>
 
 Type: wayfinder:research | wayfinder:prototype | wayfinder:grilling | wayfinder:task | implementation
 Status: open | claimed | resolved
-Blocked by: 1-2, 1-5  (or "None (can start immediately)")
+Blocked by: 2, 5  (or "None (can start immediately)")
 
 ## Question / What to build
 <the question, if a wayfinder:* ticket — or the end-to-end behaviour, if implementation>
@@ -118,7 +124,27 @@ Blocked by: 1-2, 1-5  (or "None (can start immediately)")
 
 `Type:` reuses matt's own wayfinder label vocabulary verbatim for decision-tickets, plus a
 fifth value (`implementation`) for to-tickets-style tickets — both kinds share one numbering
-sequence and one folder, distinguished only by this field.
+sequence and one folder, distinguished only by this field. Matt's own local-markdown convention
+doesn't have an equivalent fifth value (his to-tickets template carries no `Type:` field at
+all — presence vs. absence of the field is what distinguishes his two ticket kinds); an
+`implementation` value was considered and rejected as a closer copy of that presence/absence
+convention, then explicitly brought back, since it's more robust for anything reading the file
+(no special-case "field is just missing" handling) at the cost of one more line per ticket.
+
+**`wayfinder:task` vs. `implementation` — worth being explicit about, since both are "do work"
+tickets and look similar at a glance:**
+
+| | `wayfinder:task` | `implementation` |
+|---|---|---|
+| When | Phase 0, before the goal/contract can even be written | Phase 3 onward, after goal/contract are approved |
+| Unblocks | A *decision* (another ticket) | The story's *delivery* (the goal itself) |
+| Resolves into | A recorded fact in `## Answer` (credentials location, a URL, a row count — something now known) | A commit, via `/chief-build` |
+| Who runs it | Inline within `/chief-wayfinder` (agent alone if AFK, or a checklist handed to the human if HITL) | `/chief-build` only |
+| Counts toward "story done"? | No — it only clears fog | Yes — it's part of what "goal met AND contract satisfied" checks |
+
+Example: "sign up for a trial of service X to judge whether its API fits" is `wayfinder:task`
+(unblocks the *decision* of which service to use, before the contract can name it). "Implement
+the S3 upload handler per the contract" is `implementation` (delivers what was already decided).
 
 **No separate backlog concept.** Considered a `.chief/backlog/tickets/` parking lot for tickets
 not yet assigned to a story; rejected as scope creep beyond the original six concepts — a
@@ -325,3 +351,16 @@ systems side by side was never actually proposed once the details were worked ou
   Chief's loop stays one-ticket-at-a-time, unchanged from v4.
 - A global backlog store for unassigned tickets — considered and rejected; a ticket belongs to
   exactly one story.
+
+## Future ideas (not v5 scope, not decided, just captured)
+
+- **`/chief-triage`** — matt's `/triage` handles issues *he didn't create*: raw external bug
+  reports and feature requests landing in the same tracker as his own planned work, run through
+  a category × state machine (`needs-triage`/`needs-info`/`ready-for-agent`/`ready-for-human`/
+  `wontfix`) that Chief has no equivalent of today, deliberately — every Chief ticket currently
+  comes from `/chief-plan` or `/chief-wayfinder`, never from an external reporter. If Chief ever
+  wants to ingest bug reports filed by a project's own end-users (not bugs in Chief itself),
+  this is the shape that would need designing. Chief's `Status:` vocabulary
+  (`open`/`claimed`/`resolved`) deliberately doesn't borrow matt's triage-state vocabulary today
+  because there's no external-intake path for it to describe — revisit this decision together
+  if `/chief-triage` ever gets built, since the two are linked.

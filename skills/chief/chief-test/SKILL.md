@@ -1,6 +1,6 @@
 ---
 name: chief-test
-description: Long-running, integration, UI, API, and external-environment verification for a ticket or a whole story. Replaces tester-agent. Invoke directly ("/chief-test 1-3" or "/chief-test story-1") or let chief-loop/chief-autopilot spawn it when real-environment validation is explicitly requested. Never patches code — reports findings only.
+description: Long-running, integration, UI, API, and external-environment verification for a ticket or a whole story. Replaces tester-agent. Invoke directly ("/chief-test 3" or "/chief-test story-1") or let chief-loop/chief-autopilot spawn it when real-environment validation is explicitly requested. Never patches code — reports findings only.
 ---
 
 # Chief Test

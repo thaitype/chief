@@ -139,9 +139,10 @@ briefly:
   fit one fresh context window (one `/chief-build` run).
 - Each ticket declares its **blocking edges** (`Blocked by: <id>, <id>` or "None") — the other
   tickets that must resolve before it can start.
-- File: `.chief/story-N/_tickets/<story-number>-<seq>-<slug>.md`, `Type: implementation`,
-  `Status: open`, numbered continuing from any existing tickets (including
-  `wayfinder:*` decision-tickets from Phase 0, if the numbering sequence is shared with those).
+- File: `.chief/story-N/_tickets/<seq>-<slug>.md`, `Type: implementation`, `Status: open`,
+  numbered continuing from any existing tickets in the same story (including `wayfinder:*`
+  decision-tickets from Phase 0 — one shared sequence, not restarted per type). No story-number
+  prefix: the folder already scopes it to this story.
 - **Wide refactors are the exception to vertical slicing.** A wide refactor (rename a column,
   retype a shared symbol) has a blast radius that fans across the whole codebase — no vertical
   slice can land green. Sequence it as **expand → migrate (batched by blast radius, each batch
