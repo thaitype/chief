@@ -7,6 +7,9 @@ You are helping the user capture a single rule into `.chief/_rules/`. This is th
 
 One invocation = one rule (path 2) or scaffolding only (path 1). Re-run for more.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ## Steps
 
 ### 1. Pre-flight

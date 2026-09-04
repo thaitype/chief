@@ -14,6 +14,9 @@ Both axes run as **parallel throwaway sub-agents** so neither pollutes the other
 this skill aggregates their findings side by side — never merged, never re-ranked against each
 other (see "Why two axes").
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ## Process
 
 ### 1. Pin the fixed point

@@ -11,6 +11,10 @@ whoever wants it.
 **Read-and-plan first, write additively, ask before anything destructive.** This skill never
 deletes the source milestone without an explicit, separate confirmation at the end.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first — both the v4 `milestone-*/` source and the v5
+`story-N/` destination live under the resolved root, not necessarily literally `.chief/`.
+
 ## Step 1: Find candidates
 
 Scan `.chief/` for `milestone-*/` directories (the v4 shape). For each one found, determine

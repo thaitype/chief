@@ -5,6 +5,9 @@ description: Run a retrospective on the current story or latest round. Checks go
 
 Run a retrospective on the current story.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ## Scope Detection
 
 Auto-detect the scope:

@@ -7,6 +7,9 @@ You are planning a **story** — Chief's unit of work, sized like a single issue
 tracker (see `docs/design/v5-ai-workflow.md` for why it's called "story," not "milestone").
 Follow this process strictly, one phase at a time. **Never skip ahead.**
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ---
 
 ## Before You Start: New vs Existing Story

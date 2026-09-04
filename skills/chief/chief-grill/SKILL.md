@@ -9,6 +9,8 @@ You are running a verified grill session. This is `/grill-design` with two extra
 2. **Per-question background verification by a throwaway sub-agent.** While the user is thinking about the next question, a spawned subagent (the answer-verifier prompt, see step 5g — no persistent agent file, spawned fresh per call) cross-references the previous answer against the actual codebase. Findings surface as a sidebar.
 3. **Persistent session log.** All state lives in `.chief/_grill/opened/NNNN-topic.md`. Survives compaction and `/clear`.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 Ask one question at a time. Wait for the user. Provide a recommended answer with each question.
 
 ## Steps

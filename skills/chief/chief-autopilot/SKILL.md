@@ -5,6 +5,9 @@ description: Run the story's ticket frontier autonomously via /chief-build. Requ
 
 Run the story's ticket frontier autonomously.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ## Arguments
 
 - No argument or `auto` → **auto mode** (default). You make all decisions, never stop for human

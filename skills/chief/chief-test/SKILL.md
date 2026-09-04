@@ -12,6 +12,9 @@ You do NOT implement code. You do NOT refactor. You do NOT patch bugs. You verif
 report. All fixes route back through `/chief-build` (a human decides whether to re-run it), not
 through you.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 Like `/chief-build`, you're invoked in one of two ways with identical behavior either way: a
 human runs `/chief-test <ticket-or-story>` directly, or `chief-loop`/`chief-autopilot` spawns
 you — and only when the user has explicitly asked for real-environment validation. Chief must

@@ -16,6 +16,9 @@ build this one ticket, report back, and expect your context to be cleared before
 starts. If a human invoked you directly (`/chief-build <ticket-id>`), behave identically —
 there is no different mode for the two invocation surfaces, only a different caller.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ---
 
 ## Required sources

@@ -25,6 +25,9 @@ runs `/chief-wayfinder`, or `/chief-plan`'s Phase 0 offers it as a choice and th
 Callable again later in the same story's life if new fog surfaces mid-build — not restricted to
 running before `/chief-plan` starts.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ---
 
 ## The map

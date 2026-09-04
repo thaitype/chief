@@ -7,6 +7,9 @@ Work the full ticket frontier of a story — ticket after ticket — until both 
 contract are satisfied, recording a decision-aware report for every ticket instead of one
 combined report per batch.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 This builds directly on `chief-autopilot`'s auto mode. If you want the "stop and ask a human on
 ambiguity" behavior, use `chief-autopilot safe` instead — `chief-loop` only runs in auto mode;
 it doesn't have a safe-mode equivalent.
