@@ -14,19 +14,27 @@
       "skills": [
         "./skills/setup/chief-install",
         "./skills/setup/chief-upgrade",
+        "./skills/setup/setup-agent-behavior",
         "./skills/chief/chief-init",
-        "./skills/chief/chief-autopilot",
+        "./skills/chief/chief-wayfinder",
         "./skills/chief/chief-plan",
-        "./skills/chief/chief-retro",
-        "./skills/chief/chief-rule",
-        "./skills/chief/chief-grill",
+        "./skills/chief/chief-build",
+        "./skills/chief/chief-test",
+        "./skills/chief/chief-review-code",
+        "./skills/chief/chief-autopilot",
         "./skills/chief/chief-loop",
+        "./skills/chief/chief-grill",
+        "./skills/chief/chief-rule",
+        "./skills/chief/chief-retro",
+        "./skills/chief/chief-explain",
+        "./skills/chief/chief-migrate-to-v5",
         "./skills/engineering/shape-up",
         "./skills/engineering/grill-design",
         "./skills/engineering/slim-down",
         "./skills/engineering/loop-readiness",
         "./skills/engineering/loop-preflight",
-        "./skills/misc/dump-commit"
+        "./skills/misc/dump-commit",
+        "./skills/misc/ask-chief"
       ]
     }
   ]
