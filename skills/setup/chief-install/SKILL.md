@@ -1,6 +1,6 @@
 ---
 name: chief-install
-description: Install the Chief framework into the current project. Installs AGENTS.md only — `.chief/` is created lazily on first need. Use when the user wants to set up the framework (e.g. "/chief-install" or "/chief-install canary").
+description: Install the Chief framework into the current project. Writes AGENTS.md directly (clone target version, present it, confirm, write) — `.chief/` is created lazily on first need. Use when the user wants to set up the framework (e.g. "/chief-install" or "/chief-install canary").
 ---
 
 Install the Chief framework into the current project.
@@ -14,6 +14,11 @@ v5 has no `.agents/agents/` subagent roster to install — `chief-agent`, `build
 "All persistent subagents are deprecated"). What used to be persistent agent files are now
 `chief-*` skills (`/chief-build`, `/chief-test`) that spawn their own throwaway subagents when
 they need isolated context — nothing for this skill to install separately.
+
+There is also no `scripts/setup.sh` to shell out to. Writing `AGENTS.md` is a small, judgment-
+sensitive operation (don't clobber a file that might already have unrelated content) better
+suited to an agent presenting a diff and asking than to a blind script — this skill does it
+directly, the same way `/chief-upgrade` already does for updates.
 
 ## Arguments
 
@@ -35,7 +40,7 @@ Check if Chief is already installed by looking for these signals:
    this file may exist from other setups).
 2. `.agents/agents/chief-agent.md` exists — a **v4-or-earlier** install signal. If found, tell
    the user this project has a pre-v5 install with the deprecated agent roster; offer
-   `/chief-upgrade` (which will explain the v4 → v5 migration, including that `.agents/agents/`
+   `/chief-upgrade` (which explains the v4 → v5 migration, including that `.agents/agents/`
    goes away) rather than proceeding here.
 
 If **neither** matches → proceed.
@@ -52,110 +57,91 @@ For `claude-code` only, also ask install mode:
   `git config --global core.symlinks true`. If unavailable, suggest copy mode.
 
 For all other agents, mode doesn't apply — they read `AGENTS.md` directly, and there's no
-per-agent integration directory to populate anymore (no `.claude/agents/`, no `.github/agents/`
-— those only ever existed to hold copies/symlinks of the now-deleted agent roster).
+per-agent integration directory to populate (no `.claude/agents/`, no `.github/agents/` — those
+only ever existed to hold copies/symlinks of the now-deleted agent roster).
 
-### 3. Clone and run setup script
+### 3. Fetch the target version
 
 ```bash
 git clone --depth 1 --branch <version> https://github.com/thaitype/chief.git .chief-agent-tmp
-bash .chief-agent-tmp/scripts/setup.sh --agent <agent> --mode <mode>
 ```
 
-The script installs:
-- `AGENTS.md` — framework rules (fresh write if absent; appended in a
-  `<!-- chief-framework:begin -->` block if `AGENTS.md` already exists)
-- For `claude-code`: `CLAUDE.md` (symlink or copy of `AGENTS.md`)
+Read `.chief-agent-tmp/template/AGENTS.md` — this is what gets installed.
 
-It does **NOT** create `.chief/`. That is intentional.
+### 4. Present and confirm
 
-If the setup script **fails completely** (non-zero exit code or crashes), skip to step 3b for
-full manual install. Do NOT run `rm -rf .chief-agent-tmp` yet — it's needed for manual steps.
+If the target `AGENTS.md` doesn't exist yet, show the full content of
+`.chief-agent-tmp/template/AGENTS.md` as what will be written fresh.
 
-If the setup script succeeds, proceed to step 4.
+If it already exists, show a diff (`diff AGENTS.md .chief-agent-tmp/template/AGENTS.md`) and
+explain: everything **outside** the `<!-- chief-framework:begin -->` /
+`<!-- chief-framework:end -->` markers (or, for a file with no markers at all, everything
+outside a `## Project Rules` section) is the user's own and will be left untouched; only the
+framework-owned block gets written or updated.
 
-### 3b. Full manual install (fallback if setup script fails)
+Ask once: "Write this?" Wait for approval before touching anything.
 
-Install `AGENTS.md` (Fresh-or-Append):
+### 5. Write
 
-```bash
-if [ ! -f AGENTS.md ]; then
-  cp .chief-agent-tmp/template/AGENTS.md AGENTS.md
-elif ! grep -qF "<!-- chief-framework:begin -->" AGENTS.md; then
-  {
-    echo ""
-    echo "<!-- chief-framework:begin -->"
-    cat .chief-agent-tmp/template/AGENTS.md
-    echo "<!-- chief-framework:end -->"
-  } >> AGENTS.md
-fi
-```
+- **No existing `AGENTS.md`** → copy `.chief-agent-tmp/template/AGENTS.md` to `AGENTS.md`
+  as-is.
+- **Existing, with `<!-- chief-framework:begin -->` markers already present** → replace
+  everything between the markers with the template's framework block content. Leave everything
+  outside the markers untouched.
+- **Existing, no markers** → append the template's framework block
+  (`<!-- chief-framework:begin -->` through `<!-- chief-framework:end -->`) to the end of the
+  file, on its own blank line. Do not touch existing content above it.
+
+### 6. Claude Code integration
 
 For `claude-code` only:
 
-Link mode:
-```bash
-ln -s AGENTS.md CLAUDE.md
-```
+- **Link mode**: `ln -s AGENTS.md CLAUDE.md` (skip if `CLAUDE.md` already exists — report it as
+  skipped, don't overwrite).
+- **Copy mode**: `cp AGENTS.md CLAUDE.md` (same skip-if-exists rule).
 
-Copy mode:
-```bash
-cp AGENTS.md CLAUDE.md
-```
+For every other agent: nothing further — they read `AGENTS.md` directly.
 
-For all other agents — no extra steps needed.
+### 7. Verify
 
-Skip any file that already exists (warn the user).
-
-### 4. Verify installation
-
-After the setup script or manual install completes, verify:
-
-1. **`AGENTS.md` exists** and contains chief framework content (either the whole file or a
-   `<!-- chief-framework:begin -->` block).
-2. **Claude Code only** (if agent is `claude-code`): `CLAUDE.md` exists (symlink or copy
-   depending on mode); if link mode, verify the symlink resolves correctly.
+1. `AGENTS.md` exists and contains chief framework content (either the whole file, for a fresh
+   write, or the `<!-- chief-framework:begin -->` block, for an append/update).
+2. **Claude Code only**: `CLAUDE.md` exists (symlink or copy per mode); if link mode, the
+   symlink resolves.
 
 `.chief/` is **not** expected to exist after install — do not flag its absence. Neither is
 `.agents/`, `.claude/agents/`, or `.github/agents/` — v5 doesn't create any of them.
 
-### 5. Fix issues (fallback)
+### 8. Clean up
 
-If any verification check fails, fix it manually:
-
-- **Missing `AGENTS.md`** → re-run the Fresh-or-Append snippet from 3b
-- **Missing `CLAUDE.md`** → create symlink (`ln -s AGENTS.md CLAUDE.md`) or copy depending on
-  mode
-- **Broken symlink** → remove and recreate
-- **Wrong mode** (e.g. user wanted link but got copy) → remove and recreate with correct mode
-
-### 6. Clean up
-
-Ensure `.chief-agent-tmp` is removed:
 ```bash
 rm -rf .chief-agent-tmp
 ```
 
-### 7. Next steps
+Always, even if the install was cancelled at step 4.
+
+### 9. Next steps
 
 Tell the user:
 
 1. Run `/chief-init` to bootstrap `.chief/project.md` with your tech stack and dev commands
-   (this also confirms where planning artifacts should live — see `/chief-init`)
-2. Review `AGENTS.md` and customize if needed
-3. Start planning: `/chief-plan`
+   (this also confirms where planning artifacts should live)
+2. Optionally run `/setup-agent-behavior` if you want general (non-Chief) agent-conduct rules
+   binding every session
+3. Review `AGENTS.md`'s Project Rules section and customize if needed
+4. Start planning: `/chief-plan`, or run `/ask-chief` if unsure where to start
 
 `.chief/` and its subfolders will be created automatically as you work — story folders, rule
 subfolders, and reports are all written on first need.
 
 ## Important rules
 
-- NEVER overwrite existing files without explicit user approval
-- If `AGENTS.md` already exists and contains content, append the chief block; do NOT overwrite
+- NEVER overwrite existing content outside the framework markers (or outside `## Project
+  Rules`, for a marker-less file) without explicit user approval.
+- NEVER skip the confirmation in step 4 — always show what will be written before writing it.
 - If a pre-v5 install is detected (`.agents/agents/chief-agent.md` present), suggest
   `/chief-upgrade` instead of proceeding — this skill installs v5 fresh, it doesn't migrate a
-  v4 agent roster
-- Always clean up `.chief-agent-tmp` even if the install is cancelled or fails
-- If the setup script fails, attempt manual fixes before giving up
-- Do NOT create `.chief/` at install — that is lazy
-- Report all verification results to the user — even successful ones
+  v4 agent roster.
+- Always clean up `.chief-agent-tmp` even if the install is cancelled or fails.
+- Do NOT create `.chief/` at install — that is lazy.
+- Report all verification results to the user — even successful ones.
