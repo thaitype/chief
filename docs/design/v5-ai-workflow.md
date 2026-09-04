@@ -1,7 +1,9 @@
 # Chief v5 — AI Workflow Redesign
 
-**Status:** Draft, pending approval. Nothing in this doc has been implemented. No skill or agent
-file has been changed — this is a design record from a grill-design consultation session.
+**Status:** Implemented on this branch, both rounds described below (the original pipeline
+redesign, and the "Round 2" section added afterward). Not yet merged to `main` or released —
+`release/v4` still needs cutting first, per "Versioning and migration." This doc remains the
+design record of *why*, written during and after the grill-design sessions that produced it.
 
 **Branch:** `design/v5-ai-workflow`
 
@@ -364,3 +366,114 @@ systems side by side was never actually proposed once the details were worked ou
   (`open`/`claimed`/`resolved`) deliberately doesn't borrow matt's triage-state vocabulary today
   because there's no external-intake path for it to describe — revisit this decision together
   if `/chief-triage` ever gets built, since the two are linked.
+
+## Round 2: chief-migrate-to-v5, chief-explain, ask-chief, and an AGENTS.md slimdown
+
+A second grill-design session, after the skills above already shipped, added four more skills
+and restructured `AGENTS.md`. Decisions:
+
+### `chief-migrate-to-v5`
+
+Optional companion to `chief-upgrade`, which handles `AGENTS.md` and detects the v4→v5 jump but
+deliberately never touches `.chief/milestone-N/` content (see "Versioning and migration"
+above). This skill is the opt-in path for whoever wants that content actually converted.
+
+- Only migrates **open** milestones (closed = has `_report/retro-milestone.md`, or every
+  `_plan/_todo.md` item checked `[x]`) — closed ones are historical record, migrating them has
+  no value.
+- `_todo.md` items + `task-N.md` specs → tickets **1:1**, no invented blocking edges (a flat
+  checklist's order is priority, not a dependency graph — guessing wrong is worse than not
+  guessing). Tagged `Migrated-from:` so they stay distinguishable from natively-planned tickets.
+- Read-and-plan first, write additively (new `story-N/` alongside the untouched
+  `milestone-N/`), then ask **separately** whether to delete the old milestone directory — never
+  bundled into the same approval as the migration itself.
+
+### `chief-explain` (was `chief-manual`) and `ask-chief`
+
+Two skills replacing what used to live in `AGENTS.md`, split by **audience**, not just content:
+
+- **`chief-explain`** — agent-facing structural reference (directory layout, storage-location
+  resolution, the `chief-*` skill family, `_rules/` writing rules). Consulted by the agent for
+  its own understanding.
+- **`ask-chief`** — human-facing router modeled on `mattpocock/skills`' `ask-matt`, `disable-
+  model-invocation: true`. Teaches a person which skill fits their situation; defers to
+  `chief-explain` for structural depth rather than re-describing each skill.
+
+Both had to be **self-contained**, not thin pointers into `docs/manual/**` — checked
+`.claude-plugin/marketplace.json` and confirmed only `skills/` ships to a consuming project via
+`npx skills`/the plugin path, never `docs/`. A pointer to files that don't exist on the
+installing project's disk would be silently broken for every real user. `docs/manual/**` stays
+the deeper reference for humans browsing the `thaitype/chief` repo on GitHub; the two skills
+above duplicate the operationally-necessary subset of it on purpose, accepting the drift risk
+as the cost of the audience split.
+
+`chief-explain` is **model-invocable** (unlike almost everything else in this design) because
+it replaces content that used to auto-load into every session via `AGENTS.md` — an agent needs
+to be able to reach for it unprompted, the same way it used to just *know* this. `ask-chief`
+stays `disable-model-invocation: true` like `ask-matt`, since it answers a question only a
+confused *human* asks.
+
+### `AGENTS.md` slimdown
+
+Everything that used to live in `AGENTS.md` beyond Project Rules got redistributed by asking,
+for each piece, "does an agent need this every session, or only sometimes?":
+
+- **Storage location** → became a one-line pointer-check added to the top of **every**
+  individual `chief-*` skill instead of one central explanation — verified this matches matt's
+  own pattern exactly (`to-spec`, `to-tickets`, `code-review`, `wayfinder` each carry their own
+  "the tracker should have been provided to you..." line rather than relying on a shared doc).
+- **Rules Hierarchy** and **Responsibility Boundary** → dropped from `AGENTS.md` entirely,
+  confirmed already duplicated inside individual skills' own "Rules" sections (chief-plan/loop/
+  autopilot already state the hierarchy; chief-build/chief-test already state their own scope
+  boundary) — nothing was lost by removing the redundant central copy.
+- **Directory Structure diagram**, the **skill family table**, and **"Rules for `.chief/_rules`
+  files"** → moved into `chief-explain` as on-demand reference, since none of them are things an
+  agent needs to have memorized to avoid acting incorrectly.
+- **Agent Behavior Principles** and **User Interaction Rules** (general agent conduct, not
+  Chief-specific at all) → moved to a **new opt-in setup skill**, `setup-agent-behavior`
+  (`skills/setup/`, no `chief-` prefix since the content isn't Chief-specific). Unlike
+  `chief-explain`'s on-demand-reference model, this content is meant to be *binding every
+  session* if a project wants it — which only a write into `AGENTS.md` itself can actually
+  guarantee, not a reference skill. So `setup-agent-behavior` writes the block into `AGENTS.md`
+  on request (show-then-confirm, same discipline as `chief-upgrade`/`chief-install`), making it
+  opt-in but persistent once installed, rather than either always-baked-in (the old v4 default)
+  or purely ephemeral (what a reference-only skill would give).
+
+Net result: `AGENTS.md` (root and template) shrinks to a two-line `<!-- chief-framework:begin
+-->` marker block pointing at `/chief-explain` and `/ask-chief`, plus the user's own `## Project
+Rules` and the `.chief/project.md` pointer.
+
+### `scripts/setup.sh` retired
+
+Reconsidered separately, once `AGENTS.md`'s only remaining job became a small, judgment-
+sensitive merge (don't clobber a file that might have unrelated pre-existing content). That
+operation fits an agent's diff-present-confirm-write loop better than a script — the same
+pattern `chief-upgrade` already used for updates. The CI/non-agentic-installation justification
+considered earlier in this document for keeping the script turned out not to reflect an actual
+intended use case; once that was withdrawn, nothing remained that a script did better than
+`chief-install` doing the same three steps directly. `chief-install` now clones the target
+version, presents what would be written, confirms, and writes — no shelling out.
+
+### Ticket ID format correction
+
+While reviewing the ticket template above for this round's work, caught and fixed a leftover
+inconsistency: the `<story>-<seq>` ID prefix (e.g. `1-3`) existed only to survive a ticket
+being "promoted" out of a `.chief/backlog/` store that was itself considered and rejected
+earlier in this document. Once backlog was off the table, nothing ever produces a ticket
+outside its story's own `_tickets/` folder, so the prefix had no remaining purpose — every
+example, template, and cross-reference in this doc and the shipped skills now uses a plain
+per-story sequence (`1`, `2`, `3`...) instead.
+
+### `Type: implementation` reconsidered, kept
+
+Briefly reconsidered dropping the `implementation` value from `Type:` entirely (mirroring
+matt's own local convention more closely: his to-tickets template carries no `Type:` field at
+all, relying on the field's *absence* to mean "implementation ticket" rather than an explicit
+value matt's vocabulary has no equivalent for) and even tried a physical folder split
+(`_tickets/decision/` vs `_tickets/build/`) to avoid needing a field at all — checked matt's
+actual local-tracker convention directly and found he does neither: `map.md`/`spec.md` sit
+outside a single shared `issues/` folder that both ticket kinds share, one numbering sequence,
+disambiguated by field presence/absence. Considered adopting that presence/absence mechanism
+for Chief too, then explicitly kept the explicit `implementation` value instead, for robustness
+(nothing reading a ticket file needs special-case "the field is just missing" handling) at the
+cost of one extra line per implementation ticket.
