@@ -111,6 +111,10 @@ project/
 | `/chief-grill`        | Stress-test แบบ stateful เชิงลึก; ตรวจคำตอบกับ codebase จริง            |
 | `/chief-rule`         | บันทึกการตัดสินใจเป็น rule ถาวรใน `_rules/`                             |
 | `/chief-retro`        | Retrospective + lesson learned + อัปเดต `_rules/`                                |
+| `/chief-explain`      | Reference สำหรับ agent — โครงสร้างไดเรกทอรี, บทบาทของแต่ละ skill      |
+| `/ask-chief`          | Router สำหรับคน — สถานการณ์แบบนี้ควรใช้ skill ไหน                  |
+| `/chief-migrate-to-v5` | แปลง milestone ของ v4 ที่ยังทำอยู่ให้เป็น story ของ v5                |
+| `/setup-agent-behavior` | (ไม่บังคับ) ติดตั้ง general agent-conduct rules ลง `AGENTS.md`       |
 | `/grill-design`       | Stress-test design แบบ stateless พร้อม self-critique                             |
 | `/shape-up`           | แปลงไอเดียฟุ้งเป็น spec ที่มีขอบเขต (top-down)                          |
 | `/slim-down`          | ตัด scope ที่ใหญ่เกินไปให้พอดีกับ 1 phase                                  |
@@ -120,9 +124,11 @@ project/
 → [Skills reference เต็ม](docs/manual/reference/skills.md)
 → [วิธีเลือก skill ที่เหมาะกับสถานการณ์](docs/manual/how-to/pick-the-right-skill.md)
 
-## ไม่มี subagent roster อีกต่อไป
+## ไม่มี subagent roster อีกต่อไป และ AGENTS.md เกือบว่างเปล่า
 
-v4 มี subagent ถาวร 4 ตัว (`chief-agent`, `builder-agent`, `tester-agent`, `answer-verifier-agent`) ที่ `/chief-install` wire เข้า `.agents/agents/` ให้ v5 ไม่มีสิ่งนี้แล้ว — `/chief-build` กับ `/chief-test` เป็น skill ที่ spawn throwaway subagent ของตัวเองเวลาต้องการ context แยก ส่วน `chief-agent`/`answer-verifier-agent` ถูกพับเข้าไปในตัว skill ที่ใช้งานมันแทน ไม่มีอะไรต้องติดตั้งแยก ไม่มีอะไรต้อง sync
+v4 มี subagent ถาวร 4 ตัว (`chief-agent`, `builder-agent`, `tester-agent`, `answer-verifier-agent`) ที่ `/chief-install` wire เข้า `.agents/agents/` ให้ v5 ไม่มีสิ่งนี้แล้ว — `/chief-build` กับ `/chief-test` เป็น skill ที่ spawn throwaway subagent ของตัวเองเวลาต้องการ context แยก ส่วน `chief-agent`/`answer-verifier-agent` ถูกพับเข้าไปในตัว skill ที่ใช้งานมันแทน ไม่มีอะไรต้องติดตั้งแยก ไม่มีอะไรต้อง sync ไม่มี `scripts/setup.sh` ด้วย — `/chief-install` เขียน `AGENTS.md` เองตรงๆ
+
+หลักการเดียวกันใช้กับ `AGENTS.md` เอง — เดิมมี directory diagram, ตาราง skill, responsibility boundary ที่ load เข้าทุก session ไม่ว่าจะต้องการหรือไม่ ตอนนี้ทั้งหมดย้ายไปอยู่ใน `/chief-explain` (agent-facing, เรียกเมื่อจำเป็น) กับ `/ask-chief` (human-facing, "ควรใช้ skill ไหน") แล้ว `AGENTS.md` เหลือแค่ Project Rules ของคุณเองกับ pointer 2 บรรทัด
 
 → [chief-* execution skills reference](docs/manual/reference/agents.md)
 
@@ -138,7 +144,7 @@ npx skills@latest add thaitype/chief
 
 ระบุ version: `npx skills@latest add thaitype/chief#v5.0.0` / `/chief-upgrade v5.0.0`
 
-มาจาก v4? `/chief-upgrade` จะตรวจจับและอธิบาย breaking change ก่อนแตะไฟล์ใดๆ — ดู [วิธีอัปเกรด](docs/manual/how-to/upgrade.md#upgrading-from-v4)
+มาจาก v4? `/chief-upgrade` จะตรวจจับและอธิบาย breaking change ก่อนแตะไฟล์ใดๆ — ดู [วิธีอัปเกรด](docs/manual/how-to/upgrade.md#upgrading-from-v4) มันจัดการแค่ `AGENTS.md` เท่านั้น ถ้าอยากแปลง milestone ของ v4 ที่ยังทำอยู่ให้เป็น story ของ v5 ด้วย (แทนที่จะทำต่อบน v4 checkout ที่ pin ไว้) รัน `/chief-migrate-to-v5` ตามหลัง
 
 ## เอกสาร
 
@@ -165,7 +171,7 @@ npx skills@latest add thaitype/chief
 - **v2** — รองรับ multi-agent เพิ่มระบบ skills [เอกสาร](https://github.com/thaitype/chief-agent-framework/tree/release/v2)
 - **v3** — เปลี่ยนชื่อเป็น Chief เปลี่ยน skill prefix เป็น `chief-` ย้าย repo ไป [`thaitype/chief`](https://github.com/thaitype/chief)
 - **v4** — ติดตั้ง skills ผ่าน `npx skills` (แยกออกจาก install) `.chief/` แบบ lazy Skills ใหม่: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`, `/shape-up`, `/slim-down`, `/chief-loop`, `/loop-readiness` `answer-verifier-agent` แทนที่ `review-plan-agent` ที่ deprecated แล้ว [เอกสาร](https://github.com/thaitype/chief/tree/release/v4)
-- **v5** — เปลี่ยนชื่อ "milestone" เป็น "story" (ขนาดเท่า 1 tracker issue ไม่ใช่ Milestone หลายสัปดาห์) เลิกใช้ `_plan/_todo.md` + task spec เปลี่ยนเป็น `_tickets/` แบบ frontier (vertical-slice ticket ที่มี blocking edges) Skill ใหม่: `/chief-wayfinder` (แผนผัง decision ที่ยังค้างก่อนวางแผน), `/chief-build` กับ `/chief-test` (แทนที่ `builder-agent`/`tester-agent` ด้วย skill), `/chief-review-code` (review diff สองมุม) ตัด `.agents/agents/` subagent roster ทิ้งทั้งหมด — `chief-agent` กับ `answer-verifier-agent` ถูกพับเข้า skill ที่ใช้งานมันแทน storage location ไม่ fix เป็น `.chief/` ตายตัวอีกต่อไป (ดู `.chief.config.md` ใน directory structure reference) อ่านเหตุผลเต็มได้ที่ [design doc](docs/design/v5-ai-workflow.md)
+- **v5** — เปลี่ยนชื่อ "milestone" เป็น "story" (ขนาดเท่า 1 tracker issue ไม่ใช่ Milestone หลายสัปดาห์) เลิกใช้ `_plan/_todo.md` + task spec เปลี่ยนเป็น `_tickets/` แบบ frontier (vertical-slice ticket ที่มี blocking edges) Skill ใหม่: `/chief-wayfinder` (แผนผัง decision ที่ยังค้างก่อนวางแผน), `/chief-build` กับ `/chief-test` (แทนที่ `builder-agent`/`tester-agent` ด้วย skill), `/chief-review-code` (review diff สองมุม), `/chief-explain` กับ `/ask-chief` (agent- และ human-facing แทน `AGENTS.md` เดิม), `/chief-migrate-to-v5` (แปลง milestone ของ v4 ที่ยังทำอยู่เป็น story ของ v5), `/setup-agent-behavior` (ไม่บังคับ, ไม่เกี่ยว Chief) ตัด `.agents/agents/` subagent roster ทิ้งทั้งหมด, ตัด `scripts/setup.sh` ทิ้ง (`/chief-install` เขียน `AGENTS.md` เอง), และ `AGENTS.md` เหลือแค่ Project Rules ของคุณเอง storage location ไม่ fix เป็น `.chief/` ตายตัวอีกต่อไป (ดู `.chief.config.md` ใน directory structure reference) อ่านเหตุผลเต็มได้ที่ [design doc](docs/design/v5-ai-workflow.md)
 
 ## Branches
 

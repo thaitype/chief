@@ -140,6 +140,26 @@ Runs a retrospective after a story or round of tickets.
 
 ---
 
+### `/chief-explain`
+
+Self-contained structural reference: directory layout, storage-location resolution, what each
+`chief-*` skill owns, and the rules for `.chief/_rules/` files. Written for the agent's own
+understanding, not a human tutorial — see `/ask-chief` for that. Model-invocable: an agent may
+reach for it on its own when it needs a structural fact, not only when you ask.
+
+---
+
+### `/chief-migrate-to-v5`
+
+Converts an in-progress v4 milestone into a v5 story — separate from `/chief-upgrade`, which
+handles `AGENTS.md` but deliberately never touches `.chief/milestone-N/` content. Only migrates
+open milestones (closed ones are left alone); converts `_todo.md` + task specs into tickets
+without inventing blocking edges (tagging each with `Migrated-from:` for traceability); asks
+before deleting the old milestone directory, as its own separate confirmation after the
+migration is already written and reviewed.
+
+---
+
 ## Engineering skills
 
 ### `/grill-design`
@@ -204,7 +224,9 @@ Standalone — use it whether or not you ran `/loop-readiness` first. `/loop-rea
 ### `/chief-install`
 
 Installs Chief into a project. Asks which coding agent, and (for Claude Code) whether to
-symlink or copy. Writes `AGENTS.md`. There's no subagent roster to wire up in v5 — see
+symlink or copy. Writes `AGENTS.md` directly — clones the target version, presents what would
+be written (fresh, or a diff against your existing file), confirms, writes. There's no
+`scripts/setup.sh` and no subagent roster to wire up in v5 — see
 [chief-* execution skills](agents.md).
 
 ### `/chief-upgrade`
@@ -212,9 +234,17 @@ symlink or copy. Writes `AGENTS.md`. There's no subagent roster to wire up in v5
 Upgrades `AGENTS.md` to a target version. Diffs it against the template and waits for sign-off
 before overwriting anything. Detects a pre-v5 install (a leftover `.agents/agents/` roster) and
 explains the v4 → v5 breaking change before proceeding — no `.chief/` content is migrated
-automatically.
+automatically (see `/chief-migrate-to-v5` if you want that).
 
 Usage: `/chief-upgrade` (latest stable), `/chief-upgrade canary`, `/chief-upgrade v5.0.0`
+
+### `/setup-agent-behavior`
+
+Opt-in, not Chief-specific. Writes a general agent-conduct block (think-before-acting,
+simplicity-first, surgical changes, goal-driven execution, single-question interaction) into
+`AGENTS.md`, if you want these principles binding every session rather than something you'd
+have to remember to invoke. Show-then-confirm, same as everything else that writes to
+`AGENTS.md`.
 
 ---
 
@@ -225,6 +255,16 @@ Usage: `/chief-upgrade` (latest stable), `/chief-upgrade canary`, `/chief-upgrad
 Packages a clean commit. Summarises staged changes and writes a commit message.
 
 Usage: `/dump-commit` (auto message), `/dump-commit fix auth flow` (custom message).
+
+---
+
+### `/ask-chief`
+
+A router over the `chief-*` skills, written for **you** — the human deciding what to run next,
+not the agent (that's `/chief-explain`). Maps your situation ("an idea with open design
+questions," "a story too foggy to name a goal," "ready to build") to the right skill and says
+why. `disable-model-invocation: true`, same as `mattpocock/skills`' `ask-matt` it's modeled on
+— it only runs when you ask for it.
 
 ---
 

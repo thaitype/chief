@@ -39,21 +39,30 @@ There's no subagent roster to install in v5 — see
 
 ## Manual install (no npx)
 
-If you can't use `npx skills`, install via shell script:
+`/chief-install` writes `AGENTS.md` directly (there's no `scripts/setup.sh` in v5 — see
+`docs/design/v5-ai-workflow.md` for why: the only thing it ever did was a small,
+judgment-sensitive file merge, which fits an agent's diff-then-confirm loop better than a blind
+script). If you can't use `npx skills` to fetch the skill files, you still need *some* coding
+agent session to run `/chief-install` — point it at this repo and ask it to install the
+skill, or copy `skills/setup/chief-install/SKILL.md`'s instructions into your agent manually.
+
+Truly agent-free install (no session at all) means doing what `/chief-install` would do, by
+hand:
 
 ```bash
 git clone --depth 1 --branch main https://github.com/thaitype/chief.git .chief-agent-tmp
-bash .chief-agent-tmp/scripts/setup.sh --agent claude-code
+cp .chief-agent-tmp/template/AGENTS.md AGENTS.md   # only if you don't already have one -
+                                                     # if you do, merge by hand: see the
+                                                     # <!-- chief-framework:begin/end --> markers
+                                                     # in the template file
+ln -s AGENTS.md CLAUDE.md   # Claude Code only; use `cp` instead of `ln -s` if symlinks aren't available
 rm -rf .chief-agent-tmp
 ```
 
-Replace `claude-code` with your agent: `copilot`, `cursor`, `opencode`, `codex`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`.
-
-Add `--mode copy` if symlinks aren't supported:
-
-```bash
-bash .chief-agent-tmp/scripts/setup.sh --agent claude-code --mode copy
-```
+This is the one case where care matters: if `AGENTS.md` already exists, don't overwrite it
+blindly — merge the template's `<!-- chief-framework:begin -->`/`<!-- chief-framework:end -->`
+block in and leave the rest of the file untouched, the same way `/chief-install` does when an
+agent runs it.
 
 ---
 
@@ -65,7 +74,8 @@ Symlink mode requires Developer Mode enabled and:
 git config --global core.symlinks true
 ```
 
-The setup script detects symlink support automatically and falls back to copy mode if unavailable. With `npx skills` + `/chief-install`, the skill handles this for you.
+`/chief-install` detects symlink support automatically and falls back to copy mode if
+unavailable.
 
 ---
 
