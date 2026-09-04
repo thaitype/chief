@@ -16,16 +16,15 @@ project/
 ├── .chief/                # Dogfooded planning state (this file lives here)
 ├── template/              # Installable package — what setup copies into user projects
 │   └── AGENTS.md          # Framework rules file
-├── scripts/
-│   └── setup.sh           # First-time installation script
 ├── skills/                # chief-* skills (chief, engineering, misc, setup buckets)
 └── docs/                  # Additional documentation
 ```
 
 v5 has no `.agents/agents/` subagent roster anymore, in `template/` or dogfooded at root —
 `/chief-build` and `/chief-test` are skills under `skills/chief/`, not agent files. There's no
-`scripts/upgrade.sh` either; `/chief-upgrade` diffs and merges `AGENTS.md` directly (see its
-`SKILL.md`).
+`scripts/` directory at all — neither `setup.sh` nor `upgrade.sh` exist; `/chief-install` and
+`/chief-upgrade` both write/diff `AGENTS.md` directly (see their `SKILL.md` files), the same
+judgment-sensitive-merge pattern in both cases rather than shelling out to a script.
 
 ### Key Distinction
 
@@ -34,18 +33,19 @@ v5 has no `.agents/agents/` subagent roster anymore, in `template/` or dogfooded
 
 ## Setup Concept
 
-Installation into a user project (`/chief-install` / `scripts/setup.sh`):
+Installation into a user project (`/chief-install`):
 
-1. Copy `template/AGENTS.md` → target `AGENTS.md` (fresh write, or appended in a
-   `<!-- chief-framework:begin -->` block if the target already has one)
-2. For Claude Code: create `CLAUDE.md` → `AGENTS.md`
+1. Clone the target version, read `template/AGENTS.md` from it
+2. Present what will be written (fresh, or a diff against the target's existing `AGENTS.md`
+   split at the `<!-- chief-framework:begin/end -->` markers) and confirm
+3. Write `AGENTS.md` (fresh write, or the framework block appended/updated)
+4. For Claude Code: create `CLAUDE.md` → `AGENTS.md`
 
 `.chief/` is never touched at install time — it's created lazily by whichever `chief-*` skill
 first needs it.
 
 ## Tech Stack
 
-- Shell (bash) for the setup script
 - Markdown for all skill definitions, rules, and documentation
 - Symlinks for Claude Code integration (`CLAUDE.md` → `AGENTS.md`)
-- No runtime dependencies
+- No runtime dependencies, no shell scripts
