@@ -16,65 +16,28 @@ tell the user to run `/chief-install` or create one first, then stop).
 
 Check whether an `## Agent Behavior Principles` section already exists.
 
-- **Already present** → tell the user it's already installed, show them the current content,
-  ask if they want to update it to the latest version (see Step 3) or leave it. Do not
-  reinstall over an existing block without asking — the user may have edited it.
+- **Already present** → tell the user it's already installed, show them the current content
+  next to `template.md`'s (see Step 2), ask if they want to update it to the latest version or
+  leave it. Do not reinstall over an existing block without asking — the user may have edited it.
 - **Absent** → continue to Step 2.
 
 ### 2. Confirm
 
-Ask once: "Install the general agent-conduct principles (think-before-acting, simplicity-first,
-surgical changes, goal-driven execution, single-question interaction) into `AGENTS.md`?" Show
-the block from Step 3 before asking, not after — the user should see exactly what they're
-agreeing to.
+Read `template.md` in this skill's own folder — that file **is** the block, kept separate from
+these instructions the same way `chief-install`/`chief-upgrade` keep `template/AGENTS.md`
+separate from their own steps (and the way `setup-matt-pocock-skills` keeps its seed templates
+like `issue-tracker-local.md` next to its own `SKILL.md`): one source of truth for the content,
+editable without touching the procedure around it.
 
-### 3. The block
+Show its content to the user, then ask once: "Install the general agent-conduct principles
+(think-before-acting, simplicity-first, surgical changes, goal-driven execution,
+single-question interaction) into `AGENTS.md`?" Show before asking, not after — the user should
+see exactly what they're agreeing to.
 
-```markdown
-## Agent Behavior Principles
+### 3. Write
 
-### 1. Think Before Acting
-
-- Start with the smallest plausible interpretation of the request.
-- If uncertain, ask ONE clarifying question — don't assume the big interpretation.
-- Surface tradeoffs and push back when a simpler approach exists.
-- When confused, name what's unclear and stop. Don't hide confusion behind a plan.
-
-### 2. Simplicity First
-
-- Do the minimum that solves the problem. Nothing speculative.
-- If a task can be done in 1-3 commands, do it directly. Don't delegate trivial work needlessly.
-- No features, abstractions, or error handling beyond what was asked.
-- If a plan starts needing an options table, pause — you may not have understood the question.
-
-### 3. Surgical Changes
-
-- Touch only what the request requires. Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken. Match existing style.
-- Every changed line should trace directly to the user's request.
-- Clean up only what YOUR changes made unused. Don't remove pre-existing dead code unless asked.
-
-### 4. Goal-Driven Execution
-
-- Transform vague requests into verifiable goals before starting.
-- Define what "done" looks like. Loop until verified.
-- For multi-step work, state a brief plan with verification at each step.
-- Strong success criteria let agents work independently. Weak criteria require constant clarification.
-
-## User Interaction Rules
-
-- When asking the user a question, use ask_user with ONE short question only.
-- When presenting a recap, summary, or review:
-  1. Print it as formatted text first (numbered list, table, or markdown block).
-  2. Then ask_user ONCE with a short confirmation, e.g. "Proceed?" or "Any changes?"
-  3. NEVER put recap content inside ask_user.
-- Do NOT ask multiple questions in a row. Make a recommendation, summarize, then confirm once.
-```
-
-### 4. Write
-
-On approval, insert the block. Placement follows the same marker convention as everything else
-`AGENTS.md`-related:
+On approval, insert `template.md`'s content verbatim. Placement follows the same marker
+convention as everything else `AGENTS.md`-related:
 
 - If `AGENTS.md` has `<!-- chief-framework:begin -->` / `<!-- chief-framework:end -->`
   markers, insert the block **immediately after the opening marker**, before whatever the
@@ -86,7 +49,7 @@ On approval, insert the block. Placement follows the same marker convention as e
 - If there are no markers at all, insert it near the top of the file, before any
   `## Project Rules` section if one exists.
 
-### 5. Report
+### 4. Report
 
 Confirm the block was written and where. Remind the user this content is theirs to edit freely
 — this skill only ever offers to install or update it, never enforces it silently.
