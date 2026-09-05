@@ -1,17 +1,18 @@
 # Your first story with Chief
 
-In this tutorial, we will install Chief into an existing project, set up project context, plan
-a story, and hand it off to an AI agent to build — start to finish.
+In this tutorial, we will get the Chief skills into an existing project, set up project
+context, plan a story, and hand it off to an AI agent to build — start to finish.
 
 By the end, you will have:
 
-- Chief installed and wired into your coding agent
+- The Chief skills available in your coding agent
 - A `.chief/project.md` with your project's context
 - A planned story with a goal, a contract, and tickets
 - Code committed by `/chief-build`
 
 This tutorial uses **Claude Code** as the coding agent. The steps are the same for other
-agents; the agent-specific setup happens automatically during install.
+agents — there's no agent-specific setup at all in v5, skills work the same everywhere once
+installed.
 
 ---
 
@@ -23,33 +24,18 @@ In a terminal inside your project:
 npx skills@latest add thaitype/chief
 ```
 
-The picker opens. Select all skills (press Space on each, or press `a` to select all). Make
-sure `chief-install` is included — it's the skill that wires Chief into your agent.
+The picker opens. Select all skills (press Space on each, or press `a` to select all).
 
-> If you only want specific skills, select `chief-install` at minimum, plus any skills you plan
-> to use (e.g. `chief-plan`, `chief-grill`).
+That's it — there's no separate install step to run afterward. `.chief/` doesn't exist yet
+(that's intentional, Chief creates it only when you need it), and nothing gets written to
+`AGENTS.md` — every `chief-*` slash command already works.
 
----
-
-## Step 2 — Run `/chief-install`
-
-Open your coding agent (Claude Code, Copilot, Cursor, etc.) in this project and run:
-
-```
-/chief-install
-```
-
-The skill will ask which coding agent you use, and (for Claude Code) whether to symlink or
-copy. v5 has no subagent roster to install — see
-[chief-* execution skills reference](../reference/agents.md) — so this only ever writes
-`AGENTS.md` (and, for Claude Code, a `CLAUDE.md` pointer to it).
-
-When it finishes, your project has `AGENTS.md` — but no `.chief/` folder yet. That's
-intentional. Chief creates it only when you need it.
+> If you only want specific skills, select the ones you plan to use (e.g. `chief-plan`,
+> `chief-grill`).
 
 ---
 
-## Step 3 — Bootstrap project context
+## Step 2 — Bootstrap project context
 
 Run:
 
@@ -75,7 +61,7 @@ knowing your project.
 
 ---
 
-## Step 4 — Plan a story
+## Step 3 — Plan a story
 
 Now plan what you're building. A **story** is Chief's unit of work — sized like a single
 issue/ticket in any tracker (GitHub, Jira, ClickUp), not like a big multi-week "Milestone" —
@@ -105,7 +91,7 @@ At each step, the skill waits for your sign-off before proceeding.
 
 ---
 
-## Step 5 — Build
+## Step 4 — Build
 
 With the plan approved, build a ticket:
 
@@ -126,7 +112,7 @@ step.
 
 ---
 
-## Step 6 — Reflect
+## Step 5 — Reflect
 
 After the story is done, run a retrospective:
 
@@ -147,7 +133,7 @@ Your project now has:
 
 ```
 project/
-├── AGENTS.md               ← framework rules
+├── AGENTS.md               ← optional, entirely your own — not shown here unless you made one
 ├── .chief/
 │   ├── project.md          ← your project context (written by /chief-init)
 │   └── story-1/

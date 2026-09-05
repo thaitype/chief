@@ -24,18 +24,11 @@ Chief stops that. Give every project the same shape — `AGENTS.md` for rules, `
 npx skills@latest add thaitype/chief
 ```
 
-Select the skills you want. Make sure `chief-install` is included.
+Select the skills you want. That's it — there's no separate install step. Nothing needs to be
+written to `AGENTS.md` for Chief to work; every `chief-*` slash command is available the
+moment its skill file is present.
 
-**Step 2 — Run `/chief-install` in your agent:**
-
-```
-/chief-install
-```
-
-It asks which coding agent you use and, for Claude Code, whether to symlink or copy. That's it
-— v5 has no subagent roster to wire up.
-
-**Step 3 — Bootstrap project context (optional):**
+**Step 2 — Bootstrap project context (optional):**
 
 ```
 /chief-init
@@ -46,9 +39,6 @@ where planning artifacts should live — keep the default (`.chief/`) unless you
 not to. Skip this step and write the file by hand later if you prefer.
 
 → [Full tutorial: your first story](docs/manual/tutorials/your-first-story.md)
-→ [Manual install options](docs/manual/how-to/install.md)
-
-> **Windows users:** Symlink mode requires Developer Mode and `git config --global core.symlinks true`. The install skill auto-detects and falls back to copy mode.
 
 ## How Chief works
 
@@ -130,40 +120,40 @@ Best for prototyping, well-defined goals, solo work.
 → [Full skills reference](docs/manual/reference/skills.md)
 → [How to pick the right skill](docs/manual/how-to/pick-the-right-skill.md)
 
-## No more subagent roster, and a nearly-empty AGENTS.md
+## No more subagent roster, no more install/upgrade skills
 
 v4 shipped four persistent subagents (`chief-agent`, `builder-agent`, `tester-agent`,
-`answer-verifier-agent`) that `/chief-install` wired into `.agents/agents/`. v5 has none of
-that — `/chief-build` and `/chief-test` are skills that spawn their own throwaway subagents for
-isolated context when they need it, and `chief-agent`/`answer-verifier-agent` were folded
+`answer-verifier-agent`) that a `chief-install` skill wired into `.agents/agents/`. v5 has none
+of that — `/chief-build` and `/chief-test` are skills that spawn their own throwaway subagents
+for isolated context when they need it, and `chief-agent`/`answer-verifier-agent` were folded
 into the skills that used them. Nothing to install separately, nothing to keep in sync. There's
-no `scripts/setup.sh` either — `/chief-install` writes `AGENTS.md` directly.
+no `scripts/setup.sh` either, and — once that roster was gone — nothing left for a dedicated
+install/upgrade skill to actually do: Chief doesn't write anything to `AGENTS.md` at all.
+`AGENTS.md` is entirely optional and entirely yours; if you want your own Project Rules
+followed, write them there yourself, in whatever shape your coding agent expects (`CLAUDE.md`
+for Claude Code, `AGENTS.md` for most others — symlink one to the other yourself if you use
+both).
 
-The same logic applies to `AGENTS.md` itself: it used to carry a directory-structure diagram,
-a skill-family table, and a responsibility-boundary writeup that loaded into every single
+The same logic emptied `AGENTS.md` of everything Chief used to put there: a directory-structure
+diagram, a skill-family table, a responsibility-boundary writeup that used to load into every
 session whether or not that session needed it. All of that either lives inside the individual
 skills that actually enforce it already, or moved to `/chief-explain` (agent-facing, on
-demand) and `/ask-chief` (human-facing, "which skill do I use?"). `AGENTS.md` now holds just
-your own Project Rules and a two-line pointer to those two skills.
+demand) and `/ask-chief` (human-facing, "which skill do I use?").
 
 → [chief-* execution skills reference](docs/manual/reference/agents.md)
 
 ## Upgrading
 
 ```bash
-# 1. Refresh skills
 npx skills@latest add thaitype/chief
-
-# 2. Upgrade AGENTS.md
-/chief-upgrade
 ```
 
-To pin a version: `npx skills@latest add thaitype/chief#v5.0.0` / `/chief-upgrade v5.0.0`
+That's the whole upgrade — refreshing skill files is idempotent, safe to re-run anytime. To pin
+a version: `npx skills@latest add thaitype/chief#v5.0.0`.
 
-Coming from v4? `/chief-upgrade` detects it and explains the breaking change before touching
-anything — see [How to upgrade](docs/manual/how-to/upgrade.md#upgrading-from-v4). It only
-handles `AGENTS.md`; if you also want an in-progress v4 milestone converted into a v5 story
-(rather than finished on a pinned v4 checkout), run `/chief-migrate` afterward.
+Coming from v4? See [How to upgrade](docs/manual/how-to/upgrade.md#upgrading-from-v4) for what
+changed. If you also want an in-progress v4 milestone converted into a v5 story (rather than
+finished on a pinned v4 checkout), run `/chief-migrate`.
 
 ## Documentation
 
@@ -172,17 +162,20 @@ Full documentation lives in [`docs/manual/`](docs/manual/):
 | Section                                                | Content                                               |
 | ------------------------------------------------------ | ----------------------------------------------------- |
 | [Tutorial](docs/manual/tutorials/your-first-story.md) | Your first story, end to end                          |
-| [How-to guides](docs/manual/how-to/)                      | Install, upgrade, pick a skill, write rules           |
+| [How-to guides](docs/manual/how-to/)                      | Get the skills, pick a skill, write rules             |
 | [Reference](docs/manual/reference/)                       | Skills, execution skills, directory structure, rules hierarchy |
 | [Explanation](docs/manual/explanation/)                   | Why Chief exists, pre-coding first, separation of concerns |
 
 ## Compatibility
 
-| Coding agent                                          | Integration                                                |
+Skills work the same everywhere once installed — no per-agent setup. `AGENTS.md`/`CLAUDE.md`
+only matters if you want your own Project Rules recognized, and that's entirely optional and
+entirely yours to create:
+
+| Coding agent                                          | Rules file it reads                                        |
 | ----------------------------------------------------- | ---------------------------------------------------------- |
-| Claude Code                                           | `CLAUDE.md → AGENTS.md` symlink                            |
-| GitHub Copilot                                        | Reads `AGENTS.md` directly                                 |
-| Cursor, Windsurf, Kiro, Codex, Aider, Amp, Gemini CLI | Reads `AGENTS.md` natively (untested ⚠️)               |
+| Claude Code                                           | `CLAUDE.md` — symlink or copy it from `AGENTS.md` yourself if you keep both |
+| GitHub Copilot, Cursor, Windsurf, Kiro, Codex, Aider, Amp, Gemini CLI | `AGENTS.md` (untested on most of these ⚠️) |
 
 ## Releases
 
@@ -190,7 +183,7 @@ Full documentation lives in [`docs/manual/`](docs/manual/):
 - **v2** — Multi-agent support, skills system. [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2)
 - **v3** — Rebranded to Chief. `chief-` skill prefix. Repo moved to [`thaitype/chief`](https://github.com/thaitype/chief).
 - **v4** — Skills via `npx skills` (decoupled from install). Lazy `.chief/`. New skills: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`, `/shape-up`, `/slim-down`, `/chief-loop`, `/loop-readiness`. `answer-verifier-agent` replaces deprecated `review-plan-agent`. [docs](https://github.com/thaitype/chief/tree/release/v4)
-- **v5** — "Milestone" renamed "story" (sized like one tracker issue, not a multi-week Milestone). `_plan/_todo.md` + task specs replaced by a `_tickets/` frontier (vertical-slice tickets with blocking edges). New: `/chief-wayfinder` (map open decisions before planning), `/chief-build` and `/chief-test` (replace `builder-agent`/`tester-agent` as skills), `/chief-review-code` (two-axis diff review), `/chief-explain` and `/ask-chief` (agent- and human-facing replacements for what used to be baked into `AGENTS.md`), `/chief-migrate` (converts an in-progress v4 milestone into a v5 story), `/setup-agent-behavior` (opt-in general agent-conduct rules, not Chief-specific). The `.agents/agents/` subagent roster is gone entirely, `scripts/setup.sh` is gone (`/chief-install` writes `AGENTS.md` directly), and `AGENTS.md` itself shrinks to just your Project Rules. Storage location is no longer hardcoded to `.chief/` (see `.chief.config.md` in the directory structure reference). See [the design doc](docs/design/v5-ai-workflow.md) for the full rationale.
+- **v5** — "Milestone" renamed "story" (sized like one tracker issue, not a multi-week Milestone). `_plan/_todo.md` + task specs replaced by a `_tickets/` frontier (vertical-slice tickets with blocking edges). New: `/chief-wayfinder` (map open decisions before planning), `/chief-build` and `/chief-test` (replace `builder-agent`/`tester-agent` as skills), `/chief-review-code` (two-axis diff review), `/chief-explain` and `/ask-chief` (agent- and human-facing replacements for what used to be baked into `AGENTS.md`), `/chief-migrate` (converts an in-progress v4 milestone into a v5 story), `/setup-agent-behavior` (opt-in general agent-conduct rules, not Chief-specific). The `.agents/agents/` subagent roster is gone entirely, `scripts/setup.sh` is gone, and — once that roster was gone — so were the install/upgrade skills themselves: Chief writes nothing to `AGENTS.md` at all anymore, so `AGENTS.md` is entirely optional and entirely yours. Storage location is no longer hardcoded to `.chief/` (see `.chief.config.md` in the directory structure reference). See [the design doc](docs/design/v5-ai-workflow.md) for the full rationale.
 
 ## Branches
 
@@ -203,11 +196,11 @@ Full documentation lives in [`docs/manual/`](docs/manual/):
 To test changes locally:
 
 ```bash
-# Install from your branch in a separate test project
-npx skills@latest add thaitype/chief#<your-branch> --skill chief-install
+# Install the skills you're changing from your branch, into a separate test project
+npx skills@latest add thaitype/chief#<your-branch>
 
-# Then test:
-/chief-install <your-branch>
+# Then invoke whichever skill you changed directly, e.g.:
+/chief-plan
 ```
 
 ## Contributing

@@ -13,11 +13,11 @@ Chief is a structured workflow for AI coding agents. These docs follow the [Diá
 
 ## Tutorials
 
-- [Your first story with Chief](tutorials/your-first-story.md) — Install Chief and ship a story from plan to commit, end-to-end.
+- [Your first story with Chief](tutorials/your-first-story.md) — Get the Chief skills and ship a story from plan to commit, end-to-end.
 
 ## How-to guides
 
-- [How to install Chief](how-to/install.md)
+- [How to get the Chief skills into a project](how-to/install.md)
 - [How to upgrade Chief](how-to/upgrade.md)
 - [How to pick the right skill for your situation](how-to/pick-the-right-skill.md)
 - [How to stress-test a design before building](how-to/stress-test-a-design.md)

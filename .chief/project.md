@@ -11,41 +11,36 @@ dogfooded — this project uses its own framework on itself.
 
 ```
 project/
-├── AGENTS.md              # Framework rules (dogfooded)
+├── AGENTS.md              # This repo's own rules (dogfooded, hand-maintained)
 ├── CLAUDE.md → AGENTS.md  # Symlink for Claude Code
 ├── .chief/                # Dogfooded planning state (this file lives here)
-├── template/              # Installable package — what setup copies into user projects
-│   └── AGENTS.md          # Framework rules file
 ├── skills/                # chief-* skills (chief, engineering, misc, setup buckets)
 └── docs/                  # Additional documentation
 ```
 
-v5 has no `.agents/agents/` subagent roster anymore, in `template/` or dogfooded at root —
+There is no `template/` directory. v5 has no `.agents/agents/` subagent roster anymore —
 `/chief-build` and `/chief-test` are skills under `skills/chief/`, not agent files. There's no
-`scripts/` directory at all — neither `setup.sh` nor `upgrade.sh` exist; `/chief-install` and
-`/chief-upgrade` both write/diff `AGENTS.md` directly (see their `SKILL.md` files), the same
-judgment-sensitive-merge pattern in both cases rather than shelling out to a script.
+install/upgrade skill either, and no `scripts/` directory — Chief writes nothing to
+`AGENTS.md` for any project, including this one; root `AGENTS.md` here is just this repo's own
+hand-maintained file, same as any consuming project's would be if they chose to have one.
 
 ### Key Distinction
 
-- `template/` = the package that gets installed into other projects
-- Root-level files = this project eating its own dogfood
+Nothing to distinguish anymore — there's no separate installable package vs. dogfood split.
+Everything under `skills/` is both what this repo runs on itself and what ships to consumers.
 
 ## Setup Concept
 
-Installation into a user project (`/chief-install`):
+There isn't one. Getting Chief's skills into a project (`npx skills add thaitype/chief` or
+copying `skills/**/SKILL.md` files by hand) is the only step — every `chief-*` slash command
+works immediately, nothing else needs to exist first.
 
-1. Clone the target version, read `template/AGENTS.md` from it
-2. Present what will be written (fresh, or a diff against the target's existing `AGENTS.md`
-   split at the `<!-- chief-framework:begin/end -->` markers) and confirm
-3. Write `AGENTS.md` (fresh write, or the framework block appended/updated)
-4. For Claude Code: create `CLAUDE.md` → `AGENTS.md`
-
-`.chief/` is never touched at install time — it's created lazily by whichever `chief-*` skill
-first needs it.
+`.chief/` is created lazily at runtime by whichever `chief-*` skill first needs it — never at
+"install" time, because there is no install time.
 
 ## Tech Stack
 
 - Markdown for all skill definitions, rules, and documentation
-- Symlinks for Claude Code integration (`CLAUDE.md` → `AGENTS.md`)
+- Symlinks for Claude Code integration (`CLAUDE.md` → `AGENTS.md`), set up by hand, not by any
+  skill
 - No runtime dependencies, no shell scripts

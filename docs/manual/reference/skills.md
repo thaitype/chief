@@ -151,12 +151,11 @@ reach for it on its own when it needs a structural fact, not only when you ask.
 
 ### `/chief-migrate`
 
-Converts an in-progress v4 milestone into a v5 story — separate from `/chief-upgrade`, which
-handles `AGENTS.md` but deliberately never touches `.chief/milestone-N/` content. Only migrates
-open milestones (closed ones are left alone); converts `_todo.md` + task specs into tickets
-without inventing blocking edges (tagging each with `Migrated-from:` for traceability); asks
-before deleting the old milestone directory, as its own separate confirmation after the
-migration is already written and reviewed.
+Converts an in-progress v4 milestone into a v5 story. Only migrates open milestones (closed
+ones are left alone); converts `_todo.md` + task specs into tickets without inventing blocking
+edges (tagging each with `Migrated-from:` for traceability); asks before deleting the old
+milestone directory, as its own separate confirmation after the migration is already written
+and reviewed. Entirely optional — a v4 story can also just finish out on a pinned v4 checkout.
 
 ---
 
@@ -221,22 +220,9 @@ Standalone — use it whether or not you ran `/loop-readiness` first. `/loop-rea
 
 ## Setup skills
 
-### `/chief-install`
-
-Installs Chief into a project. Asks which coding agent, and (for Claude Code) whether to
-symlink or copy. Writes `AGENTS.md` directly — clones the target version, presents what would
-be written (fresh, or a diff against your existing file), confirms, writes. There's no
-`scripts/setup.sh` and no subagent roster to wire up in v5 — see
-[chief-* execution skills](agents.md).
-
-### `/chief-upgrade`
-
-Upgrades `AGENTS.md` to a target version. Diffs it against the template and waits for sign-off
-before overwriting anything. Detects a pre-v5 install (a leftover `.agents/agents/` roster) and
-explains the v4 → v5 breaking change before proceeding — no `.chief/` content is migrated
-automatically (see `/chief-migrate` if you want that).
-
-Usage: `/chief-upgrade` (latest stable), `/chief-upgrade canary`, `/chief-upgrade v5.0.0`
+There's no install/upgrade skill in v5 — see [chief-* execution skills](agents.md) for why.
+Getting the skills at all (`npx skills add thaitype/chief`, re-run anytime to refresh) is the
+only setup step; nothing needs writing to `AGENTS.md` for Chief to work.
 
 ### `/setup-agent-behavior`
 

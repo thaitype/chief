@@ -39,8 +39,10 @@ filesystem backend; it has no equivalent for a future non-local backend.
 
 ```
 project/
-├── AGENTS.md               ← framework + project rules (highest authority) — kept minimal;
-│                              everything explanatory lives in skills like this one instead
+├── AGENTS.md               ← optional, entirely the user's own — Project Rules are the
+│                              highest authority if this file exists at all; Chief never
+│                              creates or writes to it, everything explanatory lives in
+│                              skills like this one instead
 └── .chief/                 ← or wherever .chief.config.md points, see above
     ├── project.md          ← tech stack, dev commands (written by /chief-init)
     ├── _rules/
@@ -83,8 +85,11 @@ installed separately, nothing needs to be kept in sync with a template.
 | `/chief-rule` | Rule capture | Writes a single rule to `_rules/` | Anything outside `_rules/` |
 | `/chief-retro` | Retrospective | Coverage check, lessons, proposes rule updates | Modify goal/contract/tickets |
 | `/chief-migrate` | Migration | Converts an in-progress v4 milestone into a v5 story | Touch `AGENTS.md`, delete anything without asking |
-| `/chief-install`, `/chief-upgrade` | Setup | Install/upgrade `AGENTS.md` | Touch `.chief/` |
 | `/setup-agent-behavior` | Setup (opt-in) | Writes general (non-Chief) agent-conduct rules into `AGENTS.md`, on request | Anything automatic |
+
+There's no install/upgrade skill — Chief needs nothing written to `AGENTS.md` to work. Getting
+the skills at all (`npx skills add thaitype/chief` or equivalent) is the only setup step;
+`/chief-init` is the natural first thing to run afterward, but nothing enforces that order.
 
 Responsibility boundary worth calling out explicitly, since it's the one most often violated in
 practice: **`/chief-build` handles all fast, deterministic, local verification** (unit tests,

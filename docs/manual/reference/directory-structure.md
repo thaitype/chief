@@ -4,19 +4,18 @@ This page describes every file and folder Chief touches, and when each is create
 
 ---
 
-## After `/chief-install`
+## After getting the skills
 
 ```
 project/
-└── AGENTS.md          ← framework + project rules (highest authority)
-    CLAUDE.md → AGENTS.md   ← symlink (Claude Code only)
 ```
 
-v5 has no subagent roster to install — no `.agents/`, no `.claude/agents/`, no
-`.github/agents/`. `/chief-build` and `/chief-test` are skills, not registered agent files; see
-[chief-* skill roles](agents.md).
-
-`.chief/` is **not** created at install time.
+Nothing appears yet. There's no install step in v5 — no `.agents/`, no `.claude/agents/`, no
+`.github/agents/`, and nothing written to `AGENTS.md`. `/chief-build` and `/chief-test` are
+skills, not registered agent files; see [chief-* skill roles](agents.md). Every `chief-*`
+slash command is available the moment its skill file is present (via `npx skills add
+thaitype/chief` or equivalent) — `AGENTS.md` is optional and entirely yours if you want one;
+`.chief/` is created lazily, starting with whatever you run first (usually `/chief-init`).
 
 ---
 
@@ -120,7 +119,8 @@ this bootstrap problem (nothing exists there yet — v5 ships one backend).
 ## Key rules
 
 - `.chief/` is created lazily — only the files you actually use appear.
-- `AGENTS.md` is always present after install. It is the highest-authority file.
+- `AGENTS.md` is optional and entirely yours — Chief never creates or writes to it, but if it
+  exists, its Project Rules section is still the highest-authority level of the rules hierarchy.
 - A canonical example layout lives at [`docs/example-chief/`](../example-chief/) for reference.
 
 ---
@@ -129,7 +129,7 @@ this bootstrap problem (nothing exists there yet — v5 ships one backend).
 
 | File / folder | Authority level | Created by |
 |---|---|---|
-| `AGENTS.md` | Highest | `/chief-install` |
+| `AGENTS.md` | Highest (if it exists) | You — Chief never writes to it |
 | `.chief/_rules/` | Global | `/chief-rule`, `/chief-retro`, or manual |
 | `.chief/story-N/_goal/` | Story | `/chief-plan` or `/chief-wayfinder` |
 | `.chief/story-N/_contract/` | Story | `/chief-plan` |

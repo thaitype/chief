@@ -502,3 +502,40 @@ the same concept a todo list). The final description names neither a version nor
 vocabulary term newer than "an old `.chief/` layout" / "the current one," and says outright
 that it's deliberately vague, pointing to the skill's own Steps for the concrete, current-only
 specifics.
+
+## Round 2 follow-up: `chief-install` and `chief-upgrade` removed entirely
+
+Removed, not merged — a step further than the `chief-migrate` rename above. The trigger:
+noticing that `setup-agent-behavior` already handles "install this block, or update it if
+already present" as **one** unified skill, while `chief-install`/`chief-upgrade` did the
+structurally identical operation (diff/present/confirm/write a named block in `AGENTS.md`) as
+**two**. That inconsistency was the opening; the actual justification for removing both outright
+rather than merging them into one came from re-examining what either skill still did, now that
+the `.agents/agents/` subagent roster (their original reason for existing, and the bulk of
+their complexity — model placeholders, symlink farms, per-agent integration files) was already
+gone:
+
+1. **Writing the "Chief Framework" pointer block into `AGENTS.md`.** Checked whether this
+   still carried real value and found it didn't: `chief-explain` and `ask-chief` are already
+   visible to an agent the moment their skill files are installed (their own `description:`
+   fields surface in the skill catalog), and `chief-explain` is model-invocable besides — an
+   agent can reach for it on its own steam. The block was pointing at something the agent
+   already knew about by other means.
+2. **Symlinking `CLAUDE.md` → `AGENTS.md` for Claude Code.** The one piece with a genuine,
+   non-redundant reason to exist (Claude Code reads `CLAUDE.md` specifically) — but skills
+   themselves don't depend on `AGENTS.md`/`CLAUDE.md` existing at all to be invocable, so this
+   only ever mattered for surfacing a user's *own* Project Rules to that specific agent.
+   Explicitly chosen **not** to relocate this into `chief-init` or anywhere else — the user's
+   call, accepting that Claude Code users who want this now set up the symlink themselves.
+3. **Detecting a pre-v5 install and explaining the v4→v5 breaking change.** With the
+   subagent-roster cleanup gone, a leftover `.agents/agents/chief-agent.md` is inert dead
+   weight, not something that breaks anything by existing — proactive agent-driven detection
+   stopped pulling its weight over just documenting the transition
+   (`docs/manual/how-to/upgrade.md`, "Upgrading from v4") for a human to read if they hit it.
+
+With all three either redundant or explicitly not relocated, no code remained for either skill
+to justify keeping. `template/` (which existed solely to be copied by the now-removed
+`chief-install`) was deleted along with it — `template/AGENTS.md` had no remaining reader.
+"Upgrading" collapses to the one thing that was always separate from either skill anyway:
+refreshing skill files via `npx skills add`, which was already idempotent and version-pinnable
+without any Chief-specific skill wrapping it.

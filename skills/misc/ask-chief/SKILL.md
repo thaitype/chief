@@ -76,16 +76,16 @@ Not feature work — the upkeep that keeps future stories cheap.
 
 ## Setup, once per project
 
-- **`/chief-install`** then **`/chief-init`** — install the framework, then bootstrap
-  `project.md` and confirm where planning artifacts should live.
+There's no install step beyond getting the skills at all (`npx skills add thaitype/chief` or
+equivalent) — nothing needs to be written to `AGENTS.md` for Chief to work.
+
+- **`/chief-init`** — the natural first thing to run: bootstraps `project.md` and confirms
+  where planning artifacts should live.
 - **`/setup-agent-behavior`** — optional. Writes general (not Chief-specific) agent-conduct
   rules into `AGENTS.md` if you want them binding every session, rather than something you'd
   have to remember to ask for.
-- **`/chief-upgrade`** to move to a new framework version later; if it detects you're still on
-  v4, it explains the breaking change before touching anything.
-- **`/chief-migrate`** — separate from `/chief-upgrade`, and only relevant once, right
-  after upgrading from v4: converts an in-progress v4 milestone into a v5 story. Asks before
-  deleting the old one.
+- **`/chief-migrate`** — only relevant once, coming from a v4 project: converts an
+  in-progress v4 milestone into a v5 story. Asks before deleting the old one.
 
 ## When you need the structural facts, not a recommendation
 

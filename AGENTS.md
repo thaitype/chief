@@ -11,19 +11,16 @@ for how it's structured (directory layout, storage location, what each skill own
 ## Project Rules
 
 - This repo IS the Chief framework. Sources of truth:
-  - Framework rules file: `template/AGENTS.md`
   - Skills: `skills/` (chief, engineering, misc, setup)
-  - Example `.chief/` layout (reference only, not consumed by install): `docs/example-chief/`
-- v5 has no `template/.agents/agents/` subagent roster — `/chief-build`/`/chief-test` are
-  skills under `skills/chief/`, not agent files. Don't recreate `.agents/agents/`.
-- `/chief-install` writes `AGENTS.md` directly (diff, present, confirm, write) — there is no
-  `scripts/setup.sh` to keep in sync with it. Don't recreate one.
-- Product changes (`AGENTS.md` content, skills) → MUST edit the source-of-truth path first,
-  then sync to root if applicable.
-- `.chief/` is created lazily at runtime by whichever `chief-*` skill runs first. There is no
-  `template/.chief/` to scaffold from.
+  - Example `.chief/` layout (reference only): `docs/example-chief/`
+- There is no `template/` directory anymore — no `template/AGENTS.md`, no
+  `template/.agents/agents/`. v5 has no install/upgrade skill and writes nothing to
+  `AGENTS.md`; don't recreate either. Root `AGENTS.md` (this file) is this repo's own,
+  hand-maintained, not generated from or synced with any template.
+- Product changes (skill content) → edit the skill's own `SKILL.md` directly; nothing to sync
+  elsewhere.
+- `.chief/` is created lazily at runtime by whichever `chief-*` skill runs first.
 - Dogfooding-only changes (story plans, tickets, reports) → edit root `.chief/` directly.
-- NEVER let root and template drift without explicit reason.
 
 ---
 

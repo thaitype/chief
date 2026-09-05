@@ -1,25 +1,28 @@
 ---
 name: chief-init
-description: Bootstrap `.chief/project.md` for a Chief-installed project by interviewing the user about their tech stack, dev commands, architecture, and key rules — and confirm where planning artifacts should live. Use after `/chief-install` (or any time the user wants to set up project-wide context). This is the lazy entry point for `.chief/` — it creates only `project.md` (and, only if the user wants a non-default location, `.chief.config.md`); stories and rules are created later, on demand.
+description: Bootstrap `.chief/project.md` by interviewing the user about their tech stack, dev commands, architecture, and key rules — and confirm where planning artifacts should live. The entry point for a new project — nothing else needs to run first (just `npx skills add thaitype/chief` to have the skills available at all). This is the lazy entry point for `.chief/` — it creates only `project.md` (and, only if the user wants a non-default location, `.chief.config.md`); stories and rules are created later, on demand.
 ---
 
 You are bootstrapping the project's `.chief/project.md`, and confirming where Chief stores its
 own planning artifacts. Nothing else is created here. Stories, rules, and other `.chief/`
 content are created later by whichever skill first needs them.
 
+There is no separate install step and nothing in `AGENTS.md` this depends on — Chief's skills
+work the moment they're available to the agent (via `npx skills add thaitype/chief` or
+whatever mechanism installed them). This skill can run standalone, first thing.
+
 ## Steps
 
-### 1. Pre-flight checks
+### 1. Pre-flight check
 
-1. Verify the framework is installed: `AGENTS.md` must exist and reference Chief. If missing,
-   tell the user to run `/chief-install` first and stop.
-2. Check if `.chief/project.md` already exists.
-   - If yes → ask the user: "`.chief/project.md` already exists. Update it / overwrite /
-     cancel?"
-   - If overwrite, back up the current file to `.chief/project.md.bak` before proceeding.
-   - If update, read the current content first and treat the interview as a refinement pass.
-   - If cancel, stop.
-3. Create `.chief/` if it does not exist.
+Check if `.chief/project.md` already exists.
+- If yes → ask the user: "`.chief/project.md` already exists. Update it / overwrite /
+  cancel?"
+- If overwrite, back up the current file to `.chief/project.md.bak` before proceeding.
+- If update, read the current content first and treat the interview as a refinement pass.
+- If cancel, stop.
+
+Create `.chief/` if it does not exist.
 
 ### 2. Confirm the storage location
 
@@ -117,6 +120,5 @@ Tell the user:
   or `_template/`.
 - Never overwrite an existing `project.md` without explicit user confirmation; always back up to
   `.bak` first.
-- If `AGENTS.md` doesn't reference Chief, do not proceed — direct the user to `/chief-install`.
 - Keep the interview short. One focused question at a time, no compound questions.
 - Reference: a canonical layout example lives at `docs/example-chief/` in the chief repo.

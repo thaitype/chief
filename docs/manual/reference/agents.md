@@ -106,9 +106,10 @@ the appendix in `chief-grill`'s own `SKILL.md`.
 
 | Coding agent | How `chief-*` skills are wired |
 |---|---|
-| Claude Code | `CLAUDE.md → AGENTS.md` symlink; skills installed via `npx skills` |
-| GitHub Copilot | Reads `AGENTS.md` directly; skills installed via `npx skills` |
-| Other agents | Read `AGENTS.md` directly (if supported); skills installed via `npx skills` |
+| Claude Code | Skills installed via `npx skills`; reads `CLAUDE.md` for Project Rules if you create one yourself (symlink or copy from `AGENTS.md`) |
+| GitHub Copilot | Skills installed via `npx skills`; reads `AGENTS.md` directly if present |
+| Other agents | Skills installed via `npx skills`; read `AGENTS.md` directly if supported and present |
 
-`/chief-install` only ever wires `AGENTS.md` (and, for Claude Code, the `CLAUDE.md` pointer) —
-there's no per-agent subagent-file wiring left to do.
+No agent needs `AGENTS.md`/`CLAUDE.md` to exist at all for `chief-*` skills to work — those
+files only matter if you want your own Project Rules recognized, and there's no install step
+that creates or manages them.

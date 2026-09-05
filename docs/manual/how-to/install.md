@@ -1,6 +1,10 @@
-# How to install Chief
+# How to get the Chief skills into a project
 
-This guide covers installing Chief into an existing project. If you want to understand the full workflow first, start with the [tutorial](../tutorials/your-first-story.md).
+This guide covers getting Chief's skills into an existing project. If you want to understand
+the full workflow first, start with the [tutorial](../tutorials/your-first-story.md).
+
+There's no install step beyond this — nothing needs to be written to `AGENTS.md` for Chief to
+work. Every `chief-*` slash command is available the moment its skill file is present.
 
 ---
 
@@ -11,79 +15,52 @@ This guide covers installing Chief into an existing project. If you want to unde
 
 ---
 
-## Standard install (recommended)
-
-**Step 1 — Install skills:**
+## Standard way (recommended)
 
 ```bash
 npx skills@latest add thaitype/chief
 ```
 
-Select the skills you want. At minimum, select `chief-install`. Press `a` to select all.
-
-**Step 2 — Run the install skill in your agent:**
-
-```
-/chief-install
-```
-
-The skill asks:
-- Which coding agent you use
-- Whether to use symlink or copy mode (Claude Code only)
-
-There's no subagent roster to install in v5 — see
-[chief-* execution skills reference](../reference/agents.md). When done, your project has
-`AGENTS.md` (and, for Claude Code, a `CLAUDE.md` pointer to it).
+Select the skills you want. Press `a` to select all. That's it.
 
 ---
 
-## Manual install (no npx)
+## Without npx
 
-`/chief-install` writes `AGENTS.md` directly (there's no `scripts/setup.sh` in v5 — see
-`docs/design/v5-ai-workflow.md` for why: the only thing it ever did was a small,
-judgment-sensitive file merge, which fits an agent's diff-then-confirm loop better than a blind
-script). If you can't use `npx skills` to fetch the skill files, you still need *some* coding
-agent session to run `/chief-install` — point it at this repo and ask it to install the
-skill, or copy `skills/setup/chief-install/SKILL.md`'s instructions into your agent manually.
-
-Truly agent-free install (no session at all) means doing what `/chief-install` would do, by
-hand:
+If you can't use `npx skills` to fetch the skill files, copy them manually: clone this repo
+and copy whichever `skills/**/SKILL.md` files you want into wherever your coding agent expects
+skill files (e.g. `.claude/skills/<name>/SKILL.md` for Claude Code).
 
 ```bash
-git clone --depth 1 --branch main https://github.com/thaitype/chief.git .chief-agent-tmp
-cp .chief-agent-tmp/template/AGENTS.md AGENTS.md   # only if you don't already have one -
-                                                     # if you do, merge by hand: see the
-                                                     # <!-- chief-framework:begin/end --> markers
-                                                     # in the template file
-ln -s AGENTS.md CLAUDE.md   # Claude Code only; use `cp` instead of `ln -s` if symlinks aren't available
-rm -rf .chief-agent-tmp
+git clone --depth 1 --branch main https://github.com/thaitype/chief.git .chief-skills-tmp
+cp -r .chief-skills-tmp/skills/chief/chief-plan .claude/skills/
+# repeat for whichever skills you want
+rm -rf .chief-skills-tmp
 ```
-
-This is the one case where care matters: if `AGENTS.md` already exists, don't overwrite it
-blindly — merge the template's `<!-- chief-framework:begin -->`/`<!-- chief-framework:end -->`
-block in and leave the rest of the file untouched, the same way `/chief-install` does when an
-agent runs it.
 
 ---
 
-## Windows
+## Optional: `AGENTS.md` / `CLAUDE.md`
 
-Symlink mode requires Developer Mode enabled and:
+Chief never creates or writes to these files — they're entirely yours, and only matter if you
+want your own Project Rules recognized by your coding agent. If you want one:
 
-```bash
-git config --global core.symlinks true
-```
+- Most agents (GitHub Copilot, Cursor, and others) read `AGENTS.md` directly. Write your rules
+  there.
+- Claude Code reads `CLAUDE.md` specifically. Symlink it to `AGENTS.md` if you want to
+  maintain one file for both:
+  ```bash
+  ln -s AGENTS.md CLAUDE.md   # or `cp` instead of `ln -s` if symlinks aren't available
+  ```
 
-`/chief-install` detects symlink support automatically and falls back to copy mode if
-unavailable.
+See [chief-* execution skills reference](../reference/agents.md) for how Chief's own rules
+hierarchy treats whatever you put there.
 
 ---
 
-## After install
+## After getting the skills
 
-Run `/chief-init` to bootstrap project context. See [the tutorial](../tutorials/your-first-story.md#step-3--bootstrap-project-context) for what this does.
-
-To verify the install worked, check that `AGENTS.md` exists in your project root and that your agent can read it.
+Run `/chief-init` to bootstrap project context. See [the tutorial](../tutorials/your-first-story.md#step-2--bootstrap-project-context) for what this does.
 
 ---
 

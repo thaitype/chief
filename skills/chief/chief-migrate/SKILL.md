@@ -15,10 +15,11 @@ description: Migrates an in-progress `.chief/` layout from an old framework vers
 > every time a version bumps. Check `git log -p` on this file for how a past migration
 > actually worked, if you ever need that instead of guessing from the current content.
 
-Migrate the *content* of an in-progress v4 milestone into v5's story shape. This is separate
-from `/chief-upgrade`, which handles `AGENTS.md` and detects the v4→v5 jump but deliberately
-does not touch `.chief/milestone-N/` — this skill is the optional companion that does, for
-whoever wants it.
+Migrate the *content* of an in-progress v4 milestone into v5's story shape. There's no
+separate "upgrade" skill in v5 to run first — `.chief/` content is the only thing that needs
+converting; nothing else about upgrading requires an agent (refreshing skill files is just
+`npx skills add thaitype/chief` again). This skill is entirely optional: a v4 story can also
+just finish out on a pinned v4 checkout instead, with new work starting fresh under v5.
 
 **Read-and-plan first, write additively, ask before anything destructive.** This skill never
 deletes the source milestone without an explicit, separate confirmation at the end.
@@ -113,5 +114,7 @@ as its own separate question:
   itself.
 - ALWAYS tag migrated tickets with `Migrated-from:` — never make a migrated ticket
   indistinguishable from one `/chief-plan` wrote natively.
-- This skill does not touch `AGENTS.md` or anything `.agents/`-related — that's
-  `/chief-upgrade`'s job, and should already be done before this skill is useful.
+- This skill does not touch `AGENTS.md` or anything `.agents/`-related. If a pre-v5
+  `.agents/agents/` roster is still sitting in the project, it's inert dead weight, not
+  something this skill (or anything else) needs to clean up automatically — leave it for the
+  user to remove whenever they're ready.
