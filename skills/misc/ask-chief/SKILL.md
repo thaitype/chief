@@ -83,7 +83,7 @@ Not feature work — the upkeep that keeps future stories cheap.
   have to remember to ask for.
 - **`/chief-upgrade`** to move to a new framework version later; if it detects you're still on
   v4, it explains the breaking change before touching anything.
-- **`/chief-migrate-to-v5`** — separate from `/chief-upgrade`, and only relevant once, right
+- **`/chief-migrate`** — separate from `/chief-upgrade`, and only relevant once, right
   after upgrading from v4: converts an in-progress v4 milestone into a v5 story. Asks before
   deleting the old one.
 

@@ -113,7 +113,7 @@ project/
 | `/chief-retro`        | Retrospective + lesson learned + อัปเดต `_rules/`                                |
 | `/chief-explain`      | Reference สำหรับ agent — โครงสร้างไดเรกทอรี, บทบาทของแต่ละ skill      |
 | `/ask-chief`          | Router สำหรับคน — สถานการณ์แบบนี้ควรใช้ skill ไหน                  |
-| `/chief-migrate-to-v5` | แปลง milestone ของ v4 ที่ยังทำอยู่ให้เป็น story ของ v5                |
+| `/chief-migrate` | แปลง milestone ของ v4 ที่ยังทำอยู่ให้เป็น story ของ v5                |
 | `/setup-agent-behavior` | (ไม่บังคับ) ติดตั้ง general agent-conduct rules ลง `AGENTS.md`       |
 | `/grill-design`       | Stress-test design แบบ stateless พร้อม self-critique                             |
 | `/shape-up`           | แปลงไอเดียฟุ้งเป็น spec ที่มีขอบเขต (top-down)                          |
@@ -144,7 +144,7 @@ npx skills@latest add thaitype/chief
 
 ระบุ version: `npx skills@latest add thaitype/chief#v5.0.0` / `/chief-upgrade v5.0.0`
 
-มาจาก v4? `/chief-upgrade` จะตรวจจับและอธิบาย breaking change ก่อนแตะไฟล์ใดๆ — ดู [วิธีอัปเกรด](docs/manual/how-to/upgrade.md#upgrading-from-v4) มันจัดการแค่ `AGENTS.md` เท่านั้น ถ้าอยากแปลง milestone ของ v4 ที่ยังทำอยู่ให้เป็น story ของ v5 ด้วย (แทนที่จะทำต่อบน v4 checkout ที่ pin ไว้) รัน `/chief-migrate-to-v5` ตามหลัง
+มาจาก v4? `/chief-upgrade` จะตรวจจับและอธิบาย breaking change ก่อนแตะไฟล์ใดๆ — ดู [วิธีอัปเกรด](docs/manual/how-to/upgrade.md#upgrading-from-v4) มันจัดการแค่ `AGENTS.md` เท่านั้น ถ้าอยากแปลง milestone ของ v4 ที่ยังทำอยู่ให้เป็น story ของ v5 ด้วย (แทนที่จะทำต่อบน v4 checkout ที่ pin ไว้) รัน `/chief-migrate` ตามหลัง
 
 ## เอกสาร
 
@@ -171,7 +171,7 @@ npx skills@latest add thaitype/chief
 - **v2** — รองรับ multi-agent เพิ่มระบบ skills [เอกสาร](https://github.com/thaitype/chief-agent-framework/tree/release/v2)
 - **v3** — เปลี่ยนชื่อเป็น Chief เปลี่ยน skill prefix เป็น `chief-` ย้าย repo ไป [`thaitype/chief`](https://github.com/thaitype/chief)
 - **v4** — ติดตั้ง skills ผ่าน `npx skills` (แยกออกจาก install) `.chief/` แบบ lazy Skills ใหม่: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`, `/shape-up`, `/slim-down`, `/chief-loop`, `/loop-readiness` `answer-verifier-agent` แทนที่ `review-plan-agent` ที่ deprecated แล้ว [เอกสาร](https://github.com/thaitype/chief/tree/release/v4)
-- **v5** — เปลี่ยนชื่อ "milestone" เป็น "story" (ขนาดเท่า 1 tracker issue ไม่ใช่ Milestone หลายสัปดาห์) เลิกใช้ `_plan/_todo.md` + task spec เปลี่ยนเป็น `_tickets/` แบบ frontier (vertical-slice ticket ที่มี blocking edges) Skill ใหม่: `/chief-wayfinder` (แผนผัง decision ที่ยังค้างก่อนวางแผน), `/chief-build` กับ `/chief-test` (แทนที่ `builder-agent`/`tester-agent` ด้วย skill), `/chief-review-code` (review diff สองมุม), `/chief-explain` กับ `/ask-chief` (agent- และ human-facing แทน `AGENTS.md` เดิม), `/chief-migrate-to-v5` (แปลง milestone ของ v4 ที่ยังทำอยู่เป็น story ของ v5), `/setup-agent-behavior` (ไม่บังคับ, ไม่เกี่ยว Chief) ตัด `.agents/agents/` subagent roster ทิ้งทั้งหมด, ตัด `scripts/setup.sh` ทิ้ง (`/chief-install` เขียน `AGENTS.md` เอง), และ `AGENTS.md` เหลือแค่ Project Rules ของคุณเอง storage location ไม่ fix เป็น `.chief/` ตายตัวอีกต่อไป (ดู `.chief.config.md` ใน directory structure reference) อ่านเหตุผลเต็มได้ที่ [design doc](docs/design/v5-ai-workflow.md)
+- **v5** — เปลี่ยนชื่อ "milestone" เป็น "story" (ขนาดเท่า 1 tracker issue ไม่ใช่ Milestone หลายสัปดาห์) เลิกใช้ `_plan/_todo.md` + task spec เปลี่ยนเป็น `_tickets/` แบบ frontier (vertical-slice ticket ที่มี blocking edges) Skill ใหม่: `/chief-wayfinder` (แผนผัง decision ที่ยังค้างก่อนวางแผน), `/chief-build` กับ `/chief-test` (แทนที่ `builder-agent`/`tester-agent` ด้วย skill), `/chief-review-code` (review diff สองมุม), `/chief-explain` กับ `/ask-chief` (agent- และ human-facing แทน `AGENTS.md` เดิม), `/chief-migrate` (แปลง milestone ของ v4 ที่ยังทำอยู่เป็น story ของ v5), `/setup-agent-behavior` (ไม่บังคับ, ไม่เกี่ยว Chief) ตัด `.agents/agents/` subagent roster ทิ้งทั้งหมด, ตัด `scripts/setup.sh` ทิ้ง (`/chief-install` เขียน `AGENTS.md` เอง), และ `AGENTS.md` เหลือแค่ Project Rules ของคุณเอง storage location ไม่ fix เป็น `.chief/` ตายตัวอีกต่อไป (ดู `.chief.config.md` ใน directory structure reference) อ่านเหตุผลเต็มได้ที่ [design doc](docs/design/v5-ai-workflow.md)
 
 ## Branches
 

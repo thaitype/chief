@@ -118,7 +118,7 @@ Best for prototyping, well-defined goals, solo work.
 | `/chief-retro`       | Retrospective + lesson learned + `_rules/` update                       |
 | `/chief-explain`     | Agent-facing structural reference — directory layout, skill roles       |
 | `/ask-chief`         | Human-facing router — which skill fits your situation, and when         |
-| `/chief-migrate-to-v5` | Convert an in-progress v4 milestone into a v5 story                   |
+| `/chief-migrate` | Convert an in-progress v4 milestone into a v5 story                   |
 | `/setup-agent-behavior` | Opt-in: install general agent-conduct rules into `AGENTS.md`         |
 | `/grill-design`      | Stateless design stress-test with self-critique                          |
 | `/shape-up`          | Turn a fuzzy idea into a scoped spec (top-down)                          |
@@ -163,7 +163,7 @@ To pin a version: `npx skills@latest add thaitype/chief#v5.0.0` / `/chief-upgrad
 Coming from v4? `/chief-upgrade` detects it and explains the breaking change before touching
 anything — see [How to upgrade](docs/manual/how-to/upgrade.md#upgrading-from-v4). It only
 handles `AGENTS.md`; if you also want an in-progress v4 milestone converted into a v5 story
-(rather than finished on a pinned v4 checkout), run `/chief-migrate-to-v5` afterward.
+(rather than finished on a pinned v4 checkout), run `/chief-migrate` afterward.
 
 ## Documentation
 
@@ -190,7 +190,7 @@ Full documentation lives in [`docs/manual/`](docs/manual/):
 - **v2** — Multi-agent support, skills system. [docs](https://github.com/thaitype/chief-agent-framework/tree/release/v2)
 - **v3** — Rebranded to Chief. `chief-` skill prefix. Repo moved to [`thaitype/chief`](https://github.com/thaitype/chief).
 - **v4** — Skills via `npx skills` (decoupled from install). Lazy `.chief/`. New skills: `/chief-init`, `/chief-rule`, `/chief-grill`, `/grill-design`, `/shape-up`, `/slim-down`, `/chief-loop`, `/loop-readiness`. `answer-verifier-agent` replaces deprecated `review-plan-agent`. [docs](https://github.com/thaitype/chief/tree/release/v4)
-- **v5** — "Milestone" renamed "story" (sized like one tracker issue, not a multi-week Milestone). `_plan/_todo.md` + task specs replaced by a `_tickets/` frontier (vertical-slice tickets with blocking edges). New: `/chief-wayfinder` (map open decisions before planning), `/chief-build` and `/chief-test` (replace `builder-agent`/`tester-agent` as skills), `/chief-review-code` (two-axis diff review), `/chief-explain` and `/ask-chief` (agent- and human-facing replacements for what used to be baked into `AGENTS.md`), `/chief-migrate-to-v5` (converts an in-progress v4 milestone into a v5 story), `/setup-agent-behavior` (opt-in general agent-conduct rules, not Chief-specific). The `.agents/agents/` subagent roster is gone entirely, `scripts/setup.sh` is gone (`/chief-install` writes `AGENTS.md` directly), and `AGENTS.md` itself shrinks to just your Project Rules. Storage location is no longer hardcoded to `.chief/` (see `.chief.config.md` in the directory structure reference). See [the design doc](docs/design/v5-ai-workflow.md) for the full rationale.
+- **v5** — "Milestone" renamed "story" (sized like one tracker issue, not a multi-week Milestone). `_plan/_todo.md` + task specs replaced by a `_tickets/` frontier (vertical-slice tickets with blocking edges). New: `/chief-wayfinder` (map open decisions before planning), `/chief-build` and `/chief-test` (replace `builder-agent`/`tester-agent` as skills), `/chief-review-code` (two-axis diff review), `/chief-explain` and `/ask-chief` (agent- and human-facing replacements for what used to be baked into `AGENTS.md`), `/chief-migrate` (converts an in-progress v4 milestone into a v5 story), `/setup-agent-behavior` (opt-in general agent-conduct rules, not Chief-specific). The `.agents/agents/` subagent roster is gone entirely, `scripts/setup.sh` is gone (`/chief-install` writes `AGENTS.md` directly), and `AGENTS.md` itself shrinks to just your Project Rules. Storage location is no longer hardcoded to `.chief/` (see `.chief.config.md` in the directory structure reference). See [the design doc](docs/design/v5-ai-workflow.md) for the full rationale.
 
 ## Branches
 

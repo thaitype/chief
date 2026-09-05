@@ -27,7 +27,7 @@
         "./skills/chief/chief-rule",
         "./skills/chief/chief-retro",
         "./skills/chief/chief-explain",
-        "./skills/chief/chief-migrate-to-v5",
+        "./skills/chief/chief-migrate",
         "./skills/engineering/shape-up",
         "./skills/engineering/grill-design",
         "./skills/engineering/slim-down",

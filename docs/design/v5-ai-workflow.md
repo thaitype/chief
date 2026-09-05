@@ -367,12 +367,12 @@ systems side by side was never actually proposed once the details were worked ou
   because there's no external-intake path for it to describe — revisit this decision together
   if `/chief-triage` ever gets built, since the two are linked.
 
-## Round 2: chief-migrate-to-v5, chief-explain, ask-chief, and an AGENTS.md slimdown
+## Round 2: chief-migrate, chief-explain, ask-chief, and an AGENTS.md slimdown
 
 A second grill-design session, after the skills above already shipped, added four more skills
 and restructured `AGENTS.md`. Decisions:
 
-### `chief-migrate-to-v5`
+### `chief-migrate`
 
 Optional companion to `chief-upgrade`, which handles `AGENTS.md` and detects the v4→v5 jump but
 deliberately never touches `.chief/milestone-N/` content (see "Versioning and migration"
@@ -477,3 +477,28 @@ disambiguated by field presence/absence. Considered adopting that presence/absen
 for Chief too, then explicitly kept the explicit `implementation` value instead, for robustness
 (nothing reading a ticket file needs special-case "the field is just missing" handling) at the
 cost of one extra line per implementation ticket.
+
+## Round 2 follow-up: `chief-migrate-to-v5` renamed `chief-migrate`
+
+Renamed shortly after round 2 shipped, on the observation that the skill's *name* shouldn't
+need to change every time a future version needs the same kind of migration, even though its
+*content* genuinely will. This mirrors `chief-upgrade`'s own naming (also not version-suffixed)
+but for a different underlying reason: `chief-upgrade`'s mechanism (diff/merge one file) is
+identical in kind across any version pair, so a version-agnostic name reflects a truly
+version-agnostic operation. `chief-migrate`'s mechanism is not — its Steps are hardcoded to the
+v4→v5 shape change specifically, and a hypothetical v5→v6 shape change would need those Steps
+**rewritten**, not extended with a new case. The rename buys a stable name users don't have to
+relearn, not reusable logic; a scope note was added inside the skill file itself saying so
+explicitly, plus a pointer to `git log -p` on the file as the actual historical record of how
+past migrations worked — deliberately not a separately maintained changelog/reference-file
+system, which would just duplicate what git history already tracks for free, with more risk of
+drifting from what the code actually did.
+
+The skill's `description` field was written fully version-agnostic too, once a first draft
+was caught still leaking version-specific vocabulary two different ways: first by literally
+naming "v4"/"v5", then — after removing the version numbers — by still saying "converts old
+task-tracking into **tickets**," where "tickets" is itself v5-specific terminology (v4 called
+the same concept a todo list). The final description names neither a version nor a
+vocabulary term newer than "an old `.chief/` layout" / "the current one," and says outright
+that it's deliberately vague, pointing to the skill's own Steps for the concrete, current-only
+specifics.

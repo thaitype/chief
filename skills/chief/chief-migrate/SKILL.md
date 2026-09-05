@@ -1,7 +1,19 @@
 ---
-name: chief-migrate-to-v5
-description: Migrate an in-progress v4 milestone (.chief/milestone-N/) into a v5 story (.chief/story-N/) — goal/contract copied over with new subsections, _todo.md + task specs converted into tickets. Only touches milestones that are still open; asks before deleting anything. Use after /chief-upgrade has already handled the framework-file side of a v4 -> v5 upgrade.
+name: chief-migrate
+description: Migrates an in-progress `.chief/` layout from an old framework version into
+  whatever shape the current version expects. Content is copied and restructured as needed;
+  only touches work still in progress; asks before deleting the old layout. See this skill's
+  own Steps for exactly what's supported today — description text stays version-agnostic on
+  purpose, the Steps carry the specifics.
 ---
+
+> **Scope note:** this skill only knows how to migrate v4 → v5 right now — the steps below
+> are written specifically for that shape change (`milestone-N` → `story-N`, `_todo.md` +
+> task specs → tickets). A future version that changes `.chief/`'s shape again will need this
+> file's Steps rewritten for that specific change, not extended — there's no generic
+> "migrate from anything" logic here, just a stable name so this skill doesn't need renaming
+> every time a version bumps. Check `git log -p` on this file for how a past migration
+> actually worked, if you ever need that instead of guessing from the current content.
 
 Migrate the *content* of an in-progress v4 milestone into v5's story shape. This is separate
 from `/chief-upgrade`, which handles `AGENTS.md` and detects the v4→v5 jump but deliberately

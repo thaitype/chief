@@ -149,7 +149,7 @@ reach for it on its own when it needs a structural fact, not only when you ask.
 
 ---
 
-### `/chief-migrate-to-v5`
+### `/chief-migrate`
 
 Converts an in-progress v4 milestone into a v5 story — separate from `/chief-upgrade`, which
 handles `AGENTS.md` but deliberately never touches `.chief/milestone-N/` content. Only migrates
@@ -234,7 +234,7 @@ be written (fresh, or a diff against your existing file), confirms, writes. Ther
 Upgrades `AGENTS.md` to a target version. Diffs it against the template and waits for sign-off
 before overwriting anything. Detects a pre-v5 install (a leftover `.agents/agents/` roster) and
 explains the v4 → v5 breaking change before proceeding — no `.chief/` content is migrated
-automatically (see `/chief-migrate-to-v5` if you want that).
+automatically (see `/chief-migrate` if you want that).
 
 Usage: `/chief-upgrade` (latest stable), `/chief-upgrade canary`, `/chief-upgrade v5.0.0`
 

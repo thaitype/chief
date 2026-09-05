@@ -82,7 +82,7 @@ installed separately, nothing needs to be kept in sync with a template.
 | `/chief-grill` | Deep stress-test | Verified, persistent grill session | Plan, implement |
 | `/chief-rule` | Rule capture | Writes a single rule to `_rules/` | Anything outside `_rules/` |
 | `/chief-retro` | Retrospective | Coverage check, lessons, proposes rule updates | Modify goal/contract/tickets |
-| `/chief-migrate-to-v5` | Migration | Converts an in-progress v4 milestone into a v5 story | Touch `AGENTS.md`, delete anything without asking |
+| `/chief-migrate` | Migration | Converts an in-progress v4 milestone into a v5 story | Touch `AGENTS.md`, delete anything without asking |
 | `/chief-install`, `/chief-upgrade` | Setup | Install/upgrade `AGENTS.md` | Touch `.chief/` |
 | `/setup-agent-behavior` | Setup (opt-in) | Writes general (non-Chief) agent-conduct rules into `AGENTS.md`, on request | Anything automatic |
 
