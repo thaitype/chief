@@ -25,6 +25,7 @@
         "./skills/engineering/grill-design",
         "./skills/engineering/slim-down",
         "./skills/engineering/loop-readiness",
+        "./skills/engineering/loop-preflight",
         "./skills/misc/dump-commit"
       ]
     }
