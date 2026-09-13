@@ -86,6 +86,15 @@ described) and recommend fixes for whichever are missing:
 - Is there a **preflight step** that verifies credentials/permissions actually work
   *before* the loop starts doing real work (not just assumed to work)? If not, recommend
   adding one — test against the real system once, before the loop runs unattended.
+- For any feedback mechanism the plan treats as already existing (a gate script, test
+  suite, a check inherited from earlier work) — as opposed to one the loop will build
+  fresh — has it been smoke-tested since the plan was written? A plan can describe a gate
+  accurately in a static read while an unrelated change between planning and execution
+  silently breaks it (e.g. a hardcoded path renamed elsewhere); only actually running the
+  gate reveals this, and a static review is blind to it by design. If not, recommend
+  running the `loop-preflight` skill on it before trusting it as available feedback —
+  that skill actually runs it, so this review itself still doesn't have to violate the
+  "never execute the plan" rule below.
 - Is access **least-privilege** scoped — no broader than the task needs? If not,
   recommend narrowing it.
 - Is it **read-only by default**? If the loop only needs to observe but holds write

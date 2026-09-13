@@ -110,6 +110,7 @@ Best for prototyping, well-defined goals, solo work.
 | `/shape-up`        | Turn a fuzzy idea into a scoped spec (top-down)                          |
 | `/slim-down`       | Cut a scope that's too large into a phase-sized piece                    |
 | `/loop-readiness`  | Review whether a plan is ready to run as an unattended loop              |
+| `/loop-preflight`  | Actually run a plan's pre-existing gates/tests to confirm they still work |
 | `/dump-commit`     | Quick clean commit with auto-generated message                           |
 
 → [Full skills reference](docs/manual/reference/skills.md)

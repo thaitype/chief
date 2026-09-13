@@ -128,6 +128,16 @@ Works from an existing plan file or by interviewing you (via `/grill-design` if 
 
 ---
 
+### `/loop-preflight`
+
+Actually runs a plan's pre-existing feedback mechanisms — gate scripts, test suites, checks inherited from prior work — to confirm they still work, rather than just noting they're described.
+
+`/loop-readiness` is a static review and never executes anything, so it can't tell a described gate apart from a broken one; a plan can be accurate at the time it's written and still go stale before the loop starts (e.g. a hardcoded path renamed by an unrelated change). `/loop-preflight` closes that gap: it identifies the pre-existing verification commands a plan depends on, confirms the list with you (and confirms again before running anything that looks production-related), runs them for real, and reports actual pass/fail.
+
+Standalone — use it whether or not you ran `/loop-readiness` first. `/loop-readiness` points here when it finds feedback the plan treats as already in place.
+
+---
+
 ## Setup skills
 
 ### `/chief-install`
