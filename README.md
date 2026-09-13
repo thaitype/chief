@@ -1,6 +1,6 @@
 # Chief ⚔️
 
-![](https://img.shields.io/badge/chief_version-v4.1.0-blue)
+![](https://img.shields.io/badge/chief_version-v4.2.0-blue)
 
 **English** | **[ไทย](README.th.md)**
 
