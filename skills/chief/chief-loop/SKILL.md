@@ -36,8 +36,10 @@ If the user confirms → proceed.
 
 **Optional:** if the `loop-readiness` skill is available, offer to run it against this
 milestone's plan before proceeding — it reviews whether the plan has enough
-feedforward/feedback coverage to run safely unattended. This is a suggestion, not a
-requirement; proceed without it if the user declines.
+feedforward/feedback coverage to run safely unattended. If it flags pre-existing gates
+the plan depends on, also offer `loop-preflight` to actually run them and confirm they
+still pass. Both are suggestions, not requirements; proceed without them if the user
+declines.
 
 ## Outer Loop (spans as many batches as it takes)
 
