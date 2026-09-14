@@ -32,9 +32,10 @@ much depth this specific loop actually needs.
 
 Is there something written down that defines what this loop is for and where its edges
 are? Depending on the loop, this could include: a goal statement, explicit non-goals /
-out-of-scope items, a contract (data shapes, API boundaries), a UI mock or diagram — go
-as deep as makes sense for the stakes involved. A one-line goal can be enough for a small
-loop; a loop that touches production data probably needs more.
+out-of-scope items, a contract (data shapes, API boundaries), a UI mock or diagram, or a
+step that needs a human present/deciding, kept explicitly outside the loop's own
+automated scope — go as deep as makes sense for the stakes involved. A one-line goal can
+be enough for a small loop; a loop that touches production data probably needs more.
 
 ### 2.2 Feedforward
 
@@ -114,6 +115,11 @@ Other recommendation examples:
   stakes are low
 - No escalation/blocked outcome in the DoD → recommend adding a defined way for the loop
   to stop and hand off to a human when it can't tell if it succeeded
+- A step in the plan needs a human present/deciding (DoR) → recommend keeping it outside
+  whatever mechanism the loop uses to select its own work automatically, and running it
+  separately once the loop's automated portion is done — a note that "a human should be
+  involved here" has no effect once the loop is actually running unattended unless the
+  step is structurally excluded from what the loop can pick up on its own
 
 Recommendations are suggestions to weigh, not requirements to satisfy before proceeding.
 

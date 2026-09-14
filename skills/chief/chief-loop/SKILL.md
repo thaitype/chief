@@ -56,7 +56,9 @@ now. If the frontier is empty but tickets remain (all blocked, or all claimed), 
 why rather than looping uselessly.
 
 If no tickets exist at all yet, tell the user to run `/chief-plan` Phase 3 first — this skill
-works an existing ticket breakdown, it does not create one.
+starts from an existing ticket breakdown; it doesn't originate a story's first batch from
+nothing. (It does author its *own* follow-up tickets once that first batch is worked and turns
+out to be incomplete — see step 3.)
 
 ### 2. Work the frontier, one ticket at a time
 
@@ -79,9 +81,21 @@ For each ticket in the frontier, in order:
 
 After the frontier empties (every ticket resolved, or every remaining ticket permanently
 blocked):
-- If the goal isn't fully met, or the implementation doesn't yet satisfy the contract → go back
-  to Phase 3 of `/chief-plan` to break down the next batch of tickets, then return to step 1.
+- If the goal isn't fully met, or the implementation doesn't yet satisfy the contract →
+  **author the missing ticket(s) yourself.** Do NOT hand this back to `/chief-plan` Phase 3 —
+  its own approval gate ("Wait for explicit approval before delegating to `/chief-build`")
+  would stop this loop on every single round, directly contradicting this skill's own
+  "never stop for human input" rule below. Instead, write the new ticket(s) using the exact
+  same shape Phase 3 uses (`.chief/story-N/_tickets/<seq>-<slug>.md`, `Type: implementation`,
+  `Status: open`, `Blocked by` wired correctly, numbered continuing from the existing
+  sequence), sized from what the goal/contract and the just-finished tickets' own reports show
+  is still missing — a resolved ticket that flagged a gap in its **Notes** (see **Ticket
+  Report** below) is exactly the kind of signal this step reads. Then return to step 1.
 - If both the goal and the contract are satisfied → stop. The story is done.
+
+This is a decision about *what's still missing*, not a design ambiguity about *how to build
+something* — it doesn't go through **Handling Ambiguity**'s decision-support-agent flow below.
+Write the ticket(s) directly.
 
 There's no cap on how many rounds this takes — keep going until both conditions hold.
 
@@ -144,3 +158,10 @@ Anything worth carrying into the next ticket or round.
   Chief's own and doesn't come from anywhere else, so don't drop it.
 - `/chief-build` handles all implementation. This skill NEVER writes code directly.
 - `/chief-test` is NOT used unless the user explicitly requests it.
+- NEVER route a goal-not-met frontier-empty finding back to `/chief-plan` Phase 3 — its
+  approval gate would stop this loop, contradicting the never-stop rule above. Author the
+  follow-up ticket(s) yourself instead (step 3).
+- No cap on how many rounds of self-authored tickets this takes, and no other in-loop check on
+  whether they're converging on the goal. Whether a story is well-specified enough to run this
+  way unattended is `loop-readiness`'s question to answer *before* starting — not something
+  this skill re-litigates mid-run.
