@@ -1,6 +1,6 @@
 ---
 name: chief-loop
-description: Work a story's ticket frontier end to end, one ticket at a time via /chief-build, writing one report per ticket instead of one per batch. When a ticket hits ambiguity, a throwaway decision-support agent proposes options; you still make the final call and the report captures the reasoning. Requires the goal and contract to exist. Use "/chief-loop".
+description: Work a story's ticket frontier end to end, one ticket at a time via /chief-build, writing one report per ticket instead of one per batch. Fast mode (default) builds quickly, matching v4's speed; strict mode adds mandatory TDD + code review per ticket. When a ticket hits ambiguity, a throwaway decision-support agent proposes options; you still make the final call and the report captures the reasoning. Requires the goal and contract to exist. Use "/chief-loop" for fast or "/chief-loop strict" for strict.
 ---
 
 Work the full ticket frontier of a story — ticket after ticket — until both the goal and the
@@ -13,6 +13,18 @@ root, resolve `storage-root:` from it first and use that path everywhere below i
 This builds directly on `chief-autopilot`'s auto mode. If you want the "stop and ask a human on
 ambiguity" behavior, use `chief-autopilot safe` instead — `chief-loop` only runs in auto mode;
 it doesn't have a safe-mode equivalent.
+
+## Arguments
+
+- No argument or `fast` → **fast mode** (default). Every ticket is built via `/chief-build` in
+  fast mode — no mandatory TDD or `/chief-review-code` per ticket. Restores v4 `chief-loop`'s
+  speed; local verification (typecheck, tests) still runs inside `/chief-build` either way.
+- `strict` → **strict mode**. Every ticket is built via `/chief-build` in thorough mode — TDD at
+  pre-agreed seams plus a mandatory `/chief-review-code` pass before every commit. Use this when
+  the extra per-ticket rigor is worth the extra time.
+
+If the mode wasn't given as an argument, resolve it at Entry Confirmation below instead of
+assuming — but never block on it: no answer there means fast, same as no argument here.
 
 ## Prerequisite Check
 
@@ -32,19 +44,20 @@ Do NOT proceed.
 Present the current goal and contract to the user in a brief summary (file names + 1-line
 description each).
 
-Ask one question:
+Ask one question, folding in the mode check only if no `fast`/`strict` argument was given:
 > "Goal and contract look correct? Proceed with chief-loop, or use `/chief-plan` to revise
-> first?"
+> first? (And: fast mode — the default, quick — or strict mode — TDD + code review on every
+> ticket?)"
 
 If the user says revise → stop.
-If the user confirms → proceed.
+If the user confirms but doesn't answer the mode part (or there's nothing to answer because an
+argument already set it) → proceed, mode = fast unless an argument said `strict`.
 
 **Optional:** if the `loop-readiness` skill is available, offer to run it against this story's
 tickets before proceeding — it reviews whether there's enough feedforward/feedback coverage to
 run safely unattended. If it flags pre-existing gates the tickets depend on, also offer
 `loop-preflight` to actually run them and confirm they still pass. Both are suggestions, not
 requirements; proceed without them if the user declines.
-declines.
 
 ## The Loop (spans as many tickets as it takes)
 
@@ -55,18 +68,21 @@ every `Blocked by` entry already `resolved`. That's the frontier — the tickets
 now. If the frontier is empty but tickets remain (all blocked, or all claimed), stop and report
 why rather than looping uselessly.
 
-If no tickets exist at all yet, tell the user to run `/chief-plan` Phase 3 first — this skill
-works an existing ticket breakdown, it does not create one.
+If no tickets exist at all yet, run `/chief-plan` Phase 3 yourself to create the first batch — do
+NOT wait for its approval gate on this, same override `chief-autopilot` uses; this skill only has
+an auto-mode-like behavior (see Rules), so stopping here to wait on a human would contradict its
+own "never stop for ambiguity" rule.
 
 ### 2. Work the frontier, one ticket at a time
 
 For each ticket in the frontier, in order:
 
 1. Set its `Status: claimed`.
-2. Invoke `/chief-build <ticket-id>`, spawned as its own subagent so this ticket gets isolated
-   context (don't run the build inline in this session — that accumulates every ticket's
-   exploration noise into one context, which is exactly what `/chief-build`'s "clear context,
-   build one ticket, clear again" rhythm exists to avoid).
+2. Invoke `/chief-build <ticket-id>` **in the mode resolved at Entry Confirmation** (fast or
+   strict), spawned as its own subagent so this ticket gets isolated context (don't run the
+   build inline in this session — that accumulates every ticket's exploration noise into one
+   context, which is exactly what `/chief-build`'s "clear context, build one ticket, clear
+   again" rhythm exists to avoid).
 3. Wait for `/chief-build` to complete.
 4. If it reports a blocker or ambiguity (its escalation format), see **Handling Ambiguity**
    below before moving on.
@@ -79,8 +95,9 @@ For each ticket in the frontier, in order:
 
 After the frontier empties (every ticket resolved, or every remaining ticket permanently
 blocked):
-- If the goal isn't fully met, or the implementation doesn't yet satisfy the contract → go back
-  to Phase 3 of `/chief-plan` to break down the next batch of tickets, then return to step 1.
+- If the goal isn't fully met, or the implementation doesn't yet satisfy the contract → run
+  Phase 3 of `/chief-plan` yourself for the next batch of tickets (same no-approval override as
+  above — don't wait), then return to step 1.
 - If both the goal and the contract are satisfied → stop. The story is done.
 
 There's no cap on how many rounds this takes — keep going until both conditions hold.
@@ -131,7 +148,12 @@ Anything worth carrying into the next ticket or round.
 - NEVER start without a goal and contract existing.
 - NEVER skip the entry confirmation.
 - NEVER stop for human input on ambiguity — this skill only has an auto-mode-like behavior.
-  Point the user at `chief-autopilot safe` if they want stop-and-ask.
+  Point the user at `chief-autopilot safe` if they want stop-and-ask. This includes re-planning:
+  running `/chief-plan` Phase 3 for a new ticket batch never waits on its approval gate here,
+  same as it never waits inside `chief-autopilot` — stopping for that would be the same
+  contradiction as stopping for a build ambiguity.
+- Mode (fast/strict) is resolved once, at Entry Confirmation, and used for every `/chief-build`
+  call this run — don't re-ask or switch modes mid-run.
 - You are ALWAYS the one who makes the final decision on an ambiguity — the decision-support
   agent only proposes options, never decides, never writes files.
 - Write a report for every ticket, immediately after it resolves — never batch report-writing
