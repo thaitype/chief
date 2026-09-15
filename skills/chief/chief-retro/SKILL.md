@@ -44,12 +44,14 @@ Write the report with these sections:
 
 ## Coverage Check
 
-For each goal and contract file, check whether the work done satisfies it:
+For each goal and contract file — every file actually present in `_goal/` and `_contract/`,
+there's no fixed filename to assume (see `chief-explain`) — check whether the work done
+satisfies it:
 
 | File | Status | Notes |
 |------|--------|-------|
-| _goal/goal.md | ✅ Satisfied / ⚠️ Partial / ❌ Missing | what's done or missing |
-| _contract/contract.md | ✅ / ⚠️ / ❌ | ... |
+| _goal/\<actual filename\> | ✅ Satisfied / ⚠️ Partial / ❌ Missing | what's done or missing |
+| _contract/\<actual filename\> | ✅ / ⚠️ / ❌ | ... |
 
 ## Planned vs Delivered
 

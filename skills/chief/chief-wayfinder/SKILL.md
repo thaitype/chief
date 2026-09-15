@@ -6,8 +6,9 @@ description: Chart a story's fog as a map of decision-tickets when the story is 
 A story has arrived wrapped in fog: the way from here to a written goal/contract isn't visible
 yet. Wayfinding charts that way as a **map** — one file, scoped to this single story — and works
 its **decision-tickets** (questions whose resolution is a decision, not a slice of build to
-execute) one at a time until the fog clears enough to write `_goal/goal.md` and
-`_contract/contract.md`.
+execute) one at a time until the fog clears enough for `/chief-plan` to write the story's goal
+and contract (whatever files that ends up as — no fixed filename is assumed, see
+`chief-explain`).
 
 **Scoped to one story.** Unlike a general-purpose wayfinder that can span many units of work,
 this map never outgrows the story it belongs to — the story is the root container (see

@@ -52,7 +52,8 @@ Before testing, read:
 1. The ticket or verification instruction you were pointed at —
    `.chief/story-N/_tickets/<id>-<slug>.md`
 2. Relevant verification rules — `.chief/_rules/_verification/**`
-3. The story's goal, if relevant — `.chief/story-N/_goal/goal.md`
+3. The story's goal, if relevant — every file in `.chief/story-N/_goal/` (no fixed filename to
+   single out, see `chief-explain`)
 
 Don't read or modify implementation source unless you need it to understand expected behavior.
 
