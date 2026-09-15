@@ -11,10 +11,9 @@ and contract (whatever files that ends up as — no fixed filename is assumed, s
 `chief-explain`).
 
 **Scoped to one story.** Unlike a general-purpose wayfinder that can span many units of work,
-this map never outgrows the story it belongs to — the story is the root container (see
-`docs/design/v5-ai-workflow.md` for why). If charting reveals the idea is actually several
-stories' worth of work, say so and stop rather than letting the map sprawl; the human splits it
-into separate stories first.
+this map never outgrows the story it belongs to — the story is the root container. If charting
+reveals the idea is actually several stories' worth of work, say so and stop rather than letting
+the map sprawl; the human splits it into separate stories first.
 
 **Plan, don't do.** Each ticket resolves a decision. The map is done when the way is clear, with
 nothing left to decide before `/chief-plan` can write the goal and contract. The pull to just
@@ -68,9 +67,9 @@ holds the detail — a decision lives in exactly one place, its ticket.
 
 ## Tickets
 
-Decision-tickets live in the **same** `.chief/story-N/_tickets/` folder as
-`/chief-plan`'s implementation tickets (see `docs/design/v5-ai-workflow.md`, "Ticket model") —
-one shared numbering sequence, one shared file shape, distinguished by the `Type:` field:
+Decision-tickets live in the **same** `.chief/story-N/_tickets/` folder as `/chief-plan`'s
+implementation tickets — one shared numbering sequence, one shared file shape, distinguished by
+the `Type:` field:
 
 ```markdown
 # 3: <the question>
