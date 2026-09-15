@@ -96,7 +96,7 @@ installed separately, nothing needs to be kept in sync with a template.
 | `/chief-build` | Implementer | Builds ONE ticket, standard mode (default) or strict mode: TDD, typecheck, test, `/chief-review-code`, commit | Decide what's next, check story completion |
 | `/chief-test` | Verifier | Long-running/integration/UI/API validation, only when explicitly requested | Implement code, patch bugs, run unit tests |
 | `/chief-review-code` | Reviewer | Two-axis (Standards + Spec) review of a diff | Decide, implement |
-| `/chief-loop` (standard default, `strict` arg), `/chief-autopilot` (always standard) | Orchestrator | Works the ticket frontier via `/chief-build`, decides what's next, checks goal+contract satisfied | Implement code directly |
+| `/chief-loop` (standard default, `strict` arg; sequential default, `parallel`/`parallel:<N>` arg — each in its own git worktree), `/chief-autopilot` (always standard, always sequential) | Orchestrator | Works the ticket frontier via `/chief-build`, decides what's next, checks goal+contract satisfied | Implement code directly |
 | `/chief-grill` | Deep stress-test | Verified, persistent grill session | Plan, implement |
 | `/chief-rule` | Rule capture | Writes a single rule to `_rules/` | Anything outside `_rules/` |
 | `/chief-retro` | Retrospective | Coverage check, lessons, proposes rule updates | Modify goal/contract/tickets |
