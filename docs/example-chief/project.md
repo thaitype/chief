@@ -1,7 +1,7 @@
 # Project Configuration
 
 > Fill in the sections below with your project's specific details.
-> This file is referenced by the chief-agent framework for project context.
+> This file is referenced by the Chief framework for project context.
 
 ## Development Commands
 

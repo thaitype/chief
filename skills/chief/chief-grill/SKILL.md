@@ -1,13 +1,15 @@
 ---
 name: chief-grill
-description: Deep grill that interviews the user one question at a time AND verifies each answer against the codebase via background `answer-verifier-agent` calls. Catches factual conflicts, contradictions with prior decisions, and unfounded assumptions inline. Persists the session to `.chief/_grill/opened/NNNN-topic.md` so it survives context compaction. Use when the user wants a stress-tested grill — when stakes are high, when claims must be cross-checked against actual repo state, or when the topic spans many decisions. Heavier than `/grill-design`; prefer this when correctness matters more than speed.
+description: Deep grill that interviews the user one question at a time AND verifies each answer against the codebase via a background throwaway verifier subagent. Catches factual conflicts, contradictions with prior decisions, and unfounded assumptions inline. Persists the session to `.chief/_grill/opened/NNNN-topic.md` so it survives context compaction. Use when the user wants a stress-tested grill — when stakes are high, when claims must be cross-checked against actual repo state, or when the topic spans many decisions. Heavier than `/grill-design`; prefer this when correctness matters more than speed.
 ---
 
 You are running a verified grill session. This is `/grill-design` with two extra things bolted on:
 
 1. **Per-question self-review (in-skill).** Before recommending an answer, you critique your own pick. After the user answers, you stress-test their answer.
-2. **Per-question background verification by `answer-verifier-agent`.** While the user is thinking about the next question, the agent cross-references the previous answer against the actual codebase. Findings surface as a sidebar.
+2. **Per-question background verification by a throwaway sub-agent.** While the user is thinking about the next question, a spawned subagent (the answer-verifier prompt, see step 5g — no persistent agent file, spawned fresh per call) cross-references the previous answer against the actual codebase. Findings surface as a sidebar.
 3. **Persistent session log.** All state lives in `.chief/_grill/opened/NNNN-topic.md`. Survives compaction and `/clear`.
+
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo root, resolve `storage-root:` from it first and use that path everywhere below instead.
 
 Ask one question at a time. Wait for the user. Provide a recommended answer with each question.
 
@@ -127,16 +129,21 @@ Update the session log:
 
 #### 5g. Fire background verifier
 
-Spawn `answer-verifier-agent` in the background with:
+Spawn a plain throwaway `Agent` call (no persistent `subagent_type` — the prompt below **is**
+the agent, nothing installed defines it) in the background, with `run_in_background: true`,
+using the **Verifier prompt** in the appendix below, filling in:
 
 - **question:** the question text
 - **answer:** the user's resolved decision
 - **prior-context:** the **Resolved** section of the log (excluding the question just asked)
 - **session-log-path:** the full path to the session log file
 
-Use the Agent tool with `subagent_type: "answer-verifier-agent"` and `run_in_background: true`. The agent will return its YAML verdict; you read it back at the start of the next turn (5c) for sidebar rendering.
+The agent will return its YAML verdict; you read it back at the start of the next turn (5c) for
+sidebar rendering.
 
-If the previous turn's background verifier hasn't returned by the time you're rendering 5c, do not block — just proceed without a sidebar. Pick up the finding when it lands; if it's a `conflict`, surface it as a sidebar at that point even if it's a question late.
+If the previous turn's background verifier hasn't returned by the time you're rendering 5c, do
+not block — just proceed without a sidebar. Pick up the finding when it lands; if it's a
+`conflict`, surface it as a sidebar at that point even if it's a question late.
 
 #### 5h. Loop
 
@@ -146,7 +153,9 @@ Go back to 5a unless the user asks to wrap up.
 
 When the user says "done" / "close this grill" / "wrap up" / similar:
 
-1. Run **final review**: invoke `answer-verifier-agent` with `mode: final` and the session log path. Wait for its verdict (foreground this one).
+1. Run **final review**: spawn a throwaway `Agent` call using the **Verifier prompt** below with
+   `mode: final` and the session log path (no `run_in_background` this time — wait for its
+   verdict in the foreground).
 2. Append the verdict's `finding` and `evidence` to the **Final Review** section of the log.
 3. If the final-review verdict is `concern` or `conflict`, surface it and ask: "Address this and stay open, or close anyway?" — respect the user's choice.
 4. On close confirmation: move `.chief/_grill/opened/NNNN-<slug>.md` → `.chief/_grill/closed/NNNN-<slug>.md`.
@@ -164,6 +173,71 @@ If the user says "stop" / "pause" / leaves without closing → leave the file in
 - NEVER auto-close a session. Closing is always user-initiated.
 - NEVER move stale opened sessions. They sit until the user closes or deletes them manually.
 - The agent's verdict is YAML — parse it, don't paraphrase. Render sidebars only for `concern` and `conflict`.
+
+## Appendix: Verifier prompt
+
+This is the complete prompt for the throwaway agent spawned in 5g and step 6 — paste it in full
+as that agent's instructions, filling in the bracketed inputs. There is no persistent agent file
+this refers to; this section **is** the definition.
+
+```
+You verify a single grill-session answer against the actual codebase. You are not a planner,
+designer, or critic — you check claims.
+
+You are given:
+- The question: [question]
+- The user's answer: [answer]
+- Prior context (earlier resolved decisions in this grill, if any): [prior-context]
+- The session log file path: [session-log-path]
+
+What you do:
+1. Identify factual claims in the answer. A claim is anything checkable against the repo: a
+   file path, a library, a function name, a convention, an existing pattern, an architectural
+   assertion.
+2. Verify each claim. Read files, run grep/glob, list directories. Use only repo state — never
+   guess.
+3. Check internal consistency. Compare against prior resolved decisions in the session log if
+   provided. Flag conflicts.
+4. Return ONE structured verdict. Do not produce a long report.
+
+What you do NOT do:
+- Do NOT modify any file.
+- Do NOT propose design alternatives.
+- Do NOT critique style, naming, or aesthetics.
+- Do NOT speculate beyond what the codebase shows.
+- Do NOT re-grill the user.
+
+Return your verdict as a fenced YAML block, exactly this shape:
+
+verdict: ok | concern | conflict
+finding: <one-sentence summary, or "none" if verdict is ok>
+evidence:
+  - <file path or one-line excerpt>
+  - <file path or one-line excerpt>
+suggested-action: continue | revisit Q<n> | clarify <what>
+
+Verdict semantics:
+- ok — every claim checks out, no conflict with prior decisions.
+- concern — a claim is unverifiable, rests on an unbacked assumption, or has mild tension with
+  a prior decision.
+- conflict — a claim contradicts repo state, or directly contradicts a prior resolved decision.
+
+Suggested-action semantics:
+- continue — nothing to act on (pairs with verdict: ok).
+- revisit Q<n> — a specific earlier question's answer should be reopened.
+- clarify <what> — the current answer needs a specific clarification before moving on.
+
+Token budget: be terse. The caller is running you in the background while the user thinks about
+the next question. Cap evidence at 3 entries, keep "finding" to one sentence, no prose outside
+the YAML block.
+
+Final-pass mode: if invoked with mode: final, your job changes — read the entire session log,
+look for cumulative drift (pairs of resolved answers that individually verified ok but together
+create tension), and return a single verdict covering the whole transcript in the same YAML
+format. evidence lists the conflicting question pairs. Use suggested-action: revisit Q<n> for
+the most upstream question that should be reopened. If the transcript is fully consistent,
+return verdict: ok with finding: none.
+```
 
 ## Differences from `/grill-design`
 

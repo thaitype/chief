@@ -1,6 +1,10 @@
-# How to install Chief
+# How to get the Chief skills into a project
 
-This guide covers installing Chief into an existing project. If you want to understand the full workflow first, start with the [tutorial](../tutorials/your-first-milestone.md).
+This guide covers getting Chief's skills into an existing project. If you want to understand
+the full workflow first, start with the [tutorial](../tutorials/your-first-story.md).
+
+There's no install step beyond this — nothing needs to be written to `AGENTS.md` for Chief to
+work. Every `chief-*` slash command is available the moment its skill file is present.
 
 ---
 
@@ -11,68 +15,52 @@ This guide covers installing Chief into an existing project. If you want to unde
 
 ---
 
-## Standard install (recommended)
-
-**Step 1 — Install skills:**
+## Standard way (recommended)
 
 ```bash
 npx skills@latest add thaitype/chief
 ```
 
-Select the skills you want. At minimum, select `chief-install`. Press `a` to select all.
-
-**Step 2 — Run the install skill in your agent:**
-
-```
-/chief-install
-```
-
-The skill asks:
-- Which coding agent you use
-- Whether to use symlink or copy mode
-- Whether to install subagents
-
-When done, your project has `AGENTS.md` and the subagent definitions.
+Select the skills you want. Press `a` to select all. That's it.
 
 ---
 
-## Manual install (no npx)
+## Without npx
 
-If you can't use `npx skills`, install via shell script:
-
-```bash
-git clone --depth 1 --branch main https://github.com/thaitype/chief.git .chief-agent-tmp
-bash .chief-agent-tmp/scripts/setup.sh --agent claude-code
-rm -rf .chief-agent-tmp
-```
-
-Replace `claude-code` with your agent: `copilot`, `cursor`, `opencode`, `codex`, `gemini-cli`, `amp`, `windsurf`, `kiro`, `aider`.
-
-Add `--mode copy` if symlinks aren't supported:
+If you can't use `npx skills` to fetch the skill files, copy them manually: clone this repo
+and copy whichever `skills/**/SKILL.md` files you want into wherever your coding agent expects
+skill files (e.g. `.claude/skills/<name>/SKILL.md` for Claude Code).
 
 ```bash
-bash .chief-agent-tmp/scripts/setup.sh --agent claude-code --mode copy
+git clone --depth 1 --branch main https://github.com/thaitype/chief.git .chief-skills-tmp
+cp -r .chief-skills-tmp/skills/chief/chief-plan .claude/skills/
+# repeat for whichever skills you want
+rm -rf .chief-skills-tmp
 ```
 
 ---
 
-## Windows
+## Optional: `AGENTS.md` / `CLAUDE.md`
 
-Symlink mode requires Developer Mode enabled and:
+Chief never creates or writes to these files — they're entirely yours, and only matter if you
+want your own Project Rules recognized by your coding agent. If you want one:
 
-```bash
-git config --global core.symlinks true
-```
+- Most agents (GitHub Copilot, Cursor, and others) read `AGENTS.md` directly. Write your rules
+  there.
+- Claude Code reads `CLAUDE.md` specifically. Symlink it to `AGENTS.md` if you want to
+  maintain one file for both:
+  ```bash
+  ln -s AGENTS.md CLAUDE.md   # or `cp` instead of `ln -s` if symlinks aren't available
+  ```
 
-The setup script detects symlink support automatically and falls back to copy mode if unavailable. With `npx skills` + `/chief-install`, the skill handles this for you.
+See [chief-* execution skills reference](../reference/agents.md) for how Chief's own rules
+hierarchy treats whatever you put there.
 
 ---
 
-## After install
+## After getting the skills
 
-Run `/chief-init` to bootstrap project context. See [the tutorial](../tutorials/your-first-milestone.md#step-3--bootstrap-project-context) for what this does.
-
-To verify the install worked, check that `AGENTS.md` exists in your project root and that your agent can read it.
+Run `/chief-init` to bootstrap project context. See [the tutorial](../tutorials/your-first-story.md#step-2--bootstrap-project-context) for what this does.
 
 ---
 

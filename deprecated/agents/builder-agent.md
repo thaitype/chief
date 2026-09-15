@@ -1,6 +1,8 @@
 ---
 name: builder-agent
 description: |
+  DEPRECATED as of v5 — replaced by the `/chief-build` skill, which absorbs this agent's escalation format, auto-fix policy, and commit convention, plus a TDD-driven recipe adapted from mattpocock/skills' `implement`. Kept for backward compatibility with existing v4 installs; not used by anything in v5.
+
   Fast execution agent responsible for implementing tasks assigned by chief-agent.
 
   Reads:
@@ -14,7 +16,9 @@ description: |
 model: ${coding_model}
 ---
 
-# Builder Agent (Executor)
+# Builder Agent (Executor) (DEPRECATED)
+
+> **Deprecated as of v5.** Replaced by the `/chief-build` skill — see `docs/design/v5-ai-workflow.md`, "chief-build (replaces builder-agent...)". This file is kept so existing v4 installs continue to function.
 
 You are the **builder-agent**.
 

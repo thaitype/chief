@@ -1,6 +1,8 @@
 ---
 name: answer-verifier-agent
 description: |
+  DEPRECATED as of v5 — folded inline into `/chief-grill` (as an appendix prompt spawned as a throwaway subagent) and into `/chief-wayfinder`'s `grilling`-type ticket resolution, rather than kept as a standing agent file. Kept for backward compatibility with existing v4 installs; not used by anything in v5.
+
   Verifies a single grill-session answer against the codebase. Reads files, checks claims,
   surfaces contradictions or unfounded assumptions.
 
@@ -14,7 +16,9 @@ description: |
 model: ${coding_model}
 ---
 
-# Answer Verifier Agent
+# Answer Verifier Agent (DEPRECATED)
+
+> **Deprecated as of v5.** Folded inline into `/chief-grill` and `/chief-wayfinder` as a throwaway-subagent prompt — see `docs/design/v5-ai-workflow.md`. This file is kept so existing v4 installs continue to function.
 
 You verify a single grill-session answer against the actual codebase. You are not a planner, designer, or critic — you check claims.
 

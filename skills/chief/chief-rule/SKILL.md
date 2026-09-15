@@ -7,6 +7,9 @@ You are helping the user capture a single rule into `.chief/_rules/`. This is th
 
 One invocation = one rule (path 2) or scaffolding only (path 1). Re-run for more.
 
+**Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
+root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
 ## Steps
 
 ### 1. Pre-flight
@@ -39,18 +42,18 @@ If **2** → continue to step 3. (Scaffolding happens later, in step 7, alongsid
    ```markdown
    # .chief/_rules/
 
-   Global rules that govern this project's autonomous AI work. Lower priority than `AGENTS.md`, higher than milestone goals.
+   Global rules that govern this project's autonomous AI work. Lower priority than `AGENTS.md`, higher than story goals.
 
    ## Categories
 
    - `_standard/` — Coding standards, architecture constraints
    - `_contract/` — Data models, API contracts, schemas
-   - `_goal/` — High-level goals (shared across milestones)
+   - `_goal/` — High-level goals (shared across stories)
    - `_verification/` — Test commands, build requirements, definition of done
 
    Subfolders are created **lazily** — on first rule in that category. Empty subfolders are not required.
 
-   Use `/chief-rule` to add rules proactively, or `/chief-retro` to capture them after a milestone retrospective.
+   Use `/chief-rule` to add rules proactively, or `/chief-retro` to capture them after a story retrospective.
    ```
 
 4. Do NOT create the four category subfolders. They remain lazy until the first rule lands in each.
@@ -63,7 +66,7 @@ Ask each question separately. Wait for the answer before moving on. Keep questio
 
 1. **What is the rule?** — A single-sentence statement of the rule.
 2. **Why does it exist?** — The motivation: incident, preference, constraint, decision.
-3. **When and where does it apply?** — Scope: always / specific area / specific milestone / specific file types / etc.
+3. **When and where does it apply?** — Scope: always / specific area / specific story / specific file types / etc.
 4. **Any code or text example?** — Optional. A short snippet showing right vs wrong, or a concrete instance.
 5. **Filename?** — Short kebab-case (e.g. `commit-style`, `db-naming`, `pr-size`). No `.md` suffix needed.
 
@@ -73,7 +76,7 @@ Based on the answers, propose one of the four categories:
 
 - `_standard/` — coding standards, naming, formatting, architectural constraints, "how we write code"
 - `_contract/` — data models, API contracts, schemas, type-level invariants
-- `_goal/` — high-level goals shared across milestones, product direction
+- `_goal/` — high-level goals shared across stories, product direction
 - `_verification/` — test commands, build requirements, definition of done, CI gates
 
 Tell the user which category you picked and why (one sentence). Ask them to confirm or override.
@@ -123,13 +126,13 @@ Then report:
 
 - Path written
 - Backup path (if collision triggered a `.bak`)
-- Reminder: chief-agent will pick up this rule on its next read of `.chief/_rules/**`
+- Reminder: every `chief-*` skill picks up this rule on its next read of `.chief/_rules/**`
 
 Stop. Do not ask "add another?" — one rule per invocation. User re-runs for the next.
 
 ## Important rules
 
-- This skill creates **only** rule files (and the `.chief/_rules/README.md` on first run). Do not scaffold milestones, project.md, or anything else.
+- This skill creates **only** rule files (and the `.chief/_rules/README.md` on first run). Do not scaffold stories, project.md, or anything else.
 - NEVER create empty category subfolders — they are lazy. Only create `_standard/`, `_contract/`, `_goal/`, or `_verification/` when the first rule lands there.
 - NEVER overwrite an existing rule file without a `.bak` backup AND user confirmation.
 - NEVER read or modify files outside `.chief/_rules/` (except the read of `AGENTS.md` if you need it for context — but you usually do not).

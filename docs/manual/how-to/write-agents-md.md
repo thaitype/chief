@@ -8,7 +8,7 @@ This guide is for writing the `## Project Rules` section of `AGENTS.md` — the 
 
 Only hard constraints that:
 
-- Apply to every milestone, forever
+- Apply to every story, forever
 - Should never be violated under any circumstance
 - Would cause real damage if ignored (security, architecture, compliance)
 
@@ -76,7 +76,7 @@ Keep `AGENTS.md` Project Rules under 20 lines. Agents lose signal in long files.
 
 **Putting everything in AGENTS.md** — If it needs detail or an example, it belongs in `_rules/_standard/`, not here.
 
-**Duplicating agent behavior** — Don't re-explain what chief-agent or builder-agent do. Their definitions already cover it.
+**Duplicating agent behavior** — Don't re-explain what `/chief-plan` or `/chief-build` do. Their skill definitions already cover it.
 
 **Aspirational rules** — `"Code should be clean and well-documented"` is not a rule. `"All public functions MUST have JSDoc with @param and @returns"` is.
 
