@@ -33,7 +33,9 @@ or empty diff should fail here, not inside two parallel sub-agents.
 ### 2. Identify the spec source
 
 - If a ticket ID was given (or is inferable from the branch/current story), read that ticket's
-  originating story: `.chief/story-N/_goal/goal.md` and `.chief/story-N/_contract/contract.md`.
+  originating story: **every file** in `.chief/story-N/_goal/` and `.chief/story-N/_contract/` —
+  there's no fixed filename to single out (see `chief-explain`), so treat the whole bucket as the
+  spec, not just one file in it.
 - If no story is inferable, ask which story this diff belongs to.
 - If the user says there isn't one, the Spec sub-agent skips and reports "no spec available."
 
@@ -75,8 +77,9 @@ spotted, named, with the hunk quoted. Distinguish hard violations (documented-st
 from judgement calls (baseline smells are always judgement calls; a documented repo standard
 overrides the baseline). Skip anything tooling enforces. Under 400 words."
 
-**Spec sub-agent prompt** includes: the diff command + commit list; the fetched contents of
-`goal.md` and `contract.md` for the story; the brief — "Report: (a) requirements the goal or
+**Spec sub-agent prompt** includes: the diff command + commit list; the fetched contents of every
+file in the story's `_goal/` and `_contract/` buckets (step 2); the brief — "Report: (a)
+requirements the goal or
 contract asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for
 (scope creep); (c) requirements that look implemented but where the implementation looks wrong.
 Quote the goal/contract line for each finding. Under 400 words."

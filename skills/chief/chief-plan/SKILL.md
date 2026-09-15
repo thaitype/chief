@@ -71,28 +71,32 @@ before moving on.
 
 ## Phase 1: Review and Write the Goal
 
-**NEVER SKIP THIS PHASE.** Even if `_goal/goal.md` already exists, present it to the user for
-review and approval before moving to the contract.
+**NEVER SKIP THIS PHASE.** Even if goal files already exist, present them to the user for review
+and approval before moving to the contract.
 
-Based on Phase 0, write or update `.chief/story-N/_goal/goal.md`. Structure:
+Based on Phase 0, write or update goal file(s) under `.chief/story-N/_goal/` — no fixed filename
+required, name each file for what it holds (v4's rule, never actually meant to go away: see
+`docs/design/v5-ai-workflow.md`, "Goal/contract stay two files" is about goal vs. contract as two
+separate gates, not about one file per bucket). Main goal content:
 
 ```markdown
 # Goal
 
 <what this story delivers, from the user's perspective>
-
-## Out of Scope
-
-<what this story deliberately does not do — the natural complement of what it delivers; state
-this alongside the goal, it doesn't need the contract to exist first>
 ```
 
-If a goal file already exists:
-- Read it and verify it still matches the decisions from Phase 0.
-- If Phase 0 revealed it's wrong or incomplete, update it now.
+Also write `## Out of Scope` — <what this story deliberately does not do, the natural complement
+of what it delivers; state this alongside the goal, it doesn't need the contract to exist first>.
+Default to its own file (e.g. `_goal/out-of-scope.md`); fold it into the same file as the main
+goal content instead when the story's scope is small enough that a separate file would be
+overkill — a judgment call each time, not a fixed rule.
+
+If goal files already exist:
+- Read them and verify they still match the decisions from Phase 0.
+- If Phase 0 revealed one is wrong or incomplete, update it now.
 - Present both existing and new/modified content to the user.
 
-If extending: update the existing file when scope overlaps; create a new file when scope is
+If extending: update an existing file when scope overlaps; create a new file when scope is
 distinct. Verify no goal contradicts another goal in the same story, and none contradicts
 `.chief/_rules/_goal/` or `AGENTS.md`.
 
@@ -103,20 +107,21 @@ already existed. Wait for explicit approval before proceeding.
 
 ## Phase 2: Write the Contract
 
-Write or update `.chief/story-N/_contract/contract.md`. Structure:
+Write or update contract file(s) under `.chief/story-N/_contract/` — same no-fixed-filename rule
+as Phase 1's goal bucket. Main contract content:
 
 ```markdown
 # Contract
 
 <API shapes, data models, constraints>
-
-## Testing Decisions
-
-<what makes a good test for this story (test external behaviour, not implementation details),
-which modules/seams will be tested, prior art for the tests elsewhere in the codebase — this
-section needs the module/interface shape above to already be decided, which is why it lives
-here and not in the goal>
 ```
+
+Also write `## Testing Decisions` — <what makes a good test for this story (test external
+behaviour, not implementation details), which modules/seams will be tested, prior art for the
+tests elsewhere in the codebase — this section needs the module/interface shape above to already
+be decided, which is why it lives here and not in the goal>. Same default as Out of Scope: its
+own file (e.g. `_contract/testing-decisions.md`) unless the story's scope is small enough to fold
+it into the main contract file instead — judgment call, not a fixed rule.
 
 If extending: update existing files when scope overlaps (e.g. adding fields to an existing
 schema); create new files when scope is distinct (e.g. a new endpoint). Verify no contract
@@ -126,8 +131,9 @@ or `AGENTS.md`.
 **STOP.** Present the contract (new and modified parts) to the user. Highlight what changed vs
 what already existed. Wait for explicit approval before proceeding.
 
-Goal and contract stay two files with two gates deliberately — this is what lets the user
+Goal and contract stay two separate phases/gates deliberately — this is what lets the user
 approve *what* before committing to *how*, which a single merged spec document wouldn't give.
+(This is about goal vs. contract as two gates, not about either one being a single file.)
 
 ---
 
