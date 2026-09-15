@@ -1,6 +1,6 @@
 ---
 name: chief-build
-description: Build one ticket, correctly. Drives TDD at pre-agreed seams, typechecks and runs tests as it goes, runs /chief-review-code, and commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
+description: Build one ticket, correctly. Strict mode (default) drives TDD at pre-agreed seams and runs /chief-review-code; standard mode skips both. Typechecks and runs tests as it goes either way, then commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
 ---
 
 # Chief Build
@@ -14,10 +14,25 @@ upstream is the input, and your whole job is to turn it into a commit.
 If you were spawned by `chief-loop` or `chief-autopilot`, treat this session as disposable:
 build this one ticket, report back, and expect your context to be cleared before the next one
 starts. If a human invoked you directly (`/chief-build <ticket-id>`), behave identically —
-there is no different mode for the two invocation surfaces, only a different caller.
+there is no different session behavior for the two invocation surfaces, only a different caller.
 
 **Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
 root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
+## Mode: strict vs standard
+
+Two modes, differing only in the build recipe (everything else in this file — required
+sources, story scope, auto-fix policy, escalation, commit format — is identical either way):
+
+- **Strict (default)** — the full five-beat recipe below: TDD at pre-agreed seams, and a
+  mandatory `/chief-review-code` pass before every commit.
+- **Standard** — skips TDD discipline and skips `/chief-review-code` entirely; implement, verify
+  locally, commit.
+
+Whoever spawns you states the mode explicitly. `chief-loop` defaults to standard and
+`chief-autopilot` always uses standard — only `chief-loop strict` requests strict mode. If a
+human invokes you directly (`/chief-build <ticket-id>`) without naming a mode, default to
+**strict** — don't silently weaken the guarantee someone gets by typing the command themselves.
 
 ---
 
@@ -26,9 +41,10 @@ root, resolve `storage-root:` from it first and use that path everywhere below i
 Before implementing, read:
 
 1. The assigned ticket — `.chief/story-N/_tickets/<id>-<slug>.md`
-2. The story's spec — `.chief/story-N/_goal/goal.md` and `.chief/story-N/_contract/contract.md`
-   (the `## Testing Decisions` subsection of `contract.md` matters most here — it names the
-   seams and modules to test)
+2. The story's spec — **every file** in `.chief/story-N/_goal/` and `.chief/story-N/_contract/`
+   (there's no fixed filename to single out, see `chief-explain`; the Testing Decisions content
+   matters most here, wherever it lives in the `_contract/` bucket — it names the seams and
+   modules to test)
 3. Global coding standards — `.chief/_rules/_standard/**`
 
 Do NOT automatically read `AGENTS.md`, `.chief/_rules/_goal/`, `.chief/_rules/_contract/`, or
@@ -43,7 +59,9 @@ your scope.
 
 ---
 
-## The build recipe (five beats, in order)
+## The build recipe
+
+### Strict mode (default) — five beats, in order
 
 1. **Work out the seams.** Read the ticket and the contract's Testing Decisions to find the
    pre-agreed seam(s) — the public boundary you'll test at, without reaching inside. If no seam
@@ -58,8 +76,17 @@ your scope.
    anything the review raises before committing; if a finding is a judgement call you disagree
    with, note the disagreement in the commit body rather than silently overriding it.
 
-One run covers one ticket. Don't fold a second ticket's work into the same run even if it looks
-related — that's a decision for whoever assembles the next batch, not for you mid-build.
+### Standard mode — three beats
+
+1. **Implement the ticket** directly against its acceptance criteria. Write tests alongside where
+   they're cheap and obviously useful, but there's no forced red-green-per-seam discipline and
+   no requirement to work out a pre-agreed seam first.
+2. **Typecheck and run the relevant tests** as you go; run the full suite once before committing.
+3. **Commit** — no `/chief-review-code` pass in this mode.
+
+One run covers one ticket, in either mode. Don't fold a second ticket's work into the same run
+even if it looks related — that's a decision for whoever assembles the next batch, not for you
+mid-build.
 
 ---
 
@@ -136,8 +163,8 @@ documents it; safe mode surfaces it to the human). Either way, you don't decide 
 ## Commit
 
 Commit only after: implementation is finished, local verification passes, acceptance criteria
-are satisfied, `/chief-review-code` findings are addressed, no blocking errors remain. Never
-commit partial or broken work.
+are satisfied, no blocking errors remain, and — strict mode only — `/chief-review-code`
+findings are addressed. Never commit partial or broken work.
 
 **Message format:**
 
@@ -169,7 +196,7 @@ What was implemented.
 List of created/modified files.
 
 ## Seam(s) tested
-Where TDD happened, and why (or why none applied).
+Where TDD happened, and why (or "standard mode — no TDD discipline applied" if that's the case).
 
 ## Notes
 Assumptions, limitations, anything the next ticket or the orchestrator should know.
@@ -186,6 +213,7 @@ Do not declare completion unless acceptance criteria are satisfied and the work 
   spawned you.
 - Never reopen the goal or the contract. If they're wrong, escalate — don't quietly work around
   them.
-- Never skip `/chief-review-code` before committing.
+- In strict mode, never skip `/chief-review-code` before committing. In standard mode, never run
+  it — that's the entire difference between the two modes; don't blend them.
 - Never touch a ticket other than the one you were assigned.
 - Follow the rules hierarchy: `AGENTS.md` > `.chief/_rules/` > story goal/contract.

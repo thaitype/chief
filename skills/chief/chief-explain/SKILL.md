@@ -92,15 +92,24 @@ installed separately, nothing needs to be kept in sync with a template.
 | `/chief-init` | Bootstrap | Writes `project.md`, confirms storage location | Plan, build |
 | `/chief-wayfinder` | Fog-charter | Maps a story's open decisions as tickets, resolves one at a time | Write goal/contract, implement |
 | `/chief-plan` | Planner | Grill or hand off to wayfinder, writes goal + contract, breaks into tickets | Implement code |
-| `/chief-build` | Implementer | Builds ONE ticket: TDD, typecheck, test, `/chief-review-code`, commit | Decide what's next, check story completion |
+| `/chief-build` | Implementer | Builds ONE ticket, standard mode (default) or strict mode: TDD, typecheck, test, `/chief-review-code`, commit | Decide what's next, check story completion |
 | `/chief-test` | Verifier | Long-running/integration/UI/API validation, only when explicitly requested | Implement code, patch bugs, run unit tests |
 | `/chief-review-code` | Reviewer | Two-axis (Standards + Spec) review of a diff | Decide, implement |
-| `/chief-loop`, `/chief-autopilot` | Orchestrator | Works the ticket frontier via `/chief-build`, decides what's next, checks goal+contract satisfied | Implement code directly |
+| `/chief-loop` (standard default, `strict` arg), `/chief-autopilot` (always standard) | Orchestrator | Works the ticket frontier via `/chief-build`, decides what's next, checks goal+contract satisfied | Implement code directly |
 | `/chief-grill` | Deep stress-test | Verified, persistent grill session | Plan, implement |
 | `/chief-rule` | Rule capture | Writes a single rule to `_rules/` | Anything outside `_rules/` |
 | `/chief-retro` | Retrospective | Coverage check, lessons, proposes rule updates | Modify goal/contract/tickets |
 | `/chief-migrate` | Migration | Converts an in-progress v4 milestone into a v5 story | Touch `AGENTS.md`, delete anything without asking |
 | `/setup-agent-behavior` | Setup (opt-in) | Writes general (non-Chief) agent-conduct rules into `AGENTS.md`, on request | Anything automatic |
+
+**`standard` vs `strict` (chief-build's two modes, referenced above and by chief-loop/
+chief-autopilot):** `standard` restores v4 builder-agent's process — no mandatory TDD or
+`/chief-review-code` per ticket. `strict` is v5's original per-ticket rigor: TDD at pre-agreed
+seams plus a mandatory `/chief-review-code` pass. Neither mode skips ordinary local verification
+(typecheck, tests) — the only difference is the TDD/review mandate, not speed. `chief-build`
+itself defaults to strict when invoked directly; `chief-loop` defaults to standard (with a
+`strict` argument to opt in); `chief-autopilot` always uses standard, with no argument to change
+it.
 
 There's no install/upgrade skill — Chief needs nothing written to `AGENTS.md` to work. Getting
 the skills at all (`npx skills add thaitype/chief` or equivalent) is the only setup step;
