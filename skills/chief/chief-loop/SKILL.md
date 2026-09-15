@@ -1,6 +1,6 @@
 ---
 name: chief-loop
-description: Work a story's ticket frontier end to end, one ticket at a time via /chief-build, writing one report per ticket instead of one per batch. Fast mode (default) builds quickly, matching v4's speed; strict mode adds mandatory TDD + code review per ticket. When a ticket hits ambiguity, a throwaway decision-support agent proposes options; you still make the final call and the report captures the reasoning. Requires the goal and contract to exist. Use "/chief-loop" for fast or "/chief-loop strict" for strict.
+description: Work a story's ticket frontier end to end, one ticket at a time via /chief-build, writing one report per ticket instead of one per batch. Standard mode (default) matches v4's process — no mandatory TDD or code review per ticket; strict mode adds both. When a ticket hits ambiguity, a throwaway decision-support agent proposes options; you still make the final call and the report captures the reasoning. Requires the goal and contract to exist. Use "/chief-loop" for standard or "/chief-loop strict" for strict.
 ---
 
 Work the full ticket frontier of a story — ticket after ticket — until both the goal and the
@@ -16,15 +16,16 @@ it doesn't have a safe-mode equivalent.
 
 ## Arguments
 
-- No argument or `fast` → **fast mode** (default). Every ticket is built via `/chief-build` in
-  fast mode — no mandatory TDD or `/chief-review-code` per ticket. Restores v4 `chief-loop`'s
-  speed; local verification (typecheck, tests) still runs inside `/chief-build` either way.
-- `strict` → **strict mode**. Every ticket is built via `/chief-build` in thorough mode — TDD at
+- No argument or `standard` → **standard mode** (default). Every ticket is built via
+  `/chief-build` in standard mode — no mandatory TDD or `/chief-review-code` per ticket. Matches
+  v4 `chief-loop`'s process; local verification (typecheck, tests) still runs inside
+  `/chief-build` either way.
+- `strict` → **strict mode**. Every ticket is built via `/chief-build` in strict mode — TDD at
   pre-agreed seams plus a mandatory `/chief-review-code` pass before every commit. Use this when
   the extra per-ticket rigor is worth the extra time.
 
 If the mode wasn't given as an argument, resolve it at Entry Confirmation below instead of
-assuming — but never block on it: no answer there means fast, same as no argument here.
+assuming — but never block on it: no answer there means standard, same as no argument here.
 
 ## Prerequisite Check
 
@@ -44,14 +45,14 @@ Do NOT proceed.
 Present the current goal and contract to the user in a brief summary (file names + 1-line
 description each).
 
-Ask one question, folding in the mode check only if no `fast`/`strict` argument was given:
+Ask one question, folding in the mode check only if no `standard`/`strict` argument was given:
 > "Goal and contract look correct? Proceed with chief-loop, or use `/chief-plan` to revise
-> first? (And: fast mode — the default, quick — or strict mode — TDD + code review on every
-> ticket?)"
+> first? (And: standard mode — the default, no TDD/review mandate — or strict mode — TDD + code
+> review on every ticket?)"
 
 If the user says revise → stop.
 If the user confirms but doesn't answer the mode part (or there's nothing to answer because an
-argument already set it) → proceed, mode = fast unless an argument said `strict`.
+argument already set it) → proceed, mode = standard unless an argument said `strict`.
 
 **Optional:** if the `loop-readiness` skill is available, offer to run it against this story's
 tickets before proceeding — it reviews whether there's enough feedforward/feedback coverage to
@@ -78,7 +79,7 @@ own "never stop for ambiguity" rule.
 For each ticket in the frontier, in order:
 
 1. Set its `Status: claimed`.
-2. Invoke `/chief-build <ticket-id>` **in the mode resolved at Entry Confirmation** (fast or
+2. Invoke `/chief-build <ticket-id>` **in the mode resolved at Entry Confirmation** (standard or
    strict), spawned as its own subagent so this ticket gets isolated context (don't run the
    build inline in this session — that accumulates every ticket's exploration noise into one
    context, which is exactly what `/chief-build`'s "clear context, build one ticket, clear
@@ -152,7 +153,7 @@ Anything worth carrying into the next ticket or round.
   running `/chief-plan` Phase 3 for a new ticket batch never waits on its approval gate here,
   same as it never waits inside `chief-autopilot` — stopping for that would be the same
   contradiction as stopping for a build ambiguity.
-- Mode (fast/strict) is resolved once, at Entry Confirmation, and used for every `/chief-build`
+- Mode (standard/strict) is resolved once, at Entry Confirmation, and used for every `/chief-build`
   call this run — don't re-ask or switch modes mid-run.
 - You are ALWAYS the one who makes the final decision on an ambiguity — the decision-support
   agent only proposes options, never decides, never writes files.

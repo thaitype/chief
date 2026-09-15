@@ -1,6 +1,6 @@
 ---
 name: chief-build
-description: Build one ticket, correctly. Thorough mode (default) drives TDD at pre-agreed seams and runs /chief-review-code; fast mode skips both for speed. Typechecks and runs tests as it goes either way, then commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
+description: Build one ticket, correctly. Strict mode (default) drives TDD at pre-agreed seams and runs /chief-review-code; standard mode skips both — no TDD or review mandate, just implement and verify. Typechecks and runs tests as it goes either way, then commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
 ---
 
 # Chief Build
@@ -19,21 +19,21 @@ there is no different session behavior for the two invocation surfaces, only a d
 **Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
 root, resolve `storage-root:` from it first and use that path everywhere below instead.
 
-## Mode: thorough vs fast
+## Mode: strict vs standard
 
 Two modes, differing only in the build recipe (everything else in this file — required
 sources, story scope, auto-fix policy, escalation, commit format — is identical either way):
 
-- **Thorough (default)** — the full five-beat recipe below: TDD at pre-agreed seams, and a
+- **Strict (default)** — the full five-beat recipe below: TDD at pre-agreed seams, and a
   mandatory `/chief-review-code` pass before every commit.
-- **Fast** — skips TDD discipline and skips `/chief-review-code` entirely; implement, verify
-  locally, commit. Matches v4 builder-agent's speed.
+- **Standard** — skips TDD discipline and skips `/chief-review-code` entirely; implement, verify
+  locally, commit. No TDD or review mandate — this is what v4's builder-agent did.
 
-Whoever spawns you states the mode explicitly. `chief-loop` defaults to fast and `chief-autopilot`
-always uses fast (both restored to v4 builder-agent's speed) — only `chief-loop strict` requests
-thorough. If a human invokes you directly (`/chief-build <ticket-id>`) without naming a mode,
-default to **thorough** — don't silently weaken the guarantee someone gets by typing the command
-themselves.
+Whoever spawns you states the mode explicitly. `chief-loop` defaults to standard and
+`chief-autopilot` always uses standard (both matching v4 builder-agent's process) — only
+`chief-loop strict` requests strict mode. If a human invokes you directly
+(`/chief-build <ticket-id>`) without naming a mode, default to **strict** — don't silently
+weaken the guarantee someone gets by typing the command themselves.
 
 ---
 
@@ -62,7 +62,7 @@ your scope.
 
 ## The build recipe
 
-### Thorough mode (default) — five beats, in order
+### Strict mode (default) — five beats, in order
 
 1. **Work out the seams.** Read the ticket and the contract's Testing Decisions to find the
    pre-agreed seam(s) — the public boundary you'll test at, without reaching inside. If no seam
@@ -77,7 +77,7 @@ your scope.
    anything the review raises before committing; if a finding is a judgement call you disagree
    with, note the disagreement in the commit body rather than silently overriding it.
 
-### Fast mode — three beats
+### Standard mode — three beats
 
 1. **Implement the ticket** directly against its acceptance criteria. Write tests alongside where
    they're cheap and obviously useful, but there's no forced red-green-per-seam discipline and
@@ -164,7 +164,7 @@ documents it; safe mode surfaces it to the human). Either way, you don't decide 
 ## Commit
 
 Commit only after: implementation is finished, local verification passes, acceptance criteria
-are satisfied, no blocking errors remain, and — thorough mode only — `/chief-review-code`
+are satisfied, no blocking errors remain, and — strict mode only — `/chief-review-code`
 findings are addressed. Never commit partial or broken work.
 
 **Message format:**
@@ -197,7 +197,7 @@ What was implemented.
 List of created/modified files.
 
 ## Seam(s) tested
-Where TDD happened, and why (or "fast mode — no TDD discipline applied" if that's the case).
+Where TDD happened, and why (or "standard mode — no TDD discipline applied" if that's the case).
 
 ## Notes
 Assumptions, limitations, anything the next ticket or the orchestrator should know.
@@ -214,7 +214,7 @@ Do not declare completion unless acceptance criteria are satisfied and the work 
   spawned you.
 - Never reopen the goal or the contract. If they're wrong, escalate — don't quietly work around
   them.
-- In thorough mode, never skip `/chief-review-code` before committing. In fast mode, never run
+- In strict mode, never skip `/chief-review-code` before committing. In standard mode, never run
   it — that's the entire difference between the two modes; don't blend them.
 - Never touch a ticket other than the one you were assigned.
 - Follow the rules hierarchy: `AGENTS.md` > `.chief/_rules/` > story goal/contract.
