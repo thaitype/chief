@@ -71,39 +71,33 @@ before moving on.
 
 ## Phase 1: Review and Write the Goal
 
-**NEVER SKIP THIS PHASE.** Even if `_goal/goal.md` already exists, present it to the user for
-review and approval before moving to the contract.
+**NEVER SKIP THIS PHASE.** Even if goal files already exist, present them to the user for review
+and approval before moving to the contract.
 
-`_goal/goal.md` is always the gate file for this phase — the one thing that must exist and get
-approved here — but it doesn't have to hold every word of the goal. Once a second file exists in
-`_goal/` for a genuinely distinct piece of scope, `goal.md` is also that bucket's index: it must
-link every other file in `_goal/` (a plain markdown link is enough), so nothing in the bucket is
-orphaned from the approval gate.
-
-Based on Phase 0, write or update `.chief/story-N/_goal/goal.md`. Structure:
+Based on Phase 0, write or update goal file(s) under `.chief/story-N/_goal/` — no fixed filename
+required, name each file for what it holds (v4's rule, never actually meant to go away: see
+`docs/design/v5-ai-workflow.md`, "Goal/contract stay two files" is about goal vs. contract as two
+separate gates, not about one file per bucket). Main goal content:
 
 ```markdown
 # Goal
 
 <what this story delivers, from the user's perspective>
-
-## Out of Scope
-
-<what this story deliberately does not do — the natural complement of what it delivers; state
-this alongside the goal, it doesn't need the contract to exist first>
 ```
 
-If a goal file already exists:
-- Read it and verify it still matches the decisions from Phase 0.
-- If Phase 0 revealed it's wrong or incomplete, update it now.
+Also write `## Out of Scope` — <what this story deliberately does not do, the natural complement
+of what it delivers; state this alongside the goal, it doesn't need the contract to exist first>.
+Default to its own file (e.g. `_goal/out-of-scope.md`); fold it into the same file as the main
+goal content instead when the story's scope is small enough that a separate file would be
+overkill — a judgment call each time, not a fixed rule.
+
+If goal files already exist:
+- Read them and verify they still match the decisions from Phase 0.
+- If Phase 0 revealed one is wrong or incomplete, update it now.
 - Present both existing and new/modified content to the user.
 
-If extending: update the existing file when scope overlaps; create a new file when scope is
-distinct (e.g. `_goal/reporting.md` alongside `_goal/goal.md`) — same rule v4 used, restored here
-because it was never actually meant to go away (see `docs/design/v5-ai-workflow.md`, "Goal/
-contract stay two files" is about goal vs. contract, not about one file per bucket). When a new
-file is created, add its link to `goal.md` in the same edit — an unlinked file is a sync bug, not
-a style choice. Verify no goal contradicts another goal in the same story, and none contradicts
+If extending: update an existing file when scope overlaps; create a new file when scope is
+distinct. Verify no goal contradicts another goal in the same story, and none contradicts
 `.chief/_rules/_goal/` or `AGENTS.md`.
 
 **STOP.** Present the goal (new and modified parts) to the user. Highlight what changed vs what
@@ -113,37 +107,33 @@ already existed. Wait for explicit approval before proceeding.
 
 ## Phase 2: Write the Contract
 
-`_contract/contract.md` is always the gate file for this phase, same role as `goal.md` in Phase
-1: the required, approved entry point, and — once a second file exists in `_contract/` — that
-bucket's index, linking every other file in it.
-
-Write or update `.chief/story-N/_contract/contract.md`. Structure:
+Write or update contract file(s) under `.chief/story-N/_contract/` — same no-fixed-filename rule
+as Phase 1's goal bucket. Main contract content:
 
 ```markdown
 # Contract
 
 <API shapes, data models, constraints>
-
-## Testing Decisions
-
-<what makes a good test for this story (test external behaviour, not implementation details),
-which modules/seams will be tested, prior art for the tests elsewhere in the codebase — this
-section needs the module/interface shape above to already be decided, which is why it lives
-here and not in the goal>
 ```
 
+Also write `## Testing Decisions` — <what makes a good test for this story (test external
+behaviour, not implementation details), which modules/seams will be tested, prior art for the
+tests elsewhere in the codebase — this section needs the module/interface shape above to already
+be decided, which is why it lives here and not in the goal>. Same default as Out of Scope: its
+own file (e.g. `_contract/testing-decisions.md`) unless the story's scope is small enough to fold
+it into the main contract file instead — judgment call, not a fixed rule.
+
 If extending: update existing files when scope overlaps (e.g. adding fields to an existing
-schema); create new files when scope is distinct (e.g. `_contract/payments-api.md` for a new
-endpoint, alongside `_contract/contract.md`). When a new file is created, add its link to
-`contract.md` in the same edit — an unlinked file is a sync bug, not a style choice. Verify no
-contract contradicts another contract in the same story, and none contradicts
-`.chief/_rules/_contract/` or `AGENTS.md`.
+schema); create new files when scope is distinct (e.g. a new endpoint). Verify no contract
+contradicts another contract in the same story, and none contradicts `.chief/_rules/_contract/`
+or `AGENTS.md`.
 
 **STOP.** Present the contract (new and modified parts) to the user. Highlight what changed vs
 what already existed. Wait for explicit approval before proceeding.
 
-Goal and contract stay two files with two gates deliberately — this is what lets the user
+Goal and contract stay two separate phases/gates deliberately — this is what lets the user
 approve *what* before committing to *how*, which a single merged spec document wouldn't give.
+(This is about goal vs. contract as two gates, not about either one being a single file.)
 
 ---
 
@@ -182,9 +172,7 @@ before delegating to `/chief-build`.
 At every phase, before presenting to the user, verify:
 
 1. **Intra-bucket consistency** — no two files within the same bucket (`_goal/`, `_contract/`,
-   `_tickets/`) contradict each other, and (for `_goal/` and `_contract/` specifically) the gate
-   file (`goal.md`/`contract.md`) links every other file present in its own bucket — an unlinked
-   file means the index has drifted out of sync and must be fixed before presenting.
+   `_tickets/`) contradict each other.
 2. **Cross-bucket consistency** — goal, contract, and tickets align (e.g. a ticket doesn't
    reference a contract field that doesn't exist).
 3. **Hierarchy compliance** — nothing contradicts a higher-level rule: `AGENTS.md` overrides

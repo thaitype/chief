@@ -60,26 +60,22 @@ project/
         │                       docs/design/v5-ai-workflow.md for why the name changed)
         ├── _map.md           ← only if /chief-wayfinder was used: Destination / Notes /
         │                        Decisions so far / Not yet specified / Out of scope
-        ├── _goal/            ← what this story delivers
-        │   ├── goal.md         always present — the Phase 1 gate file; holds Out of Scope and
-        │   │                   links to any other files in this bucket (below)
-        │   └── <other>.md      optional — only when a genuinely distinct piece of scope earns
-        │                       its own file (like v4's goal bucket); goal.md must link it
-        ├── _contract/        ← API shapes, data models, constraints
-        │   ├── contract.md     always present — the Phase 2 gate file; holds Testing Decisions
-        │   │                   and links to any other files in this bucket (below)
-        │   └── <other>.md      optional — same rule as goal's bucket, one file per distinct
-        │                       concern (e.g. a new endpoint); contract.md must link it
+        ├── _goal/            ← what this story delivers, plus Out of Scope
+        │   └── *.md            no fixed filename — one file is the common case, more when a
+        │                       piece of scope is genuinely distinct (v4's rule); Out of Scope
+        │                       defaults to its own file, folded into an existing one only when
+        │                       the story is small enough that a separate file is overkill
+        ├── _contract/        ← API shapes, data models, constraints, plus Testing Decisions
+        │   └── *.md            same shape as `_goal/`: no fixed filename, Testing Decisions
+        │                       defaults to its own file, folded in when the story is small
         ├── _tickets/         ← decision-tickets (wayfinder) and implementation tickets
         │                        (chief-plan), one flat numbering sequence per story, no
         │                        story-number prefix (the folder already scopes it)
         └── _report/          ← ticket reports, retro output, investigations
 ```
 
-`goal.md`/`contract.md` are never the *only* place their bucket's content may live — they're the
-required entry point (what gets presented at the Phase 1/2 approval gate) plus an index of
-whatever else is in the same folder. A bucket with only one file needs no index links at all,
-since there's nothing else to point to; the index only matters once a second file exists.
+Neither bucket has a required filename — a skill reading a story's goal or contract reads every
+file in `_goal/`/`_contract/`, never assumes one specific name holds everything.
 
 `.chief/` (or the resolved storage root) is created **lazily** — nothing appears until the
 first thing that needs it runs. Don't expect `_rules/` subfolders, `story-N/`, or anything else
