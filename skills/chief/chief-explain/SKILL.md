@@ -56,8 +56,9 @@ project/
     │   ├── _contract/       ← global API contracts, data models
     │   ├── _goal/           ← long-term direction (spans stories)
     │   └── _verification/   ← test commands, definition of done
-    └── story-N/             ← one issue/ticket-sized unit of work (not a "Milestone" — see
-        │                       docs/design/v5-ai-workflow.md for why the name changed)
+    └── story-N/             ← one issue/ticket-sized unit of work (renamed from v4's
+        │                       "Milestone" — sized like one tracker issue, not a multi-week
+        │                       epic)
         ├── _map.md           ← only if /chief-wayfinder was used: Destination / Notes /
         │                        Decisions so far / Not yet specified / Out of scope
         ├── _goal/            ← what this story delivers, plus Out of Scope

@@ -4,8 +4,8 @@ description: Plan a new story or extend an existing one step-by-step with review
 ---
 
 You are planning a **story** — Chief's unit of work, sized like a single issue/ticket in any
-tracker (see `docs/design/v5-ai-workflow.md` for why it's called "story," not "milestone").
-Follow this process strictly, one phase at a time. **Never skip ahead.**
+tracker (renamed from v4's "milestone," which was mis-scaled from the start). Follow this
+process strictly, one phase at a time. **Never skip ahead.**
 
 **Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
 root, resolve `storage-root:` from it first and use that path everywhere below instead.
@@ -75,9 +75,9 @@ before moving on.
 and approval before moving to the contract.
 
 Based on Phase 0, write or update goal file(s) under `.chief/story-N/_goal/` — no fixed filename
-required, name each file for what it holds (v4's rule, never actually meant to go away: see
-`docs/design/v5-ai-workflow.md`, "Goal/contract stay two files" is about goal vs. contract as two
-separate gates, not about one file per bucket). Main goal content:
+required, name each file for what it holds (v4's rule, never actually meant to go away — the
+two-file split is about goal vs. contract as separate gates, not about one file per bucket).
+Main goal content:
 
 ```markdown
 # Goal
@@ -140,8 +140,7 @@ approve *what* before committing to *how*, which a single merged spec document w
 ## Phase 3: Break Into Tickets
 
 Write vertical-slice tickets into `.chief/story-N/_tickets/`, replacing what used to be a flat
-`_plan/_todo.md`. See `docs/design/v5-ai-workflow.md` ("Ticket model") for the file shape —
-briefly:
+`_plan/_todo.md`. The ticket model, briefly:
 
 - Each ticket is a **tracer-bullet vertical slice**: a narrow but complete path through every
   layer the change touches (schema, API, UI, tests), demoable/verifiable on its own, sized to

@@ -28,7 +28,7 @@ Create `.chief/` if it does not exist.
 
 Ask one question, even though there's only one working answer today — this stays visible
 rather than silently defaulting, because the storage location is deliberately not fixed to
-`.chief/` (see `docs/design/v5-ai-workflow.md`, "Storage backend"):
+`.chief/`:
 
 > "Planning artifacts (stories, rules, tickets) live under `.chief/` by default. Keep that, or
 > use a different directory name?"
@@ -121,4 +121,4 @@ Tell the user:
 - Never overwrite an existing `project.md` without explicit user confirmation; always back up to
   `.bak` first.
 - Keep the interview short. One focused question at a time, no compound questions.
-- Reference: a canonical layout example lives at `docs/example-chief/` in the chief repo.
+- Reference: run `/chief-explain` for the full `.chief/` directory-layout diagram.
