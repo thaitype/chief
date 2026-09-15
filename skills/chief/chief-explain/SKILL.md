@@ -3,6 +3,12 @@ name: chief-explain
 description: Self-contained structural reference for the Chief framework — directory layout, storage-location resolution, the chief-* skill family and what each owns, and the rules for writing `.chief/_rules/` files. For the agent's own understanding, not a human-facing tutorial. Model-invocable — reach for it whenever you need to know how Chief is shaped and don't already know.
 ---
 
+**Chief version:** `v5.canary-1` — bumped by hand in this line whenever a new canary/release tag
+is cut. This is the only version marker that reliably travels with an install (`npx skills add`
+only copies `skills/`, never `docs/` or git history) — read it here if you need to know which
+build of Chief is actually running, and treat it as informational only, not a correctness check
+(it says nothing about whether a specific fix has landed on top of it).
+
 Reference material about how Chief itself is put together. Read this when you need to know
 where something lives, which skill owns a responsibility, or how a mechanism works — not when
 the user needs to be taught which skill to reach for (that's `/ask-chief`, a different audience:
@@ -54,13 +60,26 @@ project/
         │                       docs/design/v5-ai-workflow.md for why the name changed)
         ├── _map.md           ← only if /chief-wayfinder was used: Destination / Notes /
         │                        Decisions so far / Not yet specified / Out of scope
-        ├── _goal/goal.md     ← what this story delivers + Out of Scope
-        ├── _contract/contract.md  ← API shapes, data models, constraints + Testing Decisions
+        ├── _goal/            ← what this story delivers
+        │   ├── goal.md         always present — the Phase 1 gate file; holds Out of Scope and
+        │   │                   links to any other files in this bucket (below)
+        │   └── <other>.md      optional — only when a genuinely distinct piece of scope earns
+        │                       its own file (like v4's goal bucket); goal.md must link it
+        ├── _contract/        ← API shapes, data models, constraints
+        │   ├── contract.md     always present — the Phase 2 gate file; holds Testing Decisions
+        │   │                   and links to any other files in this bucket (below)
+        │   └── <other>.md      optional — same rule as goal's bucket, one file per distinct
+        │                       concern (e.g. a new endpoint); contract.md must link it
         ├── _tickets/         ← decision-tickets (wayfinder) and implementation tickets
         │                        (chief-plan), one flat numbering sequence per story, no
         │                        story-number prefix (the folder already scopes it)
         └── _report/          ← ticket reports, retro output, investigations
 ```
+
+`goal.md`/`contract.md` are never the *only* place their bucket's content may live — they're the
+required entry point (what gets presented at the Phase 1/2 approval gate) plus an index of
+whatever else is in the same folder. A bucket with only one file needs no index links at all,
+since there's nothing else to point to; the index only matters once a second file exists.
 
 `.chief/` (or the resolved storage root) is created **lazily** — nothing appears until the
 first thing that needs it runs. Don't expect `_rules/` subfolders, `story-N/`, or anything else

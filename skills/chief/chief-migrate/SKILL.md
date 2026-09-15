@@ -53,13 +53,24 @@ to confirm which one(s) to migrate now (they may want to do them one at a time).
 
 For the confirmed milestone(s), work out the mapping before writing anything:
 
-- `_goal/*.md` → `story-N/_goal/*.md`, content copied as-is, with an empty `## Out of Scope`
-  heading appended if not already present (nothing to fill in — there's no reliable way to
-  infer what was out of scope from v4 content; leave it for the user to fill in later, or skip
-  the heading entirely if they'd rather add it only when they actually have something to put
-  there).
-- `_contract/*.md` → `story-N/_contract/*.md`, same copy-as-is treatment, with an empty
-  `## Testing Decisions` heading for the same reason.
+- `_goal/*.md` → `story-N/_goal/*.md`, content copied as-is, filenames unchanged, nothing
+  renamed. v5's `_goal/` bucket always needs a `goal.md` gate file that links every other file
+  in the bucket (see `chief-explain`):
+  - If one of the copied files is already named `goal.md`, treat it as the gate file: append an
+    empty `## Out of Scope` heading if not already present (nothing to fill in — there's no
+    reliable way to infer what was out of scope from v4 content; leave it for the user, or skip
+    the heading entirely if they'd rather add it only once they have something to put there),
+    and add a link to each sibling file if missing.
+  - If none of the copied files is named `goal.md`, create a new `story-N/_goal/goal.md`
+    containing only: the empty `## Out of Scope` heading, and a plain link list naming every
+    copied file with its original filename. **Do not summarize or rewrite the copied files'
+    content into this new file** — a synthesized summary risks misrepresenting the original
+    goal; a link list can't.
+- `_contract/*.md` → `story-N/_contract/*.md`, same copy-as-is-filenames-unchanged treatment,
+  same gate-file rule as above but for `contract.md` and `## Testing Decisions`: append to an
+  existing `contract.md` if the migration produced one, otherwise create a new `contract.md`
+  holding only the empty heading and a link list to the copied files — never a synthesized
+  summary of their content.
 - `_plan/_todo.md` items (and the matching `_plan/task-N.md` file, if one exists for that item)
   → one ticket file per item in `story-N/_tickets/`:
   - `Type: implementation`
