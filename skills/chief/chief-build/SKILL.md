@@ -14,10 +14,18 @@ upstream is the input, and your whole job is to turn it into a commit.
 If you were spawned by `chief-loop` or `chief-autopilot`, treat this session as disposable:
 build this one ticket, report back, and expect your context to be cleared before the next one
 starts. If a human invoked you directly (`/chief-build <ticket-id>`), behave identically —
-there is no different session behavior for the two invocation surfaces, only a different caller.
+there is no different build behavior for the two invocation surfaces, only a different caller.
+The one thing a caller can vary is *where* you operate — see Working directory below — never
+what you do.
 
 **Storage location:** `.chief/` is the default. If `.chief.config.md` exists at the repo
 root, resolve `storage-root:` from it first and use that path everywhere below instead.
+
+**Working directory:** normally your own current checkout. `chief-loop` in parallel mode tells
+you a specific git worktree directory to operate and commit in instead — when it does, treat
+that as your repo root for this entire run (reads, writes, and the final commit all happen
+there). You never create, merge, or remove that worktree yourself; `chief-loop` owns its
+lifecycle entirely. Nothing else in this file changes based on where you're running.
 
 ## Mode: strict vs standard
 
