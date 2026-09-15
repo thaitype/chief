@@ -102,6 +102,15 @@ installed separately, nothing needs to be kept in sync with a template.
 | `/chief-migrate` | Migration | Converts an in-progress v4 milestone into a v5 story | Touch `AGENTS.md`, delete anything without asking |
 | `/setup-agent-behavior` | Setup (opt-in) | Writes general (non-Chief) agent-conduct rules into `AGENTS.md`, on request | Anything automatic |
 
+**`standard` vs `strict` (chief-build's two modes, referenced above and by chief-loop/
+chief-autopilot):** `standard` restores v4 builder-agent's process — no mandatory TDD or
+`/chief-review-code` per ticket. `strict` is v5's original per-ticket rigor: TDD at pre-agreed
+seams plus a mandatory `/chief-review-code` pass. Neither mode skips ordinary local verification
+(typecheck, tests) — the only difference is the TDD/review mandate, not speed. `chief-build`
+itself defaults to strict when invoked directly; `chief-loop` defaults to standard (with a
+`strict` argument to opt in); `chief-autopilot` always uses standard, with no argument to change
+it.
+
 There's no install/upgrade skill — Chief needs nothing written to `AGENTS.md` to work. Getting
 the skills at all (`npx skills add thaitype/chief` or equivalent) is the only setup step;
 `/chief-init` is the natural first thing to run afterward, but nothing enforces that order.

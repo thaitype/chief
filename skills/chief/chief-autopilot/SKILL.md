@@ -1,6 +1,6 @@
 ---
 name: chief-autopilot
-description: Run the story's ticket frontier autonomously via /chief-build in standard mode (matches v4's process — no mandatory TDD/code review per ticket). Requires the goal and contract to exist. Creates/updates tickets as needed, works the frontier, and repeats until the story is done. Auto mode makes all decisions autonomously; safe mode stops on ambiguity. Use "/chief-autopilot" for auto or "/chief-autopilot safe" for safe mode.
+description: Run the story's ticket frontier autonomously via /chief-build in standard mode (no mandatory TDD/code review per ticket). Requires the goal and contract to exist. Creates/updates tickets as needed, works the frontier, and repeats until the story is done. Auto mode makes all decisions autonomously; safe mode stops on ambiguity. Use "/chief-autopilot" for auto or "/chief-autopilot safe" for safe mode.
 ---
 
 Run the story's ticket frontier autonomously.
@@ -53,8 +53,8 @@ satisfied, run Phase 3 again for the next batch.
 For each ticket in the frontier:
 - Set `Status: claimed`.
 - Invoke `/chief-build <ticket-id>` **in standard mode** (no mandatory TDD or `/chief-review-code`
-  per ticket — matches v4 builder-agent's process; this skill has no argument to change it),
-  spawned as its own subagent (isolated context per ticket — don't run it inline).
+  per ticket; this skill has no argument to change it), spawned as its own subagent (isolated
+  context per ticket — don't run it inline).
 - Wait for completion.
 - Set `Status: resolved` when done.
 

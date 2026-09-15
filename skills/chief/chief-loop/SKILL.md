@@ -1,6 +1,6 @@
 ---
 name: chief-loop
-description: Work a story's ticket frontier end to end, one ticket at a time via /chief-build, writing one report per ticket instead of one per batch. Standard mode (default) matches v4's process — no mandatory TDD or code review per ticket; strict mode adds both. When a ticket hits ambiguity, a throwaway decision-support agent proposes options; you still make the final call and the report captures the reasoning. Requires the goal and contract to exist. Use "/chief-loop" for standard or "/chief-loop strict" for strict.
+description: Work a story's ticket frontier end to end, one ticket at a time via /chief-build, writing one report per ticket instead of one per batch. Standard mode (default) has no mandatory TDD or code review per ticket; strict mode adds both. When a ticket hits ambiguity, a throwaway decision-support agent proposes options; you still make the final call and the report captures the reasoning. Requires the goal and contract to exist. Use "/chief-loop" for standard or "/chief-loop strict" for strict.
 ---
 
 Work the full ticket frontier of a story — ticket after ticket — until both the goal and the
@@ -17,9 +17,8 @@ it doesn't have a safe-mode equivalent.
 ## Arguments
 
 - No argument or `standard` → **standard mode** (default). Every ticket is built via
-  `/chief-build` in standard mode — no mandatory TDD or `/chief-review-code` per ticket. Matches
-  v4 `chief-loop`'s process; local verification (typecheck, tests) still runs inside
-  `/chief-build` either way.
+  `/chief-build` in standard mode — no mandatory TDD or `/chief-review-code` per ticket. Local
+  verification (typecheck, tests) still runs inside `/chief-build` either way.
 - `strict` → **strict mode**. Every ticket is built via `/chief-build` in strict mode — TDD at
   pre-agreed seams plus a mandatory `/chief-review-code` pass before every commit. Use this when
   the extra per-ticket rigor is worth the extra time.

@@ -1,6 +1,6 @@
 ---
 name: chief-build
-description: Build one ticket, correctly. Strict mode (default) drives TDD at pre-agreed seams and runs /chief-review-code; standard mode skips both — no TDD or review mandate, just implement and verify. Typechecks and runs tests as it goes either way, then commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
+description: Build one ticket, correctly. Strict mode (default) drives TDD at pre-agreed seams and runs /chief-review-code; standard mode skips both. Typechecks and runs tests as it goes either way, then commits. Replaces builder-agent — invoke directly ("/chief-build 3") or let chief-loop/chief-autopilot spawn it per ticket. Never decides what's next or whether the story is done; that's chief-loop/chief-autopilot's job.
 ---
 
 # Chief Build
@@ -27,13 +27,12 @@ sources, story scope, auto-fix policy, escalation, commit format — is identica
 - **Strict (default)** — the full five-beat recipe below: TDD at pre-agreed seams, and a
   mandatory `/chief-review-code` pass before every commit.
 - **Standard** — skips TDD discipline and skips `/chief-review-code` entirely; implement, verify
-  locally, commit. No TDD or review mandate — this is what v4's builder-agent did.
+  locally, commit.
 
 Whoever spawns you states the mode explicitly. `chief-loop` defaults to standard and
-`chief-autopilot` always uses standard (both matching v4 builder-agent's process) — only
-`chief-loop strict` requests strict mode. If a human invokes you directly
-(`/chief-build <ticket-id>`) without naming a mode, default to **strict** — don't silently
-weaken the guarantee someone gets by typing the command themselves.
+`chief-autopilot` always uses standard — only `chief-loop strict` requests strict mode. If a
+human invokes you directly (`/chief-build <ticket-id>`) without naming a mode, default to
+**strict** — don't silently weaken the guarantee someone gets by typing the command themselves.
 
 ---
 
