@@ -3,7 +3,7 @@ name: chief-explain
 description: Self-contained structural reference for the Chief framework — directory layout, storage-location resolution, the chief-* skill family and what each owns, and the rules for writing `.chief/_rules/` files. For the agent's own understanding, not a human-facing tutorial. Model-invocable — reach for it whenever you need to know how Chief is shaped and don't already know.
 ---
 
-**Chief version:** `v5.canary-2` — bumped by hand in this line whenever a new canary/release tag
+**Chief version:** `v5.canary-2.exp` — bumped by hand in this line whenever a new canary/release tag
 is cut. This is the only version marker that reliably travels with an install (`npx skills add`
 only copies `skills/`, never `docs/` or git history) — read it here if you need to know which
 build of Chief is actually running, and treat it as informational only, not a correctness check
@@ -96,7 +96,7 @@ installed separately, nothing needs to be kept in sync with a template.
 | `/chief-build` | Implementer | Builds ONE ticket, standard mode (default) or strict mode: TDD, typecheck, test, `/chief-review-code`, commit | Decide what's next, check story completion |
 | `/chief-test` | Verifier | Long-running/integration/UI/API validation, only when explicitly requested | Implement code, patch bugs, run unit tests |
 | `/chief-review-code` | Reviewer | Two-axis (Standards + Spec) review of a diff | Decide, implement |
-| `/chief-loop` (standard default, `strict` arg), `/chief-autopilot` (always standard) | Orchestrator | Works the ticket frontier via `/chief-build`, decides what's next, checks goal+contract satisfied | Implement code directly |
+| `/chief-loop` (standard default, `strict` arg; sequential default, `parallel`/`parallel:<N>` arg — each in its own git worktree), `/chief-autopilot` (always standard, always sequential) | Orchestrator | Works the ticket frontier via `/chief-build`, decides what's next, checks goal+contract satisfied | Implement code directly |
 | `/chief-grill` | Deep stress-test | Verified, persistent grill session | Plan, implement |
 | `/chief-rule` | Rule capture | Writes a single rule to `_rules/` | Anything outside `_rules/` |
 | `/chief-retro` | Retrospective | Coverage check, lessons, proposes rule updates | Modify goal/contract/tickets |
