@@ -9,7 +9,7 @@
 > multiple tickets at once, each in its own isolated git worktree — no more subagent roster.
 > Public alpha, ready for testing.
 >
-> Install: `npx skills@latest add thaitype/chief#v5.0.0-alpha.0` ·
+> Install: `npx skills@latest add thaitype/chief#release/v5` ·
 > [Release notes](https://github.com/thaitype/chief/releases/tag/v5.0.0-alpha.0) · docs on
 > [`release/v5`](https://github.com/thaitype/chief/tree/release/v5)
 >

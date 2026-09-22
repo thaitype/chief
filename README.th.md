@@ -9,7 +9,7 @@
 > พร้อมกัน แต่ละอันแยก git worktree ของตัวเอง — ไม่มี subagent roster อีกต่อไป public alpha
 > พร้อมให้ทดสอบแล้ว
 >
-> ติดตั้ง: `npx skills@latest add thaitype/chief#v5.0.0-alpha.0` ·
+> ติดตั้ง: `npx skills@latest add thaitype/chief#release/v5` ·
 > [Release notes](https://github.com/thaitype/chief/releases/tag/v5.0.0-alpha.0) · เอกสารอยู่ที่
 > [`release/v5`](https://github.com/thaitype/chief/tree/release/v5)
 >
