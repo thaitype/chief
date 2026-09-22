@@ -4,6 +4,17 @@
 
 **[English](README.md)** | **ไทย**
 
+> 📣 **Chief v5 Alpha เปิดให้ทดสอบแล้ว** — Story/Ticket model, `/chief-wayfinder`, `/chief-loop`
+> ทำงานแบบ ticket-frontier — ตอนนี้มีโหมด parallel (`/chief-loop parallel:3`) ที่สร้างหลาย ticket
+> พร้อมกัน แต่ละอันแยก git worktree ของตัวเอง — ไม่มี subagent roster อีกต่อไป public alpha
+> พร้อมให้ทดสอบแล้ว
+>
+> ติดตั้ง: `npx skills@latest add thaitype/chief#v5.0.0-alpha.0` ·
+> [Release notes](https://github.com/thaitype/chief/releases/tag/v5.0.0-alpha.0) · เอกสารอยู่ที่
+> [`release/v5`](https://github.com/thaitype/chief/tree/release/v5)
+>
+> README นี้อธิบาย v4.2.0 ซึ่งเป็น stable version ปัจจุบัน
+
 Workflow ที่มีโครงสร้างสำหรับ AI coding agents ติดตั้งในโปรเจกต์ใดก็ได้ กำหนด rules ครั้งเดียว แล้วหยุดอธิบาย codebase ซ้ำทุก chat
 
 > Chief เป็นส่วนหนึ่งของระบบนิเวศ [chief-tribe](https://github.com/thaitype/chief-tribe) โดยใช้ [sage](https://github.com/thaitype/sage) เป็น behavioral baseline

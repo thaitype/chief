@@ -4,6 +4,17 @@
 
 **English** | **[ไทย](README.th.md)**
 
+> 📣 **Chief v5 Alpha is here** — Story/Ticket model, `/chief-wayfinder`, `/chief-loop`
+> ticket-frontier execution — now with a parallel mode (`/chief-loop parallel:3`) that builds
+> multiple tickets at once, each in its own isolated git worktree — no more subagent roster.
+> Public alpha, ready for testing.
+>
+> Install: `npx skills@latest add thaitype/chief#v5.0.0-alpha.0` ·
+> [Release notes](https://github.com/thaitype/chief/releases/tag/v5.0.0-alpha.0) · docs on
+> [`release/v5`](https://github.com/thaitype/chief/tree/release/v5)
+>
+> This README describes the current stable **v4.2.0** line.
+
 A structured workflow for AI coding agents. Drop it into any project, set your rules once, and stop re-explaining your codebase every chat.
 
 > Chief is part of the [chief-tribe](https://github.com/thaitype/chief-tribe) ecosystem. It uses [sage](https://github.com/thaitype/sage) as its behavioral baseline.
