@@ -22,11 +22,11 @@ The cost of a 10-minute grill session before building is zero compared to unrave
 
 Good pre-coding produces:
 
-- **A clear goal** — what this milestone delivers, in one or two sentences
+- **A clear goal** — what this story delivers, in one or two sentences
 - **Concrete contracts** — the shapes of APIs, data models, and service boundaries that won't change mid-implementation
 - **Resolved decisions** — architecture choices, trade-offs, and constraints made explicit, not left for the AI to guess
 
-With these three things in place, a builder agent can implement tasks without stopping to ask clarifying questions. The plan is unambiguous enough that there's only one valid interpretation.
+With these three things in place, `/chief-build` can implement tickets without stopping to ask clarifying questions. The plan is unambiguous enough that there's only one valid interpretation.
 
 ## The grill session
 
@@ -36,8 +36,8 @@ Chief's grill skills (`/grill-design` and `/chief-grill`) exist specifically for
 
 ## What pre-coding doesn't solve
 
-Even with a perfect spec, an AI agent can build something that doesn't match it. Pre-coding reduces this probability significantly — but it doesn't eliminate it. Post-coding validation (verifying that the implementation satisfies the spec) is a separate problem. Chief v4 delegates this to `tester-agent` and human review. Systematic spec-compliance verification is a known gap, not a solved one.
+Even with a perfect spec, an AI agent can build something that doesn't match it. Pre-coding reduces this probability significantly — but it doesn't eliminate it. Post-coding validation (verifying that the implementation satisfies the spec) is a separate problem. Chief delegates this to `/chief-test` and human review. Systematic spec-compliance verification is a known gap, not a solved one.
 
 ---
 
-See also: [Why Chief exists](why-chief.md), [The three-agent model](three-agent-model.md), [How to stress-test a design](../how-to/stress-test-a-design.md)
+See also: [Why Chief exists](why-chief.md), [The separation of concerns](three-agent-model.md), [How to stress-test a design](../how-to/stress-test-a-design.md)

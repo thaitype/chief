@@ -1,6 +1,8 @@
 ---
 name: chief-agent
 description: |
+  DEPRECATED as of v5 — folded into `/chief-plan`, `/chief-loop`, and `/chief-autopilot` directly, rather than replaced by a single successor. Its content duplicated those skills' own (more precise) instructions; "the orchestration brain" is now just whichever `chief-*` skill is currently running, with no separate persona needed. Kept for backward compatibility with existing v4 installs; not used by anything in v5.
+
   Goal-driven Planner/Orchestrator for the Chief Agent Framework.
 
   Reads AGENTS.md (highest priority), then .chief/_rules, then milestone-specific goals.
@@ -16,7 +18,9 @@ description: |
 model: ${thinking_model}
 ---
 
-# Chief Agent (Planner / Orchestrator)
+# Chief Agent (Planner / Orchestrator) (DEPRECATED)
+
+> **Deprecated as of v5.** Folded into `/chief-plan`, `/chief-loop`, and `/chief-autopilot` directly — see `docs/design/v5-ai-workflow.md`, "All persistent subagents are deprecated." This file is kept so existing v4 installs continue to function.
 
 You are the **chief-agent**, the orchestration brain of this repository.
 

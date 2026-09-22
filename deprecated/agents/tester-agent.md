@@ -1,6 +1,8 @@
 ---
 name: tester-agent
 description: |
+  DEPRECATED as of v5 — replaced by the `/chief-test` skill, same scope boundary (long-running/integration/UI/API validation only, never unit tests or code changes), same explicit-request-only trigger. Kept for backward compatibility with existing v4 installs; not used by anything in v5.
+
   Long-running verification agent responsible for non-deterministic, integration,
   API, UI, and external acceptance testing.
 
@@ -15,7 +17,9 @@ description: |
 model: ${coding_model}
 ---
 
-# Tester Agent (Long-Running Verifier)
+# Tester Agent (Long-Running Verifier) (DEPRECATED)
+
+> **Deprecated as of v5.** Replaced by the `/chief-test` skill — see `docs/design/v5-ai-workflow.md`. This file is kept so existing v4 installs continue to function.
 
 You are the **tester-agent**.
 

@@ -12,7 +12,7 @@ Chief has multiple skills that serve different purposes. Use this guide to find 
 /chief-plan
 ```
 
-You know what you want. The skill grills you briefly, writes goals and contracts, and breaks the work into tasks. When ready, run `/chief-autopilot` to execute.
+You know what you want. The skill grills you briefly, writes the goal and contract, and breaks the work into tickets. When ready, run `/chief-autopilot` to execute.
 
 ### Medium — need to clarify before planning
 
@@ -36,9 +36,9 @@ You have a problem or vision but haven't turned it into concrete requirements. `
 
 | You want to… | Use |
 |---|---|
-| Plan a milestone step by step | `/chief-plan` |
-| Run a milestone hands-off | `/chief-autopilot` |
-| Run a full milestone across many batches, one report per task | `/chief-loop` |
+| Plan a story step by step | `/chief-plan` |
+| Run a story hands-off | `/chief-autopilot` |
+| Run a full story across as many rounds as it takes, one report per ticket | `/chief-loop` |
 | Stress-test a design before building | `/chief-grill` or `/grill-design` |
 | Turn a vague idea into a spec | `/shape-up` |
 | Cut a goal down to a manageable phase | `/slim-down` |
@@ -46,7 +46,7 @@ You have a problem or vision but haven't turned it into concrete requirements. `
 | Actually run a plan's existing gates/tests before trusting them | `/loop-preflight` |
 | Permanently capture a decision as a rule | `/chief-rule` |
 | Bootstrap project context once | `/chief-init` |
-| Review a milestone after it ships | `/chief-retro` |
+| Review a story after it ships | `/chief-retro` |
 | Make a quick commit | `/dump-commit` |
 
 ---
@@ -58,7 +58,7 @@ Both stress-test ideas. The difference is persistence and verification depth.
 | | `/grill-design` | `/chief-grill` |
 |---|---|---|
 | Session saved to file? | No — context only | Yes — `.chief/_grill/opened/` |
-| Verifies answers against codebase? | No | Yes — spawns `answer-verifier-agent` per question |
+| Verifies answers against codebase? | No | Yes — spawns a throwaway verifier subagent per question |
 | Token cost | Normal | ~2× (two agents running) |
 | Best for | Quick design exploration | High-stakes decisions, sessions you might resume |
 
@@ -80,7 +80,7 @@ You can combine: plan carefully with `/chief-plan`, then execute with `/chief-au
 
 ## Choosing between `/chief-autopilot` and `/chief-loop`
 
-`/chief-loop` builds directly on `/chief-autopilot`'s auto mode — same no-stopping-for-ambiguity behavior, but it spans as many batches as it takes to finish the milestone (not just one), and writes a report per task instead of one per batch. Use `/loop-readiness` first if the milestone is large or touches anything you'd want a real-environment check on before letting it run unattended for that long — and if it finds pre-existing gates the milestone depends on, follow up with `/loop-preflight` to actually confirm those still pass before starting `/chief-loop`.
+`/chief-loop` builds directly on `/chief-autopilot`'s auto mode — same no-stopping-for-ambiguity behavior, but it spans as many rounds as it takes to finish the story (not just one), and writes a report per ticket instead of one per batch. Use `/loop-readiness` first if the story is large or touches anything you'd want a real-environment check on before letting it run unattended for that long — and if it finds pre-existing gates the story depends on, follow up with `/loop-preflight` to actually confirm those still pass before starting `/chief-loop`.
 
 If you want the "stop and ask a human on ambiguity" behavior, use `/chief-autopilot safe` instead — `/chief-loop` has no safe-mode equivalent.
 

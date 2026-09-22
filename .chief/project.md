@@ -2,7 +2,8 @@
 
 ## Overview
 
-This project **is** the Chief Agent Framework. The root-level `.agents/`, `.chief/`, and `AGENTS.md` are dogfooded — this project uses its own framework on itself.
+This project **is** the Chief framework. The root-level `AGENTS.md` and `.chief/` are
+dogfooded — this project uses its own framework on itself.
 
 ## Architecture
 
@@ -10,45 +11,36 @@ This project **is** the Chief Agent Framework. The root-level `.agents/`, `.chie
 
 ```
 project/
-├── AGENTS.md              # Framework rules (dogfooded)
+├── AGENTS.md              # This repo's own rules (dogfooded, hand-maintained)
 ├── CLAUDE.md → AGENTS.md  # Symlink for Claude Code
-├── .agents/               # Dogfooded agent definitions (no placeholders)
-├── .chief/                # Dogfooded planning state
-├── template/              # Installable package — what setup copies into user projects
-│   ├── .agents/           # Agent definitions with ${thinking_model}/${coding_model} placeholders
-│   │   ├── agents/        # chief-agent, builder-agent, tester-agent, review-plan-agent
-│   │   └── skills/        # grill-me, chief-plan, chief-autopilot, chief-retro, dump-commit
-│   ├── .chief/            # Blank project scaffold (empty project.md, _rules/, etc.)
-│   └── AGENTS.md          # Framework rules file
-├── scripts/
-│   ├── setup.sh           # First-time installation script
-│   └── upgrade.sh         # Framework upgrade script
-├── skills/                # Skills not shipped in template (chief-install, chief-upgrade)
+├── .chief/                # Dogfooded planning state (this file lives here)
+├── skills/                # chief-* skills (chief, engineering, misc, setup buckets)
 └── docs/                  # Additional documentation
 ```
 
+There is no `template/` directory. v5 has no `.agents/agents/` subagent roster anymore —
+`/chief-build` and `/chief-test` are skills under `skills/chief/`, not agent files. There's no
+install/upgrade skill either, and no `scripts/` directory — Chief writes nothing to
+`AGENTS.md` for any project, including this one; root `AGENTS.md` here is just this repo's own
+hand-maintained file, same as any consuming project's would be if they chose to have one.
+
 ### Key Distinction
 
-- `template/` = the package that gets installed into other projects
-- Root-level files = this project eating its own dogfood
+Nothing to distinguish anymore — there's no separate installable package vs. dogfood split.
+Everything under `skills/` is both what this repo runs on itself and what ships to consumers.
 
 ## Setup Concept
 
-Installation into a user project follows these steps (regardless of script or manual):
+There isn't one. Getting Chief's skills into a project (`npx skills add thaitype/chief` or
+copying `skills/**/SKILL.md` files by hand) is the only step — every `chief-*` slash command
+works immediately, nothing else needs to exist first.
 
-1. Copy `template/.agents/` → target `.agents/`
-2. Copy `template/.chief/` → target `.chief/`
-3. Copy `template/AGENTS.md` → target `AGENTS.md`
-4. Replace `${thinking_model}` and `${coding_model}` placeholders in `.agents/agents/*.md` with actual model names
-5. Create agent-specific integration files (symlinks or copies from `.agents/agents/` to `.claude/agents/`, `.github/agents/`, etc.)
-
-### Critical Rule
-
-Always modify the canonical `.agents/agents/` files first (step 4), then create symlinks or copies (step 5). Never run text replacement on symlinked files — `sed` on a symlink destroys it and replaces it with a regular file.
+`.chief/` is created lazily at runtime by whichever `chief-*` skill first needs it — never at
+"install" time, because there is no install time.
 
 ## Tech Stack
 
-- Shell (bash) for setup scripts
-- Markdown for all agent definitions, rules, and documentation
-- Symlinks for integration with coding agents
-- No runtime dependencies
+- Markdown for all skill definitions, rules, and documentation
+- Symlinks for Claude Code integration (`CLAUDE.md` → `AGENTS.md`), set up by hand, not by any
+  skill
+- No runtime dependencies, no shell scripts
