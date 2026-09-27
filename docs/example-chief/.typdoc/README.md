@@ -10,21 +10,20 @@ full rationale.
 ```
 .typdoc/
 ├── config.json               one namespace per story: story-1, story-2, ...
-├── collections/tickets.json  which files: _tickets/{key}.md
+├── collections/tickets.json  which files: _tickets/{key}.md, slug optional
 ├── schemas/ticket.json       the fields: type, status, blocked_by — code TK, matching
 │                              Chief's own default key prefix when it numbers a ticket itself
 └── state/story-1.json        the highest ticket number already issued in story-1
 ```
 
 Run `typdoc validate` from inside `docs/example-chief/` to see it type-check
-`story-1/_tickets/TK-1.md` — try `typdoc get TK-1 --json` too.
+`story-1/_tickets/TK-1-example-ticket.md` — try `typdoc get TK-1 --json` too.
 
-**Current limitation:** typdoc 0.3.1 rejects a wildcard alongside `{key}` in a collection's
-`match`, so a coded document's filename can only be its bare key (`TK-1.md`) — not Chief's own
-default `<key>-<slug>.md`. That's why this example's ticket has no slug in its filename, unlike
-what `/chief-plan` normally writes. Once typdoc supports a slug alongside the key, drop this
-note and the example ticket can go back to its slugged form — nothing else here needs to
-change.
+**Slugged filenames work as of typdoc 0.4.0** — a collection's `slug` setting (`optional` by
+default, which this one uses) allows `TK-1-example-ticket.md` to resolve as key `TK-1`, same as
+Chief's own default `<key>-<slug>.md`. `typdoc new TK "Title" --slug some-slug` names the file
+to match. On typdoc 0.3.x, only the bare key (`TK-1.md`, no slug) validated — if you're on that
+version, drop the slug from your own tickets' filenames until you upgrade.
 
 If you're adopting this over tickets that already exist (not a fresh project), hand-write
 `state/<namespace>.json` with the highest number already used before running `typdoc new` —

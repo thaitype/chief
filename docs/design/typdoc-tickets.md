@@ -114,31 +114,32 @@ correctly-configured typdoc project *can* type it.
 
 ## Filename convention
 
-typdoc's coded documents are named by key alone today (`WF-2.md`); a future typdoc release may
-add optional `<code>-<slug>` naming. This is cosmetic and orthogonal to everything above — chief
-never parses a slug out of a ticket's filename, only its key/ref, so nothing in this design
-depends on whether that typdoc feature exists yet. Whatever `typdoc new` returns as the file's
-name is the file's name; the fallback path writes `TK-<n>-<slug>.md` (using its own default
-code from **Numbering and keys** above), not the bare `<seq>-<slug>.md` it uses today — so a
-ticket's filename and its frontmatter key always agree, in both modes.
+typdoc's coded documents are named by their key, optionally followed by `-<slug>` (a
+collection's `slug` setting controls whether that's `optional`, `required`, or `none` — this is
+cosmetic and orthogonal to everything above: chief never parses a slug out of a ticket's
+filename, only its key/ref, so nothing in this design ever depended on it). Whatever `typdoc
+new` returns as the file's name is the file's name (pass `--slug <slug>` to get one); the
+fallback path writes `TK-<n>-<slug>.md` (using its own default code from **Numbering and keys**
+above), not the bare `<seq>-<slug>.md` it uses today — so a ticket's filename and its
+frontmatter key always agree, in both modes.
 
-**Confirmed against typdoc 0.3.1:** a collection's `match` cannot combine `{key}` with a
-wildcard (`_tickets/{key}*.md` is rejected — `config.match-template`), so a real typdoc project
-pointed at `_tickets/` can only type bare-key filenames (`TK-1.md`) today, not chief's own
-`<key>-<slug>.md`. This confirms the orthogonality claim above holds for chief's own logic
-(nothing here depends on the slug), but it means the reference `.typdoc/` project below can't
-validate a slugged ticket until that typdoc feature ships — see its own README for how that's
-handled meanwhile.
+**Confirmed against a real typdoc install, both versions:** on 0.3.1, a collection's `match`
+rejected combining `{key}` with a wildcard (`_tickets/{key}*.md` was `config.match-template`),
+so only bare-key filenames (`TK-1.md`) validated. On 0.4.0, the same collection file validates
+`TK-1-example-ticket.md` unchanged — the default `slug: optional` covers both forms, no config
+edit needed. This round-trip is itself evidence the orthogonality claim held: chief's own logic
+never referenced a slug either way, only the *reference template's* validity moved.
 
 ## Reference typdoc project
 
 `docs/example-chief/.typdoc/` is a working, ready-to-copy typdoc project (config, collection,
-schema) typing `docs/example-chief/story-1/_tickets/`. Chief doesn't provision this for anyone
-(see **Out of scope** below) — it's a template a user copies into their own storage root by
-hand, the same way `docs/example-chief/` itself already is. Its own README covers the
-bare-key-only limitation above and why the schema declares an otherwise-unused `title` field
-(`typdoc new`'s required title argument always writes one; declaring it avoids a spurious
-`frontmatter.unknown` warning on every ticket typdoc creates).
+schema) typing `docs/example-chief/story-1/_tickets/`, verified against a real typdoc 0.4.0
+install (`validate`, `get`, and `new --slug` all clean). Chief doesn't provision this for
+anyone (see **Out of scope** below) — it's a template a user copies into their own storage root
+by hand, the same way `docs/example-chief/` itself already is. Its own README covers why the
+schema declares an otherwise-unused `title` field (`typdoc new`'s required title argument
+always writes one; declaring it avoids a spurious `frontmatter.unknown` warning on every ticket
+typdoc creates) and the 0.3.x fallback for anyone not yet upgraded.
 
 ## Skills touched
 

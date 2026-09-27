@@ -1,0 +1,29 @@
+---
+type: implementation
+status: open
+blocked_by: []
+---
+
+# TK-1: Example ticket
+
+## What to build
+
+<the end-to-end behaviour this ticket makes work, from the user's perspective — a narrow but
+complete vertical slice through every layer the change touches>
+
+## Acceptance Criteria
+
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+<!--
+This is a placeholder showing the ticket file shape /chief-plan writes to
+.chief/story-N/_tickets/<key>-<slug>.md (no story-number prefix - the folder already scopes
+it). `TK-` is Chief's own default key prefix when it numbers a ticket itself; a typdoc project
+pointed at _tickets/ issues the key instead (see ../../.typdoc/, whose collection types this
+exact file, slug included, on typdoc 0.4.0+). A wayfinder decision-ticket looks the same but
+with type: wayfinder:research | wayfinder:prototype | wayfinder:grilling | wayfinder:task, a
+"## Question" section instead of "## What to build", and a "## Answer" section filled in on
+resolve. See docs/manual/reference/directory-structure.md, docs/design/v5-ai-workflow.md, and
+docs/design/typdoc-tickets.md.
+-->
