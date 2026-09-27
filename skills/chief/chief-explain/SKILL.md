@@ -126,6 +126,11 @@ reads them from frontmatter directly — none of this requires `typdoc` to be in
 ever makes ticket *creation* collision-safe when it's present and configured. See
 `docs/design/typdoc-tickets.md` for the full rationale.
 
+A ready-to-copy typdoc project (config, collection, schema for this exact shape) lives at
+`docs/example-chief/.typdoc/` — copy it into a project's storage root to get real typing over
+its `_tickets/`, no authoring from scratch required. This skill still doesn't provision it for
+anyone; it's a reference the user copies by hand, same as `docs/example-chief/` itself.
+
 ## The `chief-*` skill family
 
 No persistent subagent roster exists in v5. `/chief-build` and `/chief-test` are skills that

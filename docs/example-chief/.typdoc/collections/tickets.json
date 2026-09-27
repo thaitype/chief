@@ -1,0 +1,4 @@
+{
+  "match": "_tickets/{key}.md",
+  "schema": ".typdoc/schemas/ticket.json"
+}

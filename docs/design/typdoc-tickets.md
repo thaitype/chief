@@ -122,6 +122,24 @@ name is the file's name; the fallback path writes `TK-<n>-<slug>.md` (using its 
 code from **Numbering and keys** above), not the bare `<seq>-<slug>.md` it uses today — so a
 ticket's filename and its frontmatter key always agree, in both modes.
 
+**Confirmed against typdoc 0.3.1:** a collection's `match` cannot combine `{key}` with a
+wildcard (`_tickets/{key}*.md` is rejected — `config.match-template`), so a real typdoc project
+pointed at `_tickets/` can only type bare-key filenames (`TK-1.md`) today, not chief's own
+`<key>-<slug>.md`. This confirms the orthogonality claim above holds for chief's own logic
+(nothing here depends on the slug), but it means the reference `.typdoc/` project below can't
+validate a slugged ticket until that typdoc feature ships — see its own README for how that's
+handled meanwhile.
+
+## Reference typdoc project
+
+`docs/example-chief/.typdoc/` is a working, ready-to-copy typdoc project (config, collection,
+schema) typing `docs/example-chief/story-1/_tickets/`. Chief doesn't provision this for anyone
+(see **Out of scope** below) — it's a template a user copies into their own storage root by
+hand, the same way `docs/example-chief/` itself already is. Its own README covers the
+bare-key-only limitation above and why the schema declares an otherwise-unused `title` field
+(`typdoc new`'s required title argument always writes one; declaring it avoids a spurious
+`frontmatter.unknown` warning on every ticket typdoc creates).
+
 ## Skills touched
 
 Every skill that reads or writes a ticket's `Type:`/`Status:`/`Blocked by:` fields moves from
@@ -141,7 +159,9 @@ numbering step where it creates tickets:
 ## Out of scope for this pass
 
 - Any `_goal:`/`_contract:`/`_report:` typing (see Scope).
-- typdoc project setup, schema/collection authoring, or a `chief-init`-style step that offers to
-  scaffold one — chief supports the format; it does not provision the tool.
+- Automating typdoc project setup, or a `chief-init`-style step that offers to scaffold one for
+  a user — chief supports the format; it does not provision the tool. A copyable reference
+  project is still shipped (see **Reference typdoc project** above) — that's a template the user
+  applies by hand, not chief configuring anything on its own.
 - Cross-bucket refs (a ticket referencing a specific contract field as a typed ref) — closed off
   by the tickets-only scope above; revisit only if that need becomes concrete.
