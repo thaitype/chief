@@ -66,23 +66,25 @@ For the confirmed milestone(s), work out the mapping before writing anything:
   unless the migrated contract content is small enough to fold it into one of the copied files
   instead.
 - `_plan/_todo.md` items (and the matching `_plan/task-N.md` file, if one exists for that item)
-  → one ticket file per item in `story-N/_tickets/`:
-  - `Type: implementation`
-  - `Status: resolved` if the todo item was checked `[x]`, else `open`
-  - `Blocked by: None` — **do not invent blocking edges** from the todo list's order. A flat
+  → one ticket file per item in `story-N/_tickets/`, fields in frontmatter (see `chief-explain`'s
+  **Ticket format**):
+  - `type: implementation`
+  - `status: resolved` if the todo item was checked `[x]`, else `open`
+  - `blocked_by: []` — **do not invent blocking edges** from the todo list's order. A flat
     checklist's order is usually priority, not a dependency graph; guessing wrong is worse than
     not guessing. Tell the user in the summary that blocking edges were not inferred and should
     be reviewed manually (e.g. via `/chief-plan` Phase 3) if this story still has open tickets.
-  - `Migrated-from: _plan/_todo.md <original item text>` (or `_plan/task-<n>.md` if that file
+  - `migrated_from: "_plan/_todo.md <original item text>"` (or `_plan/task-<n>.md` if that file
     existed) — a field unique to migrated tickets, so they stay greppable and distinguishable
     from tickets `/chief-plan` writes natively.
   - Body: `## What to build` from the task spec's Objective/Steps if a `task-N.md` existed,
     otherwise from the todo item's own text. `## Acceptance Criteria` copied from the task
     spec's Acceptance Criteria section if present, otherwise a single unchecked placeholder
     criterion noting it needs to be filled in.
-  - Ticket IDs are a plain per-story sequence (`1`, `2`, `3`...), continuing from any tickets
-    that already exist in the target `story-N/_tickets/` (there shouldn't be any yet for a
-    fresh migration, but check).
+  - Ticket keys follow the same numbering procedure as `/chief-plan` and `/chief-wayfinder`: try
+    `typdoc new` first, else key it `TK-<n>` yourself, continuing from any tickets that already
+    exist in the target `story-N/_tickets/` (there shouldn't be any yet for a fresh migration,
+    but check).
 - `_report/*` → `story-N/_report/*`, copied as-is (these are just historical notes; no shape
   change needed).
 
@@ -112,12 +114,12 @@ as its own separate question:
 ## Rules
 
 - NEVER migrate a closed milestone — check the retro/todo-completion signal first, every time.
-- NEVER invent blocking edges between migrated tickets. `Blocked by: None` plus a note that
+- NEVER invent blocking edges between migrated tickets. `blocked_by: []` plus a note that
   edges need manual review is the honest output; a wrong guess is worse than an admitted gap.
 - NEVER delete `.chief/milestone-N/` without an explicit, separate confirmation *after* the
   migration is already written and shown — never as part of the same approval as the migration
   itself.
-- ALWAYS tag migrated tickets with `Migrated-from:` — never make a migrated ticket
+- ALWAYS tag migrated tickets with `migrated_from:` — never make a migrated ticket
   indistinguishable from one `/chief-plan` wrote natively.
 - This skill does not touch `AGENTS.md` or anything `.agents/`-related. If a pre-v5
   `.agents/agents/` roster is still sitting in the project, it's inert dead weight, not

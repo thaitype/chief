@@ -49,7 +49,7 @@ starting on any ticket>
 
 <!-- index: one line per resolved ticket, enough to judge relevance, zoom the link for detail -->
 
-- [<ticket title>](../_tickets/<id>-<slug>.md): <one-line gist of the answer>
+- [<ticket title>](../_tickets/<key>-<slug>.md): <one-line gist of the answer>
 
 ## Not yet specified
 
@@ -69,14 +69,17 @@ holds the detail — a decision lives in exactly one place, its ticket.
 
 Decision-tickets live in the **same** `.chief/story-N/_tickets/` folder as `/chief-plan`'s
 implementation tickets — one shared numbering sequence, one shared file shape, distinguished by
-the `Type:` field:
+the `type` field. Fields live in frontmatter; see `chief-explain`'s **Ticket format** for the
+full shape and how a ticket's key is issued:
 
 ```markdown
-# 3: <the question>
+---
+type: wayfinder:research | wayfinder:prototype | wayfinder:grilling | wayfinder:task
+status: open | claimed | resolved
+blocked_by: [TK-1]  (empty, [], if nothing blocks it)
+---
 
-Type: wayfinder:research | wayfinder:prototype | wayfinder:grilling | wayfinder:task
-Status: open | claimed | resolved
-Blocked by: 1  (or "None (can start immediately)")
+# TK-3: <the question>
 
 ## Question
 
@@ -87,9 +90,9 @@ Blocked by: 1  (or "None (can start immediately)")
 <filled in on resolve>
 ```
 
-A session **claims** a ticket by setting `Status: claimed` **before** any work, so concurrent
-sessions skip it. **Frontier** = tickets with `Type: wayfinder:*`, `Status: open`, and every
-blocker `resolved`.
+A session **claims** a ticket by setting `status: claimed` **before** any work, so concurrent
+sessions skip it. **Frontier** = tickets whose `type` starts with `wayfinder:`, `status: open`,
+and every blocker `resolved`.
 
 ### Ticket types
 
@@ -149,8 +152,9 @@ Never resolve more than one ticket per session, except research tickets.
    session), say so and hand off to `/chief-plan` directly — you don't need a map for this.
 3. **Create `.chief/story-N/_map.md`**: Destination and Notes filled in, Decisions so far empty,
    fog sketched into Not yet specified.
-4. **Create the tickets you can specify now**, then wire `Blocked by` edges in a second pass
-   (numbers need to exist before they can reference each other).
+4. **Create the tickets you can specify now** (numbering per `chief-explain`'s **Ticket
+   format**: try `typdoc new`, else key it `TK-<n>` yourself), then wire `blocked_by` edges in a
+   second pass — keys need to exist before they can reference each other.
 5. **Fire `wayfinder:research` tickets in parallel**: for each, spin up a subagent that calls
    the Skill tool with `research`.
 6. Stop — charting is one session's work, it hand-resolves nothing.
@@ -161,7 +165,7 @@ Never resolve more than one ticket per session, except research tickets.
 2. Pick the ticket: if the human named one, use it; otherwise take the first frontier ticket.
    **Claim it** before any work.
 3. Resolve it per its type (see above). Zoom into any related/closed ticket body on demand.
-4. Record: append the answer under `## Answer`, set `Status: resolved`, append a context
+4. Record: append the answer under `## Answer`, set `status: resolved`, append a context
    pointer to the map's Decisions so far.
 5. Add newly-surfaced tickets (create, then wire blocking); graduate any fog the answer made
    specifiable, clearing it from Not yet specified. If the answer reveals a ticket sits beyond

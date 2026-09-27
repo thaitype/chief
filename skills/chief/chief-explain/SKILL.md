@@ -82,6 +82,50 @@ file in `_goal/`/`_contract/`, never assumes one specific name holds everything.
 first thing that needs it runs. Don't expect `_rules/` subfolders, `story-N/`, or anything else
 to exist ahead of time; check, don't assume.
 
+## Ticket format
+
+A ticket's `type`, `status`, and `blocked_by` fields live in YAML frontmatter, not the body:
+
+```markdown
+---
+type: implementation
+status: open
+blocked_by: []
+---
+
+# TK-3: <title>
+...
+```
+
+- **`type`** — `implementation` (written by `chief-plan`) or `wayfinder:research` /
+  `wayfinder:prototype` / `wayfinder:grilling` / `wayfinder:task` (decision-tickets, written by
+  `chief-wayfinder`). One shared field, one shared `_tickets/` folder, one shared numbering
+  sequence for both kinds.
+- **`status`** — `open` → `claimed` → `resolved`.
+- **`blocked_by`** — a list of the other tickets' keys that must resolve first (`[TK-1, TK-2]`),
+  empty (`[]`) when nothing blocks it. Always a key, never a bare number — see Numbering below;
+  typdoc (if used) resolves refs by key, and there's no such thing as a codeless key in its
+  model.
+
+**Numbering:** whichever skill is creating a ticket (`chief-plan` Phase 3, `chief-wayfinder`,
+`chief-migrate`) tries `typdoc new` first:
+
+- **Exit 0** — use the key it returns, verbatim, whatever code that project's typdoc schema
+  defines for its tickets collection. Chief never checks where that schema or its `.typdoc/`
+  config lives, never creates one, and never picks the code itself — that's entirely on whoever
+  set up the typdoc project, if anyone did.
+- **Any other exit** (no `typdoc` binary, no typdoc project found, or anything else) — number it
+  itself instead, keyed `TK-<n>` continuing the story's existing sequence. `TK` is Chief's own
+  default label for this path only, not a code it mandates anywhere else — a ticket numbered
+  this way needs no renumbering later if a typdoc project gets set up over the same story
+  afterward.
+
+A ticket's filename matches its key: `TK-<n>-<slug>.md` when self-numbered, or whatever
+`typdoc new` names the file when delegated. Every `chief-*` skill that reads a ticket's fields
+reads them from frontmatter directly — none of this requires `typdoc` to be installed; it only
+ever makes ticket *creation* collision-safe when it's present and configured. See
+`docs/design/typdoc-tickets.md` for the full rationale.
+
 ## The `chief-*` skill family
 
 No persistent subagent roster exists in v5. `/chief-build` and `/chief-test` are skills that

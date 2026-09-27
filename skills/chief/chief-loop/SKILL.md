@@ -85,10 +85,10 @@ requirements; proceed without them if the user declines.
 
 ### 1. Compute the frontier
 
-Scan `.chief/story-N/_tickets/` for tickets with `Type: implementation`, `Status: open`, and
-every `Blocked by` entry already `resolved`. That's the frontier — the tickets takeable right
-now. If the frontier is empty but tickets remain (all blocked, or all claimed), stop and report
-why rather than looping uselessly.
+Scan `.chief/story-N/_tickets/` frontmatter for tickets with `type: implementation`,
+`status: open`, and every `blocked_by` key already `status: resolved`. That's the frontier — the
+tickets takeable right now. If the frontier is empty but tickets remain (all blocked, or all
+claimed), stop and report why rather than looping uselessly.
 
 If no tickets exist at all yet, run `/chief-plan` Phase 3 yourself to create the first batch — do
 NOT wait for its approval gate on this, same override `chief-autopilot` uses; this skill only has
@@ -103,7 +103,7 @@ How, depends on the concurrency resolved at Entry Confirmation.
 
 For each ticket in the frontier, in order:
 
-1. Set its `Status: claimed`.
+1. Set its frontmatter `status: claimed`.
 2. Invoke `/chief-build <ticket-id>` **in the mode resolved at Entry Confirmation** (standard or
    strict), spawned as its own subagent so this ticket gets isolated context (don't run the
    build inline in this session — that accumulates every ticket's exploration noise into one
@@ -112,7 +112,7 @@ For each ticket in the frontier, in order:
 3. Wait for `/chief-build` to complete.
 4. If it reports a blocker or ambiguity (its escalation format), see **Handling Ambiguity**
    below before moving on.
-5. Set the ticket's `Status: resolved`.
+5. Set the ticket's frontmatter `status: resolved`.
 6. Recompute the frontier — resolving this ticket may have unblocked others.
 7. Write this ticket's report (see **Ticket Report** below) immediately, before starting the
    next one. Don't batch report-writing up to the end.
@@ -126,7 +126,7 @@ never the main checkout.
 
 **Filling a pool slot**, for the next eligible ticket in the (recomputed) frontier:
 
-1. Set its `Status: claimed` in the main checkout.
+1. Set its frontmatter `status: claimed` in the main checkout.
 2. Create a git worktree for it, branched from the story branch's **current tip** at this exact
    moment (so it starts from whatever earlier parallel tickets have already merged back — this
    is what keeps conflicts rarer as a round progresses): `git worktree add <path> -b
@@ -145,7 +145,7 @@ never the main checkout.
    (fast-forward if the rebase was clean). If the rebase or merge itself hits a conflict, that's
    also handled by **Handling Ambiguity**.
 7. Remove the worktree and delete its temporary branch.
-8. Set the ticket's `Status: resolved` in the main checkout.
+8. Set the ticket's frontmatter `status: resolved` in the main checkout.
 9. Write this ticket's report (see **Ticket Report** below) immediately.
 10. Recompute the frontier — this merge may have unblocked others — and immediately pull the
     next eligible ticket into the now-free slot (step "Filling a pool slot" above). **Don't wait

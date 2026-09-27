@@ -153,7 +153,7 @@ reach for it on its own when it needs a structural fact, not only when you ask.
 
 Converts an in-progress v4 milestone into a v5 story. Only migrates open milestones (closed
 ones are left alone); converts `_todo.md` + task specs into tickets without inventing blocking
-edges (tagging each with `Migrated-from:` for traceability); asks before deleting the old
+edges (tagging each with `migrated_from:` for traceability); asks before deleting the old
 milestone directory, as its own separate confirmation after the migration is already written
 and reviewed. Entirely optional — a v4 story can also just finish out on a pinned v4 checkout.
 

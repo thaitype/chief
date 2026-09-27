@@ -43,20 +43,20 @@ If the user confirms → proceed.
 
 ### 1. Compute or extend the ticket frontier
 
-Scan `.chief/story-N/_tickets/` for `Type: implementation` tickets. If none exist yet, run
-`/chief-plan` Phase 3 to create the first batch (do NOT wait for approval on this — that's
-autopilot). If the frontier (open, unblocked) is empty but the goal/contract aren't yet
-satisfied, run Phase 3 again for the next batch.
+Scan `.chief/story-N/_tickets/` frontmatter for `type: implementation` tickets. If none exist
+yet, run `/chief-plan` Phase 3 to create the first batch (do NOT wait for approval on this —
+that's autopilot). If the frontier (`status: open`, unblocked) is empty but the goal/contract
+aren't yet satisfied, run Phase 3 again for the next batch.
 
 ### 2. Delegate to `/chief-build`
 
 For each ticket in the frontier:
-- Set `Status: claimed`.
+- Set frontmatter `status: claimed`.
 - Invoke `/chief-build <ticket-id>` **in standard mode** (no mandatory TDD or `/chief-review-code`
   per ticket; this skill has no argument to change it), spawned as its own subagent (isolated
   context per ticket — don't run it inline).
 - Wait for completion.
-- Set `Status: resolved` when done.
+- Set frontmatter `status: resolved` when done.
 
 ### 3. Handle blockers and ambiguity
 
