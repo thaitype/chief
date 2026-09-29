@@ -149,10 +149,9 @@ Write vertical-slice tickets into `.chief/story-N/_tickets/`, replacing what use
   if none) — the other tickets that must resolve before it can start.
 - File: `.chief/story-N/_tickets/<key>-<slug>.md`, frontmatter `type: implementation`,
   `status: open`. Numbering continues from any existing tickets in the same story (including
-  `wayfinder:*` decision-tickets from Phase 0 — one shared sequence, not restarted per type):
-  try `typdoc new` first, else key it `TK-<n>` yourself — see `chief-explain`'s **Ticket
-  format** for the full procedure and field shape. No story-number prefix: the folder already
-  scopes it to this story.
+  `wayfinder:*` decision-tickets from Phase 0 — one shared sequence, not restarted per type) —
+  see `chief-explain`'s **Ticket format** for the field shape and its typdoc section for
+  creating it. No story-number prefix: the folder already scopes it to this story.
 - **Wide refactors are the exception to vertical slicing.** A wide refactor (rename a column,
   retype a shared symbol) has a blast radius that fans across the whole codebase — no vertical
   slice can land green. Sequence it as **expand → migrate (batched by blast radius, each batch

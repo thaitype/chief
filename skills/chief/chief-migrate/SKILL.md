@@ -81,10 +81,9 @@ For the confirmed milestone(s), work out the mapping before writing anything:
     otherwise from the todo item's own text. `## Acceptance Criteria` copied from the task
     spec's Acceptance Criteria section if present, otherwise a single unchecked placeholder
     criterion noting it needs to be filled in.
-  - Ticket keys follow the same numbering procedure as `/chief-plan` and `/chief-wayfinder`: try
-    `typdoc new` first, else key it `TK-<n>` yourself, continuing from any tickets that already
-    exist in the target `story-N/_tickets/` (there shouldn't be any yet for a fresh migration,
-    but check).
+  - Ticket keys follow the same numbering as `/chief-plan` and `/chief-wayfinder` (see
+    `chief-explain`'s typdoc section), continuing from any tickets that already exist in the
+    target `story-N/_tickets/` (there shouldn't be any yet for a fresh migration, but check).
 - `_report/*` → `story-N/_report/*`, copied as-is (these are just historical notes; no shape
   change needed).
 

@@ -152,9 +152,9 @@ Never resolve more than one ticket per session, except research tickets.
    session), say so and hand off to `/chief-plan` directly — you don't need a map for this.
 3. **Create `.chief/story-N/_map.md`**: Destination and Notes filled in, Decisions so far empty,
    fog sketched into Not yet specified.
-4. **Create the tickets you can specify now** (numbering per `chief-explain`'s **Ticket
-   format**: try `typdoc new`, else key it `TK-<n>` yourself), then wire `blocked_by` edges in a
-   second pass — keys need to exist before they can reference each other.
+4. **Create the tickets you can specify now** (see `chief-explain`'s typdoc section for
+   creating one), then wire `blocked_by` edges in a second pass — keys need to exist before they
+   can reference each other.
 5. **Fire `wayfinder:research` tickets in parallel**: for each, spin up a subagent that calls
    the Skill tool with `research`.
 6. Stop — charting is one session's work, it hand-resolves nothing.

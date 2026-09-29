@@ -103,33 +103,37 @@ blocked_by: []
   sequence for both kinds.
 - **`status`** — `open` → `claimed` → `resolved`.
 - **`blocked_by`** — a list of the other tickets' keys that must resolve first (`[TK-1, TK-2]`),
-  empty (`[]`) when nothing blocks it. Always a key, never a bare number — see Numbering below;
+  empty (`[]`) when nothing blocks it. Always a key, never a bare number — see typdoc below;
   typdoc (if used) resolves refs by key, and there's no such thing as a codeless key in its
   model.
 
-**Numbering:** whichever skill is creating a ticket (`chief-plan` Phase 3, `chief-wayfinder`,
-`chief-migrate`) tries `typdoc new` first:
+**typdoc (optional).** If a working [typdoc](https://github.com/thaitype/typdoc) project is set
+up over `_tickets/`, any `chief-*` skill creating, reading, or updating a ticket can use it
+instead of working the files directly — collision-safe numbering on create, real queries on
+read, schema-checked writes on update. Nothing here requires it: work the files directly
+whenever it isn't set up, and treat any snag while using it (wrong code guessed, a missing
+field, whatever) as an ordinary problem to work out, not a hard rule to follow — check what an
+existing ticket's key already looks like, or ask typdoc itself, and retry.
 
-- **Exit 0** — use the key it returns, verbatim, whatever code that project's typdoc schema
-  defines for its tickets collection. Chief never checks where that schema or its `.typdoc/`
-  config lives, never creates one, and never picks the code itself — that's entirely on whoever
-  set up the typdoc project, if anyone did.
-- **Any other exit** (no `typdoc` binary, no typdoc project found, or anything else) — number it
-  itself instead, keyed `TK-<n>` continuing the story's existing sequence. `TK` is Chief's own
-  default label for this path only, not a code it mandates anywhere else — a ticket numbered
-  this way needs no renumbering later if a typdoc project gets set up over the same story
-  afterward.
+Roughly, per action (full syntax lives in the `typdoc` skill, not here):
 
-A ticket's filename matches its key: `TK-<n>-<slug>.md` when self-numbered, or whatever
-`typdoc new` names the file when delegated. Every `chief-*` skill that reads a ticket's fields
-reads them from frontmatter directly — none of this requires `typdoc` to be installed; it only
-ever makes ticket *creation* collision-safe when it's present and configured. See
-`docs/design/typdoc-tickets.md` for the full rationale.
+- **Create** — `typdoc new <code> "<title>" --namespace <story-N> --set type=<type>` (`--slug`
+  too, to match the filename a self-numbered ticket would get).
+- **Read the frontier** — `typdoc list --collection tickets --where status=open --where
+  'ref.all(blocked_by).status=resolved'`.
+- **Update status** — `typdoc set <key> status=claimed` (or `resolved`).
+- **Check the project** — `typdoc validate`, worth running after creating or updating a ticket.
 
-A ready-to-copy typdoc project (config, collection, schema for this exact shape) lives at
-`docs/example-chief/.typdoc/` — copy it into a project's storage root to get real typing over
-its `_tickets/`, no authoring from scratch required. This skill still doesn't provision it for
-anyone; it's a reference the user copies by hand, same as `docs/example-chief/` itself.
+There's no fixed code — `TK` is only Chief's own default when it numbers a ticket itself with no
+typdoc involved (filename `TK-<n>-<slug>.md`). A story with existing tickets already shows its
+real code in their filenames; a typdoc project states its own in the schema (`typdoc get <key>
+--json` includes it).
+
+A ready-to-copy typdoc project (config, collection, schema for this exact shape, code `TK`)
+lives at `docs/example-chief/.typdoc/` — copy it into a project's storage root to get real
+typing over its `_tickets/`, no authoring from scratch required. This skill still doesn't
+provision it for anyone; it's a reference the user copies by hand, same as
+`docs/example-chief/` itself.
 
 ## The `chief-*` skill family
 

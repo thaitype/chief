@@ -43,10 +43,11 @@ If the user confirms → proceed.
 
 ### 1. Compute or extend the ticket frontier
 
-Scan `.chief/story-N/_tickets/` frontmatter for `type: implementation` tickets. If none exist
-yet, run `/chief-plan` Phase 3 to create the first batch (do NOT wait for approval on this —
-that's autopilot). If the frontier (`status: open`, unblocked) is empty but the goal/contract
-aren't yet satisfied, run Phase 3 again for the next batch.
+Scan `.chief/story-N/_tickets/` frontmatter for `type: implementation` tickets (or query with
+typdoc, if set up — see `chief-explain`'s typdoc section). If none exist yet, run `/chief-plan`
+Phase 3 to create the first batch (do NOT wait for approval on this — that's autopilot). If the
+frontier (`status: open`, unblocked) is empty but the goal/contract aren't yet satisfied, run
+Phase 3 again for the next batch.
 
 ### 2. Delegate to `/chief-build`
 

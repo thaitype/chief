@@ -86,7 +86,8 @@ requirements; proceed without them if the user declines.
 ### 1. Compute the frontier
 
 Scan `.chief/story-N/_tickets/` frontmatter for tickets with `type: implementation`,
-`status: open`, and every `blocked_by` key already `status: resolved`. That's the frontier — the
+`status: open`, and every `blocked_by` key already `status: resolved` (or query for the same
+thing with typdoc, if set up — see `chief-explain`'s typdoc section). That's the frontier — the
 tickets takeable right now. If the frontier is empty but tickets remain (all blocked, or all
 claimed), stop and report why rather than looping uselessly.
 

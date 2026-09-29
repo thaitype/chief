@@ -1,6 +1,8 @@
 # Chief v5 — Optional typdoc Ticket Format
 
-**Status:** Design — not yet implemented. Written from a grill-design session.
+**Status:** Implemented on this branch (PR #31), revised once already after real-world adoption
+feedback from `thaitype/typdoc` itself. Written from a grill-design session, revised through a
+second one after that feedback.
 
 **Branch:** `design/typdoc-tickets` (branched from `release/v5`)
 
@@ -87,23 +89,42 @@ free-form prose, unchanged:
   (`status=open` and every blocker `resolved`) — the one place typdoc's query model earns its
   place.
 
-## Numbering and keys
+## Numbering, reading, and updating — revised after real adoption
 
-`chief-plan` and `chief-wayfinder` currently compute the next ticket number themselves by
-reading what's already in `_tickets/`. Going forward:
+The first cut of this section specified an exact `typdoc new <namespace> "<title>"` call and a
+strict exit-code branch (0 = use the key, anything else = fall back to `TK-<n>`), duplicated
+into `chief-plan`, `chief-wayfinder`, `chief-migrate`, and implied for `chief-loop` /
+`chief-autopilot` / `chief-retro`. Real adoption in `thaitype/typdoc` itself (Aria/Mina,
+2026-09-28, against typdoc 0.5.0) found this specified command wrong (the first argument is the
+schema **code**, not the namespace) and, more importantly, under-specified: getting exit 0 at
+all needed `TYPDOC_DIR`/cwd control, `--namespace`, and `--set type=`, none of which the skills
+mentioned — so `typdoc new` never exited 0 as written, and the silent fallback hid that every
+ticket was being self-numbered instead of delegated.
 
-1. Try `typdoc new <namespace> "<title>"` (or the equivalent path-based `typdoc new` form).
-2. **Exit 0** — use the key it returns, verbatim, whatever code that project's schema defines
-   (`WF-`, `TICKET-`, anything). This is the collision-safe path: typdoc's namespace lock means
-   two sessions (notably `chief-loop`'s parallel worktree mode) can't pick the same number.
-3. **Any other exit** (127 command not found, 5 no project found, or anything else) — fall back
-   to today's behavior of computing the next number itself, but key it as `TK-<n>` rather than a
-   bare number. `TK` here is chief's own default label for its self-managed numbering, not a
-   code it mandates anywhere else — it exists only so a ticket written before any typdoc project
-   existed already has a key-shaped ref (`TK-3`, not `3`), and needs no renumbering pass later if
-   a typdoc project is set up over the same tickets. Nothing forces a real typdoc schema to
-   actually use `TK` as its code; when typdoc is active, chief always uses the key that came
-   back from step 2, not this default.
+That revealed the deeper problem: exit-code detail belongs to typdoc's own docs, not duplicated
+here, and duplicating even a corrected version of it into every ticket-touching skill just
+recreates the same drift risk the moment typdoc's CLI changes again (it already has, twice,
+across 0.3 → 0.4 → 0.5 during this design's own lifetime).
+
+**Revised architecture:** typdoc knowledge lives in exactly one place, `chief-explain`'s typdoc
+section — not duplicated into any other skill. Every other `chief-*` skill that creates, reads,
+or updates a ticket does two things only: check whether typdoc is usable, and if so, follow
+`chief-explain`'s guidance instead of carrying its own copy of the mechanics. No skill outside
+`chief-explain` names a flag, an exit code, or a fixed schema code.
+
+**The policy is deliberately light, not a decision tree:** typdoc is optional. If it's there,
+use it for the operation at hand (create, read/query the frontier, update status, validate). If
+it isn't installed, do the operation directly on the files — that's the only condition that
+triggers silently working around it. If it's installed and a specific call hits a snag (wrong
+code guessed, a missing field), that's an ordinary problem to resolve with judgment — check an
+existing ticket's key, or ask typdoc itself what it expects, and retry — not a fixed rule to
+branch on by exit code.
+
+**No fixed code.** `TK` is Chief's own default only when it numbers a ticket itself with no
+typdoc involved at all; it was never meant to be assumed as the code of an actual typdoc
+project's schema, and earlier drafts of this doc didn't say clearly enough how to find the real
+one — a story's existing ticket filenames already show it, or `typdoc get`/`typdoc list` on an
+existing document reports its own `code`.
 
 Chief never checks *where* a typdoc project lives, never creates one, and never asserts an
 opinion about `.typdoc/config.json`'s location or the schema/collection definitions that make
@@ -119,9 +140,9 @@ collection's `slug` setting controls whether that's `optional`, `required`, or `
 cosmetic and orthogonal to everything above: chief never parses a slug out of a ticket's
 filename, only its key/ref, so nothing in this design ever depended on it). Whatever `typdoc
 new` returns as the file's name is the file's name (pass `--slug <slug>` to get one); the
-fallback path writes `TK-<n>-<slug>.md` (using its own default code from **Numbering and keys**
-above), not the bare `<seq>-<slug>.md` it uses today — so a ticket's filename and its
-frontmatter key always agree, in both modes.
+fallback path writes `TK-<n>-<slug>.md` (using its own default code from the section above), not
+the bare `<seq>-<slug>.md` it uses today — so a ticket's filename and its frontmatter key always
+agree, in both modes.
 
 **Confirmed against a real typdoc install, both versions:** on 0.3.1, a collection's `match`
 rejected combining `{key}` with a wildcard (`_tickets/{key}*.md` was `config.match-template`),
@@ -144,18 +165,21 @@ typdoc creates) and the 0.3.x fallback for anyone not yet upgraded.
 ## Skills touched
 
 Every skill that reads or writes a ticket's `Type:`/`Status:`/`Blocked by:` fields moves from
-string-matching the body to reading/writing frontmatter, and gains the try-typdoc-then-fallback
-numbering step where it creates tickets:
+string-matching the body to reading/writing frontmatter. Only `chief-explain` carries any
+typdoc mechanics; every other skill below gets a one-line pointer to it at the point it creates,
+reads, or updates a ticket, nothing more:
 
-- `chief-wayfinder` — creates decision-tickets, resolves them (`Status: open → claimed →
-  resolved`).
-- `chief-plan` — Phase 3, creates implementation tickets.
-- `chief-loop` / `chief-autopilot` — compute the frontier, claim and resolve tickets.
-- `chief-retro` — scans `_tickets/` for coverage.
-- `chief-migrate` — writes v5-shaped tickets from a v4 milestone's todo/task-spec; needs to
-  write the new frontmatter shape, not the old body-text one.
-- `chief-explain` — its directory-structure reference gains the frontmatter shape as the
-  documented ticket format.
+- `chief-wayfinder` — creates decision-tickets, resolves them (`status: open → claimed →
+  resolved`). Pointer at ticket creation.
+- `chief-plan` — Phase 3, creates implementation tickets. Pointer at ticket creation.
+- `chief-loop` / `chief-autopilot` — compute the frontier, claim and resolve tickets. Pointer at
+  frontier computation (the read side; `chief-explain` covers the update side too).
+- `chief-retro` — scans `_tickets/` for coverage. Pointer at the scan.
+- `chief-migrate` — writes v5-shaped tickets from a v4 milestone's todo/task-spec. Pointer at
+  ticket creation.
+- `chief-explain` — the single source of truth: the frontmatter shape, and the typdoc section
+  (optional, light policy, rough per-action examples, no exit codes, no fixed code) covered
+  above.
 
 ## Out of scope for this pass
 
