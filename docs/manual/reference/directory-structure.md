@@ -47,26 +47,32 @@ extra file is written. If you pick a different name, a `.chief.config.md` appear
     ├── _contract/
     │   └── contract.md      ← API shapes, data models, constraints + Testing Decisions
     ├── _tickets/
-    │   └── 1-<slug>.md      ← vertical-slice tickets, numbered per-story from 1
+    │   └── TK-1-<slug>.md   ← vertical-slice tickets, numbered per-story from 1
     └── _report/              ← ticket reports, retro output, investigations
 ```
 
-Ticket numbers are **not** prefixed with the story number — the story is already the folder
-they live in (`.chief/story-1/_tickets/`), so repeating it in the filename would be redundant.
-(This differs from a scheme this doc carried in an earlier draft; dropped once `.chief/backlog/`
-— the only reason a ticket would ever need to carry its story number outside that folder — was
-considered and rejected. See `docs/design/v5-ai-workflow.md`.)
+Ticket keys are **not** prefixed with the story number — the story is already the folder they
+live in (`.chief/story-1/_tickets/`), so repeating it in the filename would be redundant. (This
+differs from a scheme this doc carried in an earlier draft; dropped once `.chief/backlog/` — the
+only reason a ticket would ever need to carry its story number outside that folder — was
+considered and rejected. See `docs/design/v5-ai-workflow.md`.) `TK` is Chief's own default key
+prefix when it numbers a ticket itself; see `docs/design/typdoc-tickets.md` for when that
+differs — a [typdoc](https://github.com/thaitype/typdoc) project pointed at `_tickets/` issues
+the key instead, using whatever code its own schema defines.
+
+A ticket's `type`, `status`, and `blocked_by` fields live in its YAML frontmatter, not the body
+— see `chief-explain`'s **Ticket format** section for the exact shape.
 
 If `/chief-wayfinder` was used on this story (optional — offered as a choice at `/chief-plan`'s
 Phase 0, or invoked directly), a map file also appears, and its decision-tickets share the same
-`_tickets/` folder as the implementation tickets above, distinguished by a `Type:` field:
+`_tickets/` folder as the implementation tickets above, distinguished by a `type` field:
 
 ```
 .chief/story-1/
 ├── _map.md                  ← Destination / Notes / Decisions so far / Not yet specified / Out of scope
 └── _tickets/
-    ├── 1-<slug>.md            ← Type: wayfinder:grilling (decision-ticket)
-    └── 2-<slug>.md            ← Type: implementation
+    ├── TK-1-<slug>.md          ← type: wayfinder:grilling (decision-ticket)
+    └── TK-2-<slug>.md          ← type: implementation
 ```
 
 ---

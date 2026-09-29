@@ -3,7 +3,7 @@ name: chief-explain
 description: Self-contained structural reference for the Chief framework — directory layout, storage-location resolution, the chief-* skill family and what each owns, and the rules for writing `.chief/_rules/` files. For the agent's own understanding, not a human-facing tutorial. Model-invocable — reach for it whenever you need to know how Chief is shaped and don't already know.
 ---
 
-**Chief version:** `v5.0.0-alpha.0` — bumped by hand in this line whenever a new canary/release tag
+**Chief version:** `v5.canary-3` — bumped by hand in this line whenever a new canary/release tag
 is cut. This is the only version marker that reliably travels with an install (`npx skills add`
 only copies `skills/`, never `docs/` or git history) — read it here if you need to know which
 build of Chief is actually running, and treat it as informational only, not a correctness check
@@ -81,6 +81,59 @@ file in `_goal/`/`_contract/`, never assumes one specific name holds everything.
 `.chief/` (or the resolved storage root) is created **lazily** — nothing appears until the
 first thing that needs it runs. Don't expect `_rules/` subfolders, `story-N/`, or anything else
 to exist ahead of time; check, don't assume.
+
+## Ticket format
+
+A ticket's `type`, `status`, and `blocked_by` fields live in YAML frontmatter, not the body:
+
+```markdown
+---
+type: implementation
+status: open
+blocked_by: []
+---
+
+# TK-3: <title>
+...
+```
+
+- **`type`** — `implementation` (written by `chief-plan`) or `wayfinder:research` /
+  `wayfinder:prototype` / `wayfinder:grilling` / `wayfinder:task` (decision-tickets, written by
+  `chief-wayfinder`). One shared field, one shared `_tickets/` folder, one shared numbering
+  sequence for both kinds.
+- **`status`** — `open` → `claimed` → `resolved`.
+- **`blocked_by`** — a list of the other tickets' keys that must resolve first (`[TK-1, TK-2]`),
+  empty (`[]`) when nothing blocks it. Always a key, never a bare number — see typdoc below;
+  typdoc (if used) resolves refs by key, and there's no such thing as a codeless key in its
+  model.
+
+**typdoc (optional).** If a working [typdoc](https://github.com/thaitype/typdoc) project is set
+up over `_tickets/`, any `chief-*` skill creating, reading, or updating a ticket can use it
+instead of working the files directly — collision-safe numbering on create, real queries on
+read, schema-checked writes on update. Nothing here requires it: work the files directly
+whenever it isn't set up, and treat any snag while using it (wrong code guessed, a missing
+field, whatever) as an ordinary problem to work out, not a hard rule to follow — check what an
+existing ticket's key already looks like, or ask typdoc itself, and retry.
+
+Roughly, per action (full syntax lives in the `typdoc` skill, not here):
+
+- **Create** — `typdoc new <code> "<title>" --namespace <story-N> --set type=<type>` (`--slug`
+  too, to match the filename a self-numbered ticket would get).
+- **Read the frontier** — `typdoc list --collection tickets --where status=open --where
+  'ref.all(blocked_by).status=resolved'`.
+- **Update status** — `typdoc set <key> status=claimed` (or `resolved`).
+- **Check the project** — `typdoc validate`, worth running after creating or updating a ticket.
+
+There's no fixed code — `TK` is only Chief's own default when it numbers a ticket itself with no
+typdoc involved (filename `TK-<n>-<slug>.md`). A story with existing tickets already shows its
+real code in their filenames; a typdoc project states its own in the schema (`typdoc get <key>
+--json` includes it).
+
+A ready-to-copy typdoc project (config, collection, schema for this exact shape, code `TK`)
+lives at `docs/example-chief/.typdoc/` — copy it into a project's storage root to get real
+typing over its `_tickets/`, no authoring from scratch required. This skill still doesn't
+provision it for anyone; it's a reference the user copies by hand, same as
+`docs/example-chief/` itself.
 
 ## The `chief-*` skill family
 

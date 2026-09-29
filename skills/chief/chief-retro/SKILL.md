@@ -12,8 +12,9 @@ root, resolve `storage-root:` from it first and use that path everywhere below i
 
 Auto-detect the scope:
 
-1. Scan `.chief/story-N/_tickets/` for `Type: implementation` tickets.
-2. If ALL of them are `Status: resolved` (and no ticket is still blocked awaiting a future
+1. Scan `.chief/story-N/_tickets/` frontmatter for `type: implementation` tickets (or query with
+   typdoc, if set up — see `chief-explain`'s typdoc section).
+2. If ALL of them are `status: resolved` (and no ticket is still blocked awaiting a future
    `/chief-plan` round) → **story retro**.
 3. If some remain `open`/`claimed`, or the goal/contract aren't yet satisfied → **round retro**
    (covers only the latest completed round of tickets — since `/chief-loop`/`/chief-autopilot`

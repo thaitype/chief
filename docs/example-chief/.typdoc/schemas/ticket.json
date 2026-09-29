@@ -1,0 +1,31 @@
+{
+  "name": "ticket",
+  "code": "TK",
+  "fields": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enum",
+      "values": [
+        "implementation",
+        "wayfinder:research",
+        "wayfinder:prototype",
+        "wayfinder:grilling",
+        "wayfinder:task"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "enum",
+      "values": ["open", "claimed", "resolved"],
+      "default": "open"
+    },
+    "blocked_by": {
+      "type": "ref[]",
+      "target": ["ticket"],
+      "acyclic": true,
+      "default": []
+    }
+  }
+}
